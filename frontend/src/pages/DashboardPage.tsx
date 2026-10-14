@@ -11,8 +11,8 @@ const TYPE_LABELS: Record<string, string> = {
 }
 
 const NEXT_STEPS: Record<string, string> = {
-  learner: 'Tutor search is coming soon. You will be able to filter by subject, grade, area and price.',
-  parent: "Tutor search is coming soon. You'll be able to find verified tutors for your child.",
+  learner: 'Search verified tutors by subject, grade, area and price.',
+  parent: 'Find a verified tutor for your child by subject, grade, area and price.',
   '': 'Use the Django admin to manage the platform.',
 }
 
@@ -26,7 +26,7 @@ function TutorApplicationCard() {
 
   if (application === undefined) return <p className="text-slate-500">Loading your application…</p>
 
-  const content = (() => {
+  const content: { text: string; action: string; to?: string } = (() => {
     if (!application) return {
       text: 'Apply to become a Brights tutor. It takes about 10 minutes if you have your documents ready.',
       action: 'Start your application',
@@ -35,7 +35,7 @@ function TutorApplicationCard() {
       case 'draft': return { text: "You've started your application. Finish it and submit it for review.", action: 'Continue application' }
       case 'more_info': return { text: 'Our team needs more information from you before they can decide.', action: 'See what is needed' }
       case 'pending': return { text: "Your application is with our review team. We'll update you here.", action: 'View application' }
-      case 'approved': return { text: "You're approved. Profile setup is coming soon.", action: 'View application' }
+      case 'approved': return { text: "You're approved. Complete your profile so learners can find you.", action: 'Edit your profile', to: '/tutor/profile' }
       case 'rejected': return { text: 'Your application was not approved. See the note from our team.', action: 'View application' }
       case 'suspended': return { text: 'Your tutor account is suspended. See the note from our team.', action: 'View application' }
       default: return { text: `Application status: ${application.status_label}.`, action: 'View application' }
@@ -45,7 +45,7 @@ function TutorApplicationCard() {
   return (
     <>
       <p className="mt-2 text-slate-600">{content.text}</p>
-      <Link to="/tutor/apply"
+      <Link to={content.to ?? '/tutor/apply'}
         className="mt-5 inline-block rounded-full bg-brand-navy px-6 py-3 font-semibold text-white transition hover:bg-brand-blue focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-blue/30">
         {content.action}
       </Link>
@@ -67,7 +67,16 @@ export function DashboardPage() {
         <h2 className="font-semibold text-slate-900">
           {user.account_type === 'tutor' ? 'Your tutor application' : "What's next"}
         </h2>
-        {user.account_type === 'tutor' ? <TutorApplicationCard /> : <p className="mt-2 text-slate-600">{NEXT_STEPS[user.account_type]}</p>}
+        {user.account_type === 'tutor' ? <TutorApplicationCard /> : (
+          <>
+            <p className="mt-2 text-slate-600">{NEXT_STEPS[user.account_type]}</p>
+            {user.account_type !== '' && (
+              <Link to="/tutors" className="mt-5 inline-block rounded-full bg-brand-navy px-6 py-3 font-semibold text-white transition hover:bg-brand-blue">
+                Find a tutor
+              </Link>
+            )}
+          </>
+        )}
       </div>
     </section>
   )

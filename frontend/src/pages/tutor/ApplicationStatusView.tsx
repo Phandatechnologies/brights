@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router'
 import { ApiError } from '../../api/client'
 import { tutorApi, type ApplicationStatus, type TutorApplication } from '../../api/tutor'
 import { FormAlert } from '../../components/Form'
@@ -12,7 +13,7 @@ const COPY: Partial<Record<ApplicationStatus, { title: string; body: string; ton
   },
   approved: {
     title: "You're approved",
-    body: 'You can tutor the subjects marked Approved below. Profile setup is coming soon; once it is live, learners and parents will be able to find you in search.',
+    body: 'You can tutor the subjects marked Approved below. Complete your tutor profile so learners and parents can find you in search.',
     tone: 'border-brand-teal/50 bg-brand-teal/10',
   },
   rejected: {
@@ -60,6 +61,11 @@ export function ApplicationStatusView({ application, onChange }: {
         <p className="font-display text-2xl font-semibold text-brand-navy">{copy?.title ?? application.status_label}</p>
         <p className="mt-2 leading-relaxed text-slate-700">{copy?.body}</p>
         {submitted && <p className="mt-3 text-sm text-slate-500">Submitted on {submitted}</p>}
+        {application.status === 'approved' && (
+          <Link to="/tutor/profile" className="mt-4 inline-block rounded-full bg-brand-navy px-6 py-3 font-semibold text-white transition hover:bg-brand-blue">
+            Edit your profile
+          </Link>
+        )}
         {application.reviewer_message && (
           <div className="mt-4 rounded-lg bg-white/70 p-4">
             <p className="text-sm font-medium text-slate-500">Note from the Brights team</p>

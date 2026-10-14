@@ -70,10 +70,10 @@ function Hero({ signedIn }: { signedIn: boolean }) {
             ) : (
               <>
                 <Link
-                  to="/register"
+                  to="/tutors"
                   className="rounded-full bg-brand-navy px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand-navy/20 transition hover:bg-brand-blue focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-blue/30"
                 >
-                  Sign up free
+                  Find a tutor
                 </Link>
                 <Link
                   to="/register?as=tutor"

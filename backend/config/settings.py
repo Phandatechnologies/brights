@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "core",
     "accounts",
     "tutors",
+    "profiles",
 ]
 
 MIDDLEWARE = [

@@ -19,7 +19,10 @@ export function Layout() {
             <span className="text-xl font-bold text-brand-navy">Brights</span>
           </Link>
 
-          <div className="flex items-center gap-2 text-sm font-medium">
+          <div className="flex items-center gap-1 text-sm font-medium sm:gap-2">
+            <Link to="/tutors" className="rounded-lg px-3 py-2 text-slate-700 hover:bg-slate-100">
+              Find a tutor
+            </Link>
             {user ? (
               <>
                 <Link to="/dashboard" className="rounded-lg px-3 py-2 text-slate-700 hover:bg-slate-100">
