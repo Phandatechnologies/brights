@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "rest_framework",
     # Brights apps
     "core",
+    "accounts",
 ]
 
 MIDDLEWARE = [
@@ -96,6 +97,21 @@ DATABASES = {
 }
 
 
+# --- Users and authentication ---------------------------------------------
+
+AUTH_USER_MODEL = "accounts.User"
+
+# Sessions: the login cookie is HttpOnly (JavaScript cannot read it).
+# The CSRF cookie must be readable by the frontend so it can send it back.
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = "Lax"
+# Only send cookies over HTTPS outside development.
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+
+
 # --- Passwords --------------------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -128,4 +144,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
+    "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"],
+    # Slow down password guessing and sign-up spam on the auth endpoints.
+    "DEFAULT_THROTTLE_CLASSES": ["rest_framework.throttling.ScopedRateThrottle"],
+    "DEFAULT_THROTTLE_RATES": {"auth": "10/minute"},
 }
