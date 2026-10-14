@@ -36,6 +36,12 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", required=True)
 DEBUG = env_bool("DJANGO_DEBUG", default=False)  # safe default: off
 ALLOWED_HOSTS = [h.strip() for h in env("DJANGO_ALLOWED_HOSTS", "").split(",") if h.strip()]
 
+# Websites allowed to send logged-in POST requests (CSRF origin check).
+# In development this is the Vite dev server, e.g. http://localhost:5173
+CSRF_TRUSTED_ORIGINS = [
+    o.strip() for o in env("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
+]
+
 
 # --- Applications -----------------------------------------------------------
 
