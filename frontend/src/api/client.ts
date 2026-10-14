@@ -29,6 +29,14 @@ export async function ensureCsrfCookie(): Promise<void> {
   await fetch('/api/auth/csrf/', { credentials: 'same-origin' })
 }
 
+/** Collect every string inside a (possibly nested) DRF error value. */
+function flattenMessages(value: unknown): string[] {
+  if (typeof value === 'string') return [value]
+  if (Array.isArray(value)) return value.flatMap(flattenMessages)
+  if (value && typeof value === 'object') return Object.values(value).flatMap(flattenMessages)
+  return [String(value)]
+}
+
 /** DRF errors look like {"detail": "..."} or {"field": ["msg", ...], "non_field_errors": [...]} */
 function parseErrors(body: unknown): { message: string; fieldErrors: FieldErrors } {
   if (!body || typeof body !== 'object') return { message: 'Something went wrong.', fieldErrors: {} }
@@ -38,7 +46,7 @@ function parseErrors(body: unknown): { message: string; fieldErrors: FieldErrors
 
   const fieldErrors: FieldErrors = {}
   for (const [key, value] of Object.entries(data)) {
-    fieldErrors[key] = Array.isArray(value) ? value.map(String) : [String(value)]
+    fieldErrors[key] = flattenMessages(value)
   }
   const general = fieldErrors.non_field_errors?.[0]
   return { message: general ?? 'Please correct the highlighted fields.', fieldErrors }
@@ -48,7 +56,7 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
   const method = (options.method ?? 'GET').toUpperCase()
   const headers = new Headers(options.headers)
   headers.set('Accept', 'application/json')
-  if (options.body) headers.set('Content-Type', 'application/json')
+  if (typeof options.body === 'string') headers.set('Content-Type', 'application/json')
   if (method !== 'GET') {
     const token = readCookie('csrftoken')
     if (token) headers.set('X-CSRFToken', token)

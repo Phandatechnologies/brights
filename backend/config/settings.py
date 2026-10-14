@@ -52,11 +52,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.postgres",
     # Third-party
     "rest_framework",
     # Brights apps
     "core",
     "accounts",
+    "tutors",
 ]
 
 MIDDLEWARE = [
@@ -140,6 +142,10 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# Private files (tutor verification documents). This folder is never served by a URL;
+# staff download files through a permission-checked API view instead.
+PRIVATE_MEDIA_ROOT = Path(env("PRIVATE_MEDIA_ROOT", str(BASE_DIR / "private_media")))
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
@@ -155,3 +161,18 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_CLASSES": ["rest_framework.throttling.ScopedRateThrottle"],
     "DEFAULT_THROTTLE_RATES": {"auth": "10/minute"},
 }
+
+
+# --- Email -----------------------------------------------------------------------
+# Development default prints emails in the runserver terminal. At deployment set
+# EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend plus the EMAIL_* values.
+EMAIL_BACKEND = env("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = env("EMAIL_HOST", "")
+EMAIL_PORT = int(env("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", default=True)
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", "Brights <no-reply@brights.local>")
+
+# Used to build links in emails.
+FRONTEND_URL = env("FRONTEND_URL", "http://localhost:5173")

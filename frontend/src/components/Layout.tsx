@@ -13,7 +13,7 @@ export function Layout() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="border-b border-slate-200 bg-white">
-        <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <Link to="/" className="flex items-center gap-2">
             <img src="/brights-logo.png" alt="" className="h-9 w-9" />
             <span className="text-xl font-bold text-brand-navy">Brights</span>
@@ -53,8 +53,17 @@ export function Layout() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-slate-200 py-6 text-center text-sm text-slate-500">
-        Brights · a Phanda Technologies product
+      <footer className="border-t border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-slate-500 sm:flex-row sm:justify-between">
+          <p>Brights is a Phanda Technologies product.</p>
+          <p>
+            Photo by{' '}
+            <a href="https://unsplash.com/@silverkblack" className="underline hover:text-slate-700" target="_blank" rel="noreferrer">
+              Vitaly Gariev
+            </a>{' '}
+            on Unsplash
+          </p>
+        </div>
       </footer>
     </div>
   )

@@ -1,8 +1,11 @@
 @import "tailwindcss";
+@import "@fontsource-variable/bricolage-grotesque/opsz.css";
+@import "@fontsource-variable/instrument-sans/index.css";
 
 /*
- * Brights brand colours, sampled from the logo.
- * Tailwind turns each --color-* into utilities, e.g. bg-brand-navy, text-brand-orange.
+ * Brights design tokens.
+ * Brand colours are sampled from the logo. Tailwind turns each --color-* into
+ * utilities (bg-brand-navy, text-brand-teal…) and each --font-* into font-display / font-sans.
  */
 @theme {
   --color-brand-navy: #043386;
@@ -10,8 +13,37 @@
   --color-brand-teal: #11c8bf;
   --color-brand-gold: #feb410;
   --color-brand-orange: #fe6d06;
+
+  --color-ink: #17213a;      /* body text: navy-tinted, softer than black */
+  --color-chalk: #f3f6f9;    /* cool off-white that matches the hero photo's wall */
+  --color-pass: #0b7f78;     /* darker teal for text on white (readable contrast) */
+  --color-below: #b54708;    /* darker orange for text on white */
+
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
-  @apply bg-white text-slate-900 antialiased;
+  @apply bg-white font-sans text-ink antialiased;
+}
+
+h1, h2, h3 {
+  @apply font-display;
+  font-optical-sizing: auto;
+  text-wrap: balance;
+}
+
+/* The logo's star twinkles in once when the home page loads. */
+@keyframes spark-in {
+  0%   { opacity: 0; transform: scale(0.2) rotate(-60deg); }
+  60%  { opacity: 1; transform: scale(1.15) rotate(8deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.spark {
+  animation: spark-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) 350ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spark { animation: none; }
 }

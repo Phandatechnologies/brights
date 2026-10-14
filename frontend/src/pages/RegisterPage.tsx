@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import type { AccountType, RegisterInput } from '../api/auth'
 import { ApiError, type FieldErrors } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
@@ -33,7 +33,13 @@ function ageWarning(type: AccountType, age: number | null): string | null {
 export function RegisterPage() {
   const { register } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState<RegisterInput>(EMPTY)
+  const [searchParams] = useSearchParams()
+  const [form, setForm] = useState<RegisterInput>(() => {
+    // e.g. /register?as=tutor pre-selects "Tutor"
+    const requested = searchParams.get('as')
+    const valid = ACCOUNT_TYPES.some((t) => t.value === requested)
+    return valid ? { ...EMPTY, account_type: requested as AccountType } : EMPTY
+  })
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)

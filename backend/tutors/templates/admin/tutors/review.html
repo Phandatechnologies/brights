@@ -1,0 +1,149 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  .review { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 24px; align-items: start; }
+  @media (max-width: 960px) { .review { grid-template-columns: 1fr; } }
+  .review section { background: var(--body-bg); border: 1px solid var(--hairline-color); border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; }
+  .review h2 { margin: 0 0 12px; font-size: 1rem; }
+  .review dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+  .review dt { color: var(--body-quiet-color); }
+  .review dd { margin: 0; }
+  .status-pill { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--darkened-bg); font-weight: 600; }
+  .subject { border-top: 1px solid var(--hairline-color); padding: 12px 0; }
+  .subject:first-of-type { border-top: 0; padding-top: 0; }
+  .subject-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .mark { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .warn { color: var(--error-fg); font-weight: 600; }
+  .choices { display: flex; gap: 16px; margin: 8px 0; }
+  .choices label { display: inline-flex; gap: 6px; align-items: center; }
+  .review input[type=text], .review textarea { width: 100%; box-sizing: border-box; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .actions button { padding: 8px 14px; cursor: pointer; border-radius: 4px; border: 1px solid var(--border-color); background: var(--body-bg); color: var(--body-fg); }
+  .actions .primary { background: var(--button-bg); color: var(--button-fg); border-color: var(--button-bg); }
+  .actions .danger { color: var(--error-fg); border-color: var(--error-fg); }
+  .doc { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: 1px solid var(--hairline-color); }
+  .doc:first-of-type { border-top: 0; }
+  .history li { margin-bottom: 8px; }
+  .muted { color: var(--body-quiet-color); }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
+  <a href="{% url 'admin:tutors_tutorapplication_changelist' %}">Tutor applications</a> &rsaquo;
+  Review
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="review">
+  <div>
+    <section>
+      <h2>Applicant</h2>
+      <dl>
+        <dt>Name</dt><dd>{{ applicant.first_name }} {{ applicant.last_name }}</dd>
+        <dt>Email</dt><dd>{{ applicant.email }}</dd>
+        <dt>Date of birth</dt><dd>{{ applicant.date_of_birth|date:"j F Y" }} (age {{ applicant.age }})</dd>
+        <dt>Pathway</dt><dd>{{ application.get_pathway_display }}</dd>
+        {% if application.pathway == "teacher" %}
+          <dt>Qualification</dt><dd>{{ application.qualification_name|default:"—" }}</dd>
+          <dt>SACE number</dt><dd>{{ application.sace_number|default:"—" }}</dd>
+        {% endif %}
+        <dt>Status</dt><dd><span class="status-pill">{{ application.get_status_display }}</span></dd>
+        <dt>Submitted</dt><dd>{{ application.submitted_at|default:"—" }}</dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>Documents</h2>
+      <p class="muted">Check names, ID details and every mark against these documents.</p>
+      {% for d in documents %}
+        <div class="doc">
+          <span><strong>{{ d.doc.get_kind_display }}</strong><br><span class="muted">{{ d.doc.original_name }}</span></span>
+          <span><a href="{{ d.url }}?inline=1" target="_blank" rel="noopener">View</a> · <a href="{{ d.url }}">Download</a></span>
+        </div>
+      {% empty %}
+        <p>No documents uploaded.</p>
+      {% endfor %}
+    </section>
+
+    <section class="history">
+      <h2>History</h2>
+      <ul>
+        {% for e in events %}
+          <li><strong>{{ e.action|capfirst }}</strong> by {{ e.actor.email|default:"(deleted user)" }}, {{ e.created_at|date:"j M Y H:i" }}
+            {% if e.note %}<br><span class="muted">“{{ e.note }}”</span>{% endif %}</li>
+        {% empty %}
+          <li class="muted">No history yet.</li>
+        {% endfor %}
+      </ul>
+    </section>
+  </div>
+
+  <div>
+    <form method="post">
+      {% csrf_token %}
+      <section>
+        <h2>Subjects</h2>
+        {% if application.pathway == "academic" %}
+          <p class="muted">Approve a subject only if its Matric mark matches the document and is {{ min_mark }}% or more.</p>
+        {% else %}
+          <p class="muted">Approve a subject only if the teaching qualification covers it.</p>
+        {% endif %}
+        {% for row in subject_rows %}
+          <div class="subject">
+            <div class="subject-head">
+              <strong>{{ row.item.subject.name }}</strong>
+              <span>
+                {% if row.item.matric_mark is not None %}<span class="mark">{{ row.item.matric_mark }}%</span>{% endif %}
+                <span class="muted">Grades {{ row.grades }}</span>
+              </span>
+            </div>
+            {% if row.below_threshold %}<p class="warn">Below {{ min_mark }}%: cannot be approved.</p>{% endif %}
+            {% if can_decide %}
+              <div class="choices" role="radiogroup" aria-label="Decision for {{ row.item.subject.name }}">
+                <label><input type="radio" name="decision_{{ row.item.pk }}" value="{{ APPROVED }}" {% if row.decision == APPROVED %}checked{% endif %} {% if row.below_threshold %}disabled{% endif %}> Approve</label>
+                <label><input type="radio" name="decision_{{ row.item.pk }}" value="{{ DECLINED }}" {% if row.decision == DECLINED %}checked{% endif %}> Decline</label>
+              </div>
+              <input type="text" name="note_{{ row.item.pk }}" value="{{ row.note }}" maxlength="300"
+                     placeholder="Reason (required if declined), e.g. mark doesn't match statement"
+                     aria-label="Note for {{ row.item.subject.name }}">
+            {% else %}
+              <p>{{ row.item.get_decision_display }}{% if row.item.decision_note %}: <span class="muted">{{ row.item.decision_note }}</span>{% endif %}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </section>
+
+      <section>
+        <h2>Decision</h2>
+        {% if is_own %}
+          <p class="warn">This is your own application. Another administrator must review it.</p>
+        {% elif can_decide or can_suspend or can_reinstate %}
+          <label for="message">Message to the tutor <span class="muted">(required to reject, request info or suspend)</span></label>
+          <textarea id="message" name="message" rows="4">{{ message }}</textarea>
+          <div class="actions">
+            {% if can_decide %}
+              <button class="primary" type="submit" name="action" value="approve">Approve selected subjects</button>
+              <button type="submit" name="action" value="request_info">Request more information</button>
+              <button class="danger" type="submit" name="action" value="reject">Reject application</button>
+            {% endif %}
+            {% if can_suspend %}
+              <button class="danger" type="submit" name="action" value="suspend">Suspend tutor</button>
+            {% endif %}
+            {% if can_reinstate %}
+              <button class="primary" type="submit" name="action" value="reinstate">Reinstate tutor</button>
+            {% endif %}
+          </div>
+          <p class="muted">The tutor is emailed automatically and the decision is added to the history.</p>
+        {% else %}
+          <p class="muted">No decisions available while the application is “{{ application.get_status_display }}”.</p>
+        {% endif %}
+      </section>
+    </form>
+  </div>
+</div>
+{% endblock %}

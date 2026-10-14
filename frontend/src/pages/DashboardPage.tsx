@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router'
+import { tutorApi, type TutorApplication } from '../api/tutor'
 import { useAuth } from '../auth/AuthContext'
 
 const TYPE_LABELS: Record<string, string> = {
@@ -10,8 +13,44 @@ const TYPE_LABELS: Record<string, string> = {
 const NEXT_STEPS: Record<string, string> = {
   learner: 'Tutor search is coming soon. You will be able to filter by subject, grade, area and price.',
   parent: "Tutor search is coming soon. You'll be able to find verified tutors for your child.",
-  tutor: 'Tutor applications open soon. You will upload your Matric results or teaching qualifications for review.',
   '': 'Use the Django admin to manage the platform.',
+}
+
+/** What a tutor sees about their application on the dashboard. */
+function TutorApplicationCard() {
+  const [application, setApplication] = useState<TutorApplication | null | undefined>(undefined)
+
+  useEffect(() => {
+    tutorApi.getApplication().then(setApplication).catch(() => setApplication(null))
+  }, [])
+
+  if (application === undefined) return <p className="text-slate-500">Loading your application…</p>
+
+  const content = (() => {
+    if (!application) return {
+      text: 'Apply to become a Brights tutor. It takes about 10 minutes if you have your documents ready.',
+      action: 'Start your application',
+    }
+    switch (application.status) {
+      case 'draft': return { text: "You've started your application. Finish it and submit it for review.", action: 'Continue application' }
+      case 'more_info': return { text: 'Our team needs more information from you before they can decide.', action: 'See what is needed' }
+      case 'pending': return { text: "Your application is with our review team. We'll update you here.", action: 'View application' }
+      case 'approved': return { text: "You're approved. Profile setup is coming soon.", action: 'View application' }
+      case 'rejected': return { text: 'Your application was not approved. See the note from our team.', action: 'View application' }
+      case 'suspended': return { text: 'Your tutor account is suspended. See the note from our team.', action: 'View application' }
+      default: return { text: `Application status: ${application.status_label}.`, action: 'View application' }
+    }
+  })()
+
+  return (
+    <>
+      <p className="mt-2 text-slate-600">{content.text}</p>
+      <Link to="/tutor/apply"
+        className="mt-5 inline-block rounded-full bg-brand-navy px-6 py-3 font-semibold text-white transition hover:bg-brand-blue focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-blue/30">
+        {content.action}
+      </Link>
+    </>
+  )
 }
 
 export function DashboardPage() {
@@ -22,11 +61,13 @@ export function DashboardPage() {
     <section className="mx-auto max-w-3xl px-4 py-10">
       <h1 className="text-3xl font-bold text-brand-navy">Hi {user.first_name} 👋</h1>
       <p className="mt-1 text-slate-600">
-        Signed in as {user.email} · <span className="font-medium">{TYPE_LABELS[user.account_type]}</span>
+        Signed in as {user.email} ({TYPE_LABELS[user.account_type]})
       </p>
       <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="font-semibold text-slate-900">What's next</h2>
-        <p className="mt-2 text-slate-600">{NEXT_STEPS[user.account_type]}</p>
+        <h2 className="font-semibold text-slate-900">
+          {user.account_type === 'tutor' ? 'Your tutor application' : "What's next"}
+        </h2>
+        {user.account_type === 'tutor' ? <TutorApplicationCard /> : <p className="mt-2 text-slate-600">{NEXT_STEPS[user.account_type]}</p>}
       </div>
     </section>
   )
