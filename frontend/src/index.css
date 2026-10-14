@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/*
+ * Brights brand colours, sampled from the logo.
+ * Tailwind turns each --color-* into utilities, e.g. bg-brand-navy, text-brand-orange.
+ */
+@theme {
+  --color-brand-navy: #043386;
+  --color-brand-blue: #004cde;
+  --color-brand-teal: #11c8bf;
+  --color-brand-gold: #feb410;
+  --color-brand-orange: #fe6d06;
+}
+
+body {
+  @apply bg-white text-slate-900 antialiased;
+}
