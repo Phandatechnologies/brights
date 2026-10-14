@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { ApiError } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
-import { FormAlert, SubmitButton, TextField } from '../components/Form'
+import { FormAlert, PasswordField, SubmitButton, TextField } from '../components/Form'
 import { AuthCard } from './AuthCard'
 
 export function LoginPage() {
@@ -39,7 +39,7 @@ export function LoginPage() {
         <FormAlert message={error} />
         <TextField label="Email" name="email" type="email" autoComplete="email" required
           value={email} onChange={(e) => setEmail(e.target.value)} />
-        <TextField label="Password" name="password" type="password" autoComplete="current-password" required
+        <PasswordField label="Password" name="password" autoComplete="current-password" required
           value={password} onChange={(e) => setPassword(e.target.value)} />
         <SubmitButton busy={busy}>Log in</SubmitButton>
       </form>

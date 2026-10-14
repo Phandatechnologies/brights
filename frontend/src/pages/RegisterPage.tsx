@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import type { AccountType, RegisterInput } from '../api/auth'
 import { ApiError, type FieldErrors } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
-import { FieldError, FormAlert, SubmitButton, TextField } from '../components/Form'
+import { FieldError, FormAlert, PasswordField, SubmitButton, TextField } from '../components/Form'
 import { ADULT_AGE, MIN_LEARNER_AGE, ageFromIsoDate } from '../lib/age'
 import { AuthCard } from './AuthCard'
 
@@ -142,7 +142,7 @@ export function RegisterPage() {
         <TextField label="Email" name="email" type="email" autoComplete="email" required
           value={form.email} errors={fieldErrors.email}
           onChange={(e) => update('email', e.target.value)} />
-        <TextField label="Password" name="password" type="password" autoComplete="new-password" required
+        <PasswordField label="Password" name="password" autoComplete="new-password" required
           value={form.password} errors={fieldErrors.password}
           hint="At least 8 characters. Avoid common passwords and your name."
           onChange={(e) => update('password', e.target.value)} />
