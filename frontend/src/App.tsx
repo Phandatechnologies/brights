@@ -8,6 +8,7 @@ import { LoginPage } from './pages/LoginPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { StatusPage } from './pages/StatusPage'
+import { ReportPage } from './pages/ReportPage'
 import { SearchPage } from './pages/SearchPage'
 import { TutorProfilePage } from './pages/TutorProfilePage'
 import { ApplyPage } from './pages/tutor/ApplyPage'
@@ -33,6 +34,7 @@ export default function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/tutor/apply" element={<ApplyPage />} />
               <Route path="/tutor/profile" element={<ProfileEditorPage />} />
+              <Route path="/tutors/:id/report" element={<ReportPage />} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

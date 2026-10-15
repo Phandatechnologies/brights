@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     "accounts",
     "tutors",
     "profiles",
+    "contact",
+    "moderation",
 ]
 
 MIDDLEWARE = [
@@ -177,3 +179,8 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", "Brights <no-reply@brights.local>
 
 # Used to build links in emails.
 FRONTEND_URL = env("FRONTEND_URL", "http://localhost:5173")
+BACKEND_URL = env("BACKEND_URL", "http://localhost:8000")
+
+# Who is emailed immediately about urgent (child-safety) reports. Comma-separated.
+# If empty, all active superusers are emailed.
+REPORT_ALERT_EMAILS = [e.strip() for e in env("REPORT_ALERT_EMAILS", "").split(",") if e.strip()]

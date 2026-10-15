@@ -1,0 +1,104 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  .review { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  @media (max-width: 960px) { .review { grid-template-columns: 1fr; } }
+  .review section { background: var(--body-bg); border: 1px solid var(--hairline-color); border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; }
+  .review h2 { margin: 0 0 12px; font-size: 1rem; }
+  .review dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+  .review dt { color: var(--body-quiet-color); }
+  .review dd { margin: 0; }
+  .urgent { background: #fdecea; border-color: #ba2121 !important; }
+  .urgent-tag { color: #ba2121; font-weight: 700; }
+  .description { white-space: pre-line; font-size: 0.95rem; line-height: 1.5; }
+  .review textarea { width: 100%; box-sizing: border-box; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .actions button { padding: 8px 14px; cursor: pointer; border-radius: 4px; border: 1px solid var(--border-color); background: var(--body-bg); color: var(--body-fg); }
+  .actions .danger { color: #fff; background: #ba2121; border-color: #ba2121; }
+  .muted { color: var(--body-quiet-color); }
+  .review ul { padding-left: 18px; margin: 0; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">Home</a> &rsaquo;
+  <a href="{% url 'admin:moderation_report_changelist' %}">Reports</a> &rsaquo; Report #{{ report.pk }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="review">
+  <div>
+    <section class="{% if report.is_urgent and is_open %}urgent{% endif %}">
+      <h2>{% if report.is_urgent %}<span class="urgent-tag">URGENT</span> · {% endif %}{{ report.get_category_display }}</h2>
+      {% if report.is_urgent and is_open %}
+        <p><strong>The tutor is hidden from search and can't be contacted until this report is closed.</strong></p>
+      {% endif %}
+      <dl>
+        <dt>Submitted</dt><dd>{{ report.created_at|date:"j M Y H:i" }}</dd>
+        <dt>Incident date</dt><dd>{{ report.incident_date|date:"j M Y"|default:"Not given" }}</dd>
+        <dt>Status</dt><dd>{{ report.get_status_display }}{% if report.outcome %}: {{ report.get_outcome_display }}{% endif %}</dd>
+        {% if report.closed_by %}<dt>Closed by</dt><dd>{{ report.closed_by.email }}, {{ report.closed_at|date:"j M Y H:i" }}</dd>{% endif %}
+      </dl>
+      <h2 style="margin-top:16px">What happened</h2>
+      <p class="description">{{ report.description }}</p>
+    </section>
+
+    <section>
+      <h2>Reporter</h2>
+      {% if report.reporter %}
+        <dl>
+          <dt>Name</dt><dd>{{ report.reporter.first_name }} {{ report.reporter.last_name }}</dd>
+          <dt>Email</dt><dd>{{ report.reporter.email }}</dd>
+          <dt>Account</dt><dd>{{ report.reporter.get_account_type_display|default:"Staff" }}{% if report.reporter_was_minor %} (under 18){% endif %}</dd>
+        </dl>
+      {% else %}<p class="muted">Account deleted.</p>{% endif %}
+      <h2 style="margin-top:16px">Contact history with this tutor</h2>
+      {% if contacts %}
+        <ul>{% for c in contacts %}<li>{{ c.created_at|date:"j M Y H:i" }}{% if c.subject %}: {{ c.subject.name }}{% endif %}{% if c.grade %}, Grade {{ c.grade }}{% endif %}</li>{% endfor %}</ul>
+      {% else %}<p class="muted">The reporter never contacted this tutor through Brights.</p>{% endif %}
+    </section>
+  </div>
+
+  <div>
+    <section>
+      <h2>Reported tutor</h2>
+      <dl>
+        <dt>Name</dt><dd>{{ tutor_user.first_name }} {{ tutor_user.last_name }}</dd>
+        <dt>Email</dt><dd>{{ tutor_user.email }}</dd>
+        <dt>Application</dt><dd>{% if application %}{{ application.get_status_display }} · <a href="{{ application_url }}">Open application</a>{% else %}—{% endif %}</dd>
+      </dl>
+      <h2 style="margin-top:16px">Other reports about this tutor ({{ other_reports|length }})</h2>
+      {% if other_reports %}
+        <ul>{% for r in other_reports %}<li><a href="{% url 'admin:moderation_report_review' r.pk %}">#{{ r.pk }}</a> {{ r.get_category_display }}, {{ r.created_at|date:"j M Y" }} ({{ r.get_status_display }}{% if r.outcome %}: {{ r.get_outcome_display }}{% endif %})</li>{% endfor %}</ul>
+      {% else %}<p class="muted">None.</p>{% endif %}
+    </section>
+
+    <section>
+      <h2>Decision</h2>
+      {% if is_own %}
+        <p class="urgent-tag">This report is about you. Another administrator must handle it.</p>
+      {% elif is_open %}
+        <form method="post">
+          {% csrf_token %}
+          <label for="message">Message to the tutor <span class="muted">(required to warn or suspend; never reveals the reporter)</span></label>
+          <textarea id="message" name="message" rows="3">{{ form.message }}</textarea>
+          <label for="notes" style="display:block;margin-top:10px">Internal notes <span class="muted">(required to dismiss; staff only)</span></label>
+          <textarea id="notes" name="notes" rows="3">{{ form.notes }}</textarea>
+          <div class="actions">
+            <button type="submit" name="action" value="dismiss">Dismiss: no action needed</button>
+            <button type="submit" name="action" value="warn">Warn tutor</button>
+            <button class="danger" type="submit" name="action" value="suspend">Suspend tutor</button>
+          </div>
+          <p class="muted">Closing the report emails the reporter that the review is finished.{% if report.is_urgent %} Dismissing or warning makes the tutor visible again (unless another urgent report is open).{% endif %}</p>
+        </form>
+      {% else %}
+        <p class="muted">This report is closed.</p>
+      {% endif %}
+      {% if report.admin_notes %}<h2 style="margin-top:16px">Internal notes</h2><p class="description">{{ report.admin_notes }}</p>{% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}

@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router'
+import { Link, useParams } from 'react-router'
 import { ApiError } from '../api/client'
 import { profilesApi, type PublicTutor } from '../api/profiles'
-import { useAuth } from '../auth/AuthContext'
 import { FullPageSpinner } from '../components/FullPageSpinner'
 import { Spark } from '../components/Spark'
 import { TutorAvatar } from '../components/TutorAvatar'
 import { formatRand, gradeRange, lessonModes } from '../lib/format'
+import { ContactPanel } from './ContactPanel'
 
 type State = { id: string; tutor: PublicTutor } | { id: string; error: string }
 
 /** /tutors/:id — a tutor's public profile. */
 export function TutorProfilePage() {
   const { id = '' } = useParams()
-  const { user } = useAuth()
-  const location = useLocation()
   const [state, setState] = useState<State | null>(null)
 
   useEffect(() => {
@@ -94,20 +92,14 @@ export function TutorProfilePage() {
               )}
             </dl>
             <div className="mt-6">
-              {user ? (
-                <button type="button" disabled
-                  className="w-full cursor-not-allowed rounded-full bg-brand-navy/40 px-5 py-3 font-semibold text-white">
-                  WhatsApp contact coming soon
-                </button>
-              ) : (
-                <Link to="/login" state={{ from: location.pathname }}
-                  className="block w-full rounded-full bg-brand-navy px-5 py-3 text-center font-semibold text-white transition hover:bg-brand-blue">
-                  Log in to contact
-                </Link>
-              )}
+              <ContactPanel tutor={tutor} />
               <p className="mt-3 text-xs leading-relaxed text-slate-500">
                 Lessons and payment are arranged directly with the tutor. Brights doesn't handle payments.
               </p>
+              <Link to={`/tutors/${tutor.id}/report`} state={{ tutorName: tutor.full_name }}
+                className="mt-4 inline-block text-sm text-slate-500 underline-offset-2 hover:text-red-700 hover:underline">
+                Report this tutor
+              </Link>
             </div>
           </div>
         </aside>

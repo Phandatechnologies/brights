@@ -21,9 +21,14 @@ def discoverable_profiles():
       - their account is active (not deactivated),
       - their application is approved (so not pending, rejected or suspended),
       - they have at least one approved subject,
-      - their profile is complete.
+      - their profile is complete,
+      - they have no open urgent (child-safety) report waiting for review.
     """
+    from moderation.models import Report
+    from moderation.rules import ReportStatus
+
     has_approved_subject = approved_subjects().filter(application__user=OuterRef("user"))
+    on_safety_hold = Report.objects.filter(tutor=OuterRef("pk"), is_urgent=True, status=ReportStatus.OPEN)
     return (
         TutorProfile.objects
         .select_related("user", "area", "user__tutor_application")
@@ -37,6 +42,7 @@ def discoverable_profiles():
         .filter(Q(teaches_online=True) | Q(teaches_in_person=True))
         .exclude(Q(teaches_in_person=True) & Q(area__isnull=True))
         .filter(Exists(has_approved_subject))
+        .exclude(Exists(on_safety_hold))
     )
 
 

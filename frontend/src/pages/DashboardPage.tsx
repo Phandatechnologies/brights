@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
+import { contactApi, type ContactHistoryItem } from '../api/contact'
 import { tutorApi, type TutorApplication } from '../api/tutor'
 import { useAuth } from '../auth/AuthContext'
 
@@ -53,6 +54,37 @@ function TutorApplicationCard() {
   )
 }
 
+/** Learners and parents: tutors they've contacted through Brights. */
+function ContactedTutors() {
+  const [items, setItems] = useState<ContactHistoryItem[] | null>(null)
+  useEffect(() => {
+    contactApi.history().then(setItems).catch(() => setItems([]))
+  }, [])
+  if (!items || items.length === 0) return null
+  return (
+    <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 className="font-semibold text-slate-900">Tutors you've contacted</h2>
+      <ul className="mt-3 divide-y divide-slate-100">
+        {items.map((item) => (
+          <li key={item.tutor_id} className="flex flex-wrap items-center justify-between gap-2 py-3">
+            {item.available ? (
+              <Link to={`/tutors/${item.tutor_id}`} className="font-medium text-brand-blue hover:underline">{item.name}</Link>
+            ) : (
+              <span className="text-slate-500">{item.name} (no longer available)</span>
+            )}
+            <span className="flex items-center gap-4 text-sm text-slate-500">
+              {new Date(item.last_contacted).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' })}
+              <Link to={`/tutors/${item.tutor_id}/report`} state={{ tutorName: item.name }} className="hover:text-red-700 hover:underline">
+                Report
+              </Link>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 export function DashboardPage() {
   const { user } = useAuth()
   if (!user) return null // RequireAuth guarantees a user; this keeps TypeScript happy
@@ -78,6 +110,7 @@ export function DashboardPage() {
           </>
         )}
       </div>
+      {(user.account_type === 'learner' || user.account_type === 'parent') && <ContactedTutors />}
     </section>
   )
 }
