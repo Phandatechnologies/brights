@@ -11,11 +11,14 @@ export type FieldErrors = Record<string, string[]>
 export class ApiError extends Error {
   status: number
   fieldErrors: FieldErrors
+  /** Machine-readable reason from the API, e.g. "email_unverified". */
+  code?: string
 
-  constructor(status: number, message: string, fieldErrors: FieldErrors = {}) {
+  constructor(status: number, message: string, fieldErrors: FieldErrors = {}, code?: string) {
     super(message)
     this.status = status
     this.fieldErrors = fieldErrors
+    this.code = code
   }
 }
 
@@ -84,7 +87,9 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
       throw new ApiError(response.status, 'The server had a problem. Please try again in a moment.')
     }
     const { message, fieldErrors } = parseErrors(body)
-    throw new ApiError(response.status, message, fieldErrors)
+    const code = typeof (body as { code?: unknown }).code === 'string' ? (body as { code: string }).code : undefined
+    if (code) delete fieldErrors.code
+    throw new ApiError(response.status, message, fieldErrors, code)
   }
   return body as T
 }

@@ -6,6 +6,7 @@ from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework.test import APITestCase
 
 from accounts.models import User
@@ -21,7 +22,7 @@ TEMP_MEDIA = tempfile.mkdtemp()
 def make_user(email, account_type="tutor", age=22, **extra):
     return User.objects.create_user(
         email=email, password="Sunflower-Maths-42", first_name="Test", last_name="User",
-        date_of_birth=dob_for_age(age), account_type=account_type, **extra,
+        date_of_birth=dob_for_age(age), account_type=account_type, email_verified_at=timezone.now(), **extra,
     )
 
 

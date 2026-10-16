@@ -18,7 +18,7 @@ TEMP_MEDIA = tempfile.mkdtemp()
 
 def make_user(email, **extra):
     defaults = dict(password="Sunflower-Maths-42", first_name="Test", last_name="User",
-                    date_of_birth=dob_for_age(25), account_type="tutor")
+                    date_of_birth=dob_for_age(25), account_type="tutor", email_verified_at=timezone.now())
     defaults.update(extra)
     return User.objects.create_user(email=email, **defaults)
 

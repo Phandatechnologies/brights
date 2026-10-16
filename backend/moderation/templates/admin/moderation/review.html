@@ -33,8 +33,10 @@
   <div>
     <section class="{% if report.is_urgent and is_open %}urgent{% endif %}">
       <h2>{% if report.is_urgent %}<span class="urgent-tag">URGENT</span> · {% endif %}{{ report.get_category_display }}</h2>
-      {% if report.is_urgent and is_open %}
+      {% if report.holds_tutor and is_open %}
         <p><strong>The tutor is hidden from search and can't be contacted until this report is closed.</strong></p>
+      {% elif report.is_urgent and is_open %}
+        <p><strong>The reporter never contacted this tutor through Brights, so the tutor is still visible.</strong> Suspend if the concern is credible.</p>
       {% endif %}
       <dl>
         <dt>Submitted</dt><dd>{{ report.created_at|date:"j M Y H:i" }}</dd>
@@ -92,7 +94,7 @@
             <button type="submit" name="action" value="warn">Warn tutor</button>
             <button class="danger" type="submit" name="action" value="suspend">Suspend tutor</button>
           </div>
-          <p class="muted">Closing the report emails the reporter that the review is finished.{% if report.is_urgent %} Dismissing or warning makes the tutor visible again (unless another urgent report is open).{% endif %}</p>
+          <p class="muted">Closing the report emails the reporter that the review is finished.{% if report.holds_tutor %} Dismissing or warning makes the tutor visible again (unless another report is holding them).{% endif %}</p>
         </form>
       {% else %}
         <p class="muted">This report is closed.</p>

@@ -22,13 +22,13 @@ def discoverable_profiles():
       - their application is approved (so not pending, rejected or suspended),
       - they have at least one approved subject,
       - their profile is complete,
-      - they have no open urgent (child-safety) report waiting for review.
+      - no open child-safety report from someone who contacted them is waiting for review.
     """
     from moderation.models import Report
     from moderation.rules import ReportStatus
 
     has_approved_subject = approved_subjects().filter(application__user=OuterRef("user"))
-    on_safety_hold = Report.objects.filter(tutor=OuterRef("pk"), is_urgent=True, status=ReportStatus.OPEN)
+    on_safety_hold = Report.objects.filter(tutor=OuterRef("pk"), holds_tutor=True, status=ReportStatus.OPEN)
     return (
         TutorProfile.objects
         .select_related("user", "area", "user__tutor_application")

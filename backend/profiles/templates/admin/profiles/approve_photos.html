@@ -1,0 +1,24 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<p>Check each photo is a clear, appropriate photo of the tutor's face. Only these exact photos will be approved.</p>
+<form method="post">
+  {% csrf_token %}
+  <div style="display:flex;flex-wrap:wrap;gap:16px;margin:16px 0">
+    {% for profile, url in profiles %}
+      <figure style="margin:0;width:200px">
+        <img src="{{ url }}" alt="" style="width:200px;height:200px;object-fit:cover;border-radius:8px">
+        <figcaption>{{ profile.full_name }}<br><span style="color:var(--body-quiet-color)">{{ profile.user.email }}</span></figcaption>
+        <input type="hidden" name="{{ action_checkbox_name }}" value="{{ profile.pk }}">
+        <input type="hidden" name="seen_{{ profile.pk }}" value="{{ profile.photo.name }}">
+      </figure>
+    {% empty %}
+      <p>None of the selected profiles has a photo.</p>
+    {% endfor %}
+  </div>
+  <input type="hidden" name="action" value="approve_photos">
+  <input type="hidden" name="confirm" value="yes">
+  <input type="submit" class="default" value="Approve these photos">
+  <a href="{% url 'admin:profiles_tutorprofile_changelist' %}" class="button cancel-link">Cancel</a>
+</form>
+{% endblock %}

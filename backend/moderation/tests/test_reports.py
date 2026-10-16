@@ -21,7 +21,8 @@ DESCRIPTION = "The tutor asked my child to keep their chats a secret from us."
 
 def make_user(email, account_type="parent", age=40, **extra):
     return User.objects.create_user(email=email, password="Sunflower-Maths-42", first_name=email.split("@")[0].title(),
-                                    last_name="Test", date_of_birth=dob_for_age(age), account_type=account_type, **extra)
+                                    last_name="Test", date_of_birth=dob_for_age(age), account_type=account_type,
+                                    email_verified_at=timezone.now(), **extra)
 
 
 @override_settings(REPORT_ALERT_EMAILS=["safety@brights.test"])
@@ -98,10 +99,15 @@ class SubmitTests(ReportTestCase):
 
 
 class UrgentHoldTests(ReportTestCase):
+    def setUp(self):
+        super().setUp()
+        ContactEvent.objects.create(requester=self.parent, tutor=self.tutor)  # a real connection
+
     def test_child_safety_report_hides_tutor_and_alerts_admins(self):
         self.assertEqual(self.search_ids(), [self.tutor.pk])
         response = self.report(category="child_safety")
         self.assertTrue(response.json()["urgent"])
+        self.assertTrue(response.json()["tutor_hidden"])
         self.assertEqual(self.search_ids(), [])
         self.assertEqual(self.client.get(reverse("tutor-detail", args=[self.tutor.pk])).status_code, 404)
         alert = [m for m in mail.outbox if m.to == ["safety@brights.test"]]
@@ -124,15 +130,31 @@ class UrgentHoldTests(ReportTestCase):
         self.assertEqual(self.search_ids(), [self.tutor.pk])
 
     def test_previous_contact_can_still_report_hidden_tutor(self):
-        ContactEvent.objects.create(requester=self.parent, tutor=self.tutor)
         other = make_user("other@example.com")
+        ContactEvent.objects.create(requester=other, tutor=self.tutor)
         self.report(user=other, category="child_safety")
+        self.assertEqual(self.search_ids(), [])
         self.assertEqual(self.report(category="inappropriate").status_code, 201)
 
     def test_stranger_cannot_report_hidden_tutor(self):
         self.report(category="child_safety")
         stranger = make_user("stranger@example.com")
         self.assertEqual(self.report(user=stranger).status_code, 404)
+
+    def test_child_safety_report_from_stranger_is_urgent_but_does_not_hide(self):
+        stranger = make_user("stranger@example.com")
+        response = self.report(user=stranger, category="child_safety")
+        self.assertTrue(response.json()["urgent"])
+        self.assertFalse(response.json()["tutor_hidden"])
+        self.assertEqual(self.search_ids(), [self.tutor.pk])
+        alert = [m for m in mail.outbox if m.to == ["safety@brights.test"]][0]
+        self.assertIn("still visible", alert.body)
+
+    def test_tutor_accounts_cannot_hide_other_tutors(self):
+        rival = make_user("rival@example.com", "tutor", 30)
+        ContactEvent.objects.create(requester=rival, tutor=self.tutor)  # even with a contact record
+        self.report(user=rival, category="child_safety")
+        self.assertEqual(self.search_ids(), [self.tutor.pk])
 
 
 class ActionTests(ReportTestCase):

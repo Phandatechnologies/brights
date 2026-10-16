@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { contactApi, type ContactHistoryItem } from '../api/contact'
 import { tutorApi, type TutorApplication } from '../api/tutor'
 import { useAuth } from '../auth/AuthContext'
+import { VerifyEmailBanner } from '../components/VerifyEmailBanner'
 
 const TYPE_LABELS: Record<string, string> = {
   learner: 'Learner',
@@ -95,6 +96,7 @@ export function DashboardPage() {
       <p className="mt-1 text-slate-600">
         Signed in as {user.email} ({TYPE_LABELS[user.account_type]})
       </p>
+      <VerifyEmailBanner />
       <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="font-semibold text-slate-900">
           {user.account_type === 'tutor' ? 'Your tutor application' : "What's next"}

@@ -78,7 +78,7 @@ class TutorPhotoView(APIView):
     def get(self, request, pk):
         profile = get_object_or_404(discoverable_profiles(), pk=pk, photo_status=PhotoStatus.APPROVED)
         response = _photo_response(profile)
-        response["Cache-Control"] = "public, max-age=86400"
+        response["Cache-Control"] = "private, max-age=300"  # short, so hidden tutors' photos disappear quickly
         return response
 
 
@@ -112,6 +112,10 @@ class OwnPhotoView(APIView):
 
     permission_classes = [IsTutorAccount]
     parser_classes = [MultiPartParser]
+    throttle_scope = "upload"
+
+    def get_throttles(self):
+        return super().get_throttles() if self.request.method == "POST" else []
 
     def get(self, request):
         profile = get_object_or_404(TutorProfile, user=request.user)

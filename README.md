@@ -7,6 +7,10 @@ A tutoring marketplace by Phanda Technologies, connecting South African high sch
 - `backend/` — Django + Django REST Framework API (PostgreSQL)
 - `frontend/` — React + TypeScript + Tailwind (Vite)
 - `docs/PROGRESS.md` — working summary of phases, decisions and open issues
+- `docs/DEPLOYMENT.md` — putting Brights online (free pilot: Render + Neon + Cloudflare R2 + Brevo)
+- `docs/SECURITY.md` — how Brights is protected, review findings, accepted risks
+- `docs/POPIA.md` — privacy-law checklist (needs legal input before launch)
+- `Dockerfile`, `render.yaml` — production image and Render blueprint
 
 ## Backend setup (Windows / PowerShell)
 
@@ -38,3 +42,13 @@ npm run dev                  # http://localhost:5173
 ```
 
 In development, Vite forwards `/api/*` requests to Django on port 8000, so run both servers at the same time.
+
+## Before every release
+
+```powershell
+cd backend
+python manage.py test
+cd ../frontend
+npm run lint
+npm run build
+```

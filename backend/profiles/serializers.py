@@ -5,7 +5,10 @@ from tutors.rules import Pathway
 
 from .models import Area, TutorProfile
 from .queries import approved_subjects
-from .rules import MAX_BIO_LENGTH, MAX_HOURLY_RATE, MIN_HOURLY_RATE, PhotoStatus, normalise_sa_mobile
+from .rules import (
+    CONTACT_DETAILS_MESSAGE, MAX_BIO_LENGTH, MAX_HOURLY_RATE, MIN_HOURLY_RATE, PhotoStatus, contains_contact_details,
+    normalise_sa_mobile,
+)
 
 
 class AreaSerializer(serializers.ModelSerializer):
@@ -90,6 +93,14 @@ class OwnProfileSerializer(serializers.ModelSerializer):
         value = value.strip()
         if len(value) > MAX_BIO_LENGTH:
             raise serializers.ValidationError(f"Keep your bio under {MAX_BIO_LENGTH} characters.")
+        if contains_contact_details(value):
+            raise serializers.ValidationError(CONTACT_DETAILS_MESSAGE)
+        return value
+
+    def validate_availability(self, value):
+        value = value.strip()
+        if contains_contact_details(value):
+            raise serializers.ValidationError(CONTACT_DETAILS_MESSAGE)
         return value
 
     def validate_hourly_rate(self, value):

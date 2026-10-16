@@ -1,5 +1,7 @@
 from datetime import timedelta
 
+from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.db.models import Max
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -8,6 +10,7 @@ from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from accounts.permissions import EmailVerified
 from accounts.rules import AccountType
 from profiles.models import TutorProfile
 from profiles.queries import approved_subjects, discoverable_profiles
@@ -43,8 +46,10 @@ class ContactTutorView(APIView):
     Returns the WhatsApp link (which contains the tutor's number) and logs the contact.
     """
 
-    permission_classes = [CanContactTutors]
+    permission_classes = [CanContactTutors, EmailVerified]
+    throttle_scope = "contact"
 
+    @transaction.atomic
     def post(self, request, pk):
         tutor = get_object_or_404(discoverable_profiles(), pk=pk)  # suspended/unlisted tutors → 404
         user = request.user
@@ -55,6 +60,8 @@ class ContactTutorView(APIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
+        # Lock this user's row so two simultaneous requests can't both pass the daily limit.
+        get_user_model().objects.select_for_update().filter(pk=user.pk).first()
         since = timezone.now() - timedelta(hours=24)
         recent = set(ContactEvent.objects.filter(requester=user, created_at__gte=since).values_list("tutor_id", flat=True))
         if tutor.pk not in recent and len(recent) >= MAX_NEW_TUTORS_PER_DAY:

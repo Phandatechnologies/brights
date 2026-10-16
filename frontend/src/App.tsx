@@ -8,7 +8,10 @@ import { LoginPage } from './pages/LoginPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { StatusPage } from './pages/StatusPage'
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { ReportPage } from './pages/ReportPage'
+import { ResetPasswordPage } from './pages/ResetPasswordPage'
+import { VerifyEmailPage } from './pages/VerifyEmailPage'
 import { SearchPage } from './pages/SearchPage'
 import { TutorProfilePage } from './pages/TutorProfilePage'
 import { ApplyPage } from './pages/tutor/ApplyPage'
@@ -24,6 +27,9 @@ export default function App() {
             <Route path="/status" element={<StatusPage />} />
             <Route path="/tutors" element={<SearchPage />} />
             <Route path="/tutors/:id" element={<TutorProfilePage />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
 
             <Route element={<GuestOnly />}>
               <Route path="/login" element={<LoginPage />} />

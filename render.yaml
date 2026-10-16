@@ -1,0 +1,60 @@
+# Render blueprint for Brights (free plan). See docs/DEPLOYMENT.md for the full guide.
+# Secrets are marked "sync: false": Render asks you for them in its dashboard,
+# so they are never stored in this repository.
+services:
+  - type: web
+    name: brights
+    runtime: docker
+    plan: free
+    region: frankfurt          # closest Render region to South Africa
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health/
+    autoDeploy: true
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true    # Render creates a strong random key
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false            # e.g. brights.onrender.com
+      - key: DJANGO_CSRF_TRUSTED_ORIGINS
+        sync: false            # e.g. https://brights.onrender.com
+      - key: FRONTEND_URL
+        sync: false            # e.g. https://brights.onrender.com
+      - key: BACKEND_URL
+        sync: false            # same as FRONTEND_URL (one service)
+      - key: DJANGO_ADMIN_URL
+        sync: false            # a hard-to-guess path, e.g. staff-7f3k9/
+      - key: TRUSTED_PROXY_COUNT
+        value: "1"
+      - key: WEB_CONCURRENCY
+        value: "2"
+      # Database (Neon)
+      - key: DATABASE_URL
+        sync: false
+      # Private documents and photos (Cloudflare R2)
+      - key: PRIVATE_STORAGE_BACKEND
+        value: s3
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_ENDPOINT_URL
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      # Email (Brevo SMTP)
+      - key: EMAIL_BACKEND
+        value: django.core.mail.backends.smtp.EmailBackend
+      - key: EMAIL_HOST
+        value: smtp-relay.brevo.com
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        sync: false            # e.g. Brights <hello@your-domain>
+      - key: REPORT_ALERT_EMAILS
+        sync: false            # monitored safety inbox

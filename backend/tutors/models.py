@@ -3,7 +3,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from .rules import DocumentKind, Pathway, Status, SubjectDecision
-from .uploads import document_upload_path, private_storage
+from .uploads import document_upload_path, get_private_storage
 
 
 class Subject(models.Model):
@@ -88,7 +88,7 @@ class ApplicationDocument(models.Model):
 
     application = models.ForeignKey(TutorApplication, on_delete=models.CASCADE, related_name="documents")
     kind = models.CharField(max_length=30, choices=DocumentKind.CHOICES)
-    file = models.FileField(storage=private_storage, upload_to=document_upload_path, max_length=255)
+    file = models.FileField(storage=get_private_storage, upload_to=document_upload_path, max_length=255)
     original_name = models.CharField(max_length=150)
     content_type = models.CharField(max_length=50)
     size = models.PositiveIntegerField()

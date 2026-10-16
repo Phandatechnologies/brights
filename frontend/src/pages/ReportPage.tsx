@@ -20,7 +20,7 @@ export function ReportPage() {
   const [errors, setErrors] = useState<FieldErrors>({})
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
-  const [sent, setSent] = useState<{ urgent: boolean } | null>(null)
+  const [sent, setSent] = useState<{ urgent: boolean; hidden: boolean } | null>(null)
 
   async function submit(event: FormEvent) {
     event.preventDefault()
@@ -31,7 +31,7 @@ export function ReportPage() {
     setBusy(true)
     try {
       const result = await moderationApi.report(id, { category, description: description.trim(), incident_date: incidentDate || null })
-      setSent({ urgent: result.urgent })
+      setSent({ urgent: result.urgent, hidden: result.tutor_hidden })
       window.scrollTo({ top: 0 })
     } catch (err) {
       if (err instanceof ApiError) {
@@ -49,9 +49,11 @@ export function ReportPage() {
         <div role="status" className="rounded-2xl border border-brand-teal/50 bg-brand-teal/10 p-6">
           <h1 className="text-2xl font-bold text-brand-navy">Thank you. We've received your report.</h1>
           <p className="mt-3 leading-relaxed text-slate-700">
-            {sent.urgent
+            {sent.hidden
               ? 'Because this is a child-safety concern, the tutor has been removed from search while our team reviews it.'
-              : 'Our team will review it and take action if needed.'}{' '}
+              : sent.urgent
+                ? 'Because this is a child-safety concern, our team has been alerted and will review it urgently.'
+                : 'Our team will review it and take action if needed.'}{' '}
             We'll email you when the review is finished. The tutor won't be told who reported them.
           </p>
         </div>
@@ -88,7 +90,8 @@ export function ReportPage() {
           <FieldError messages={errors.category} />
           {category === 'child_safety' && (
             <p className="mt-3 rounded-lg bg-red-50 p-3 text-sm text-red-900">
-              The tutor will be removed from search straight away while our team reviews your report.
+              Our team is alerted straight away. If you contacted this tutor through Brights, they're also removed
+              from search while we review your report.
             </p>
           )}
         </fieldset>

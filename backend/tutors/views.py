@@ -10,6 +10,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from accounts.permissions import EmailVerified
 from accounts.rules import ADULT_AGE
 from .models import ApplicationDocument, Subject, TutorApplication
 from .permissions import IsStaff, IsTutorAccount
@@ -68,12 +69,13 @@ class MyApplicationView(APIView):
         return Response(ApplicationSerializer(application).data, status=status.HTTP_201_CREATED)
 
     def patch(self, request):
-        application = self.get_application(request)
-        if not application.is_editable:
-            return not_editable_response(application)
-        serializer = ApplicationUpdateSerializer(application, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
         with transaction.atomic():
+            # Lock the row so a simultaneous submit can't be undone by this edit.
+            application = get_object_or_404(TutorApplication.objects.select_for_update(), user=request.user)
+            if not application.is_editable:
+                return not_editable_response(application)
+            serializer = ApplicationUpdateSerializer(application, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
             serializer.save()
         application = self.get_application(request)  # reload with fresh relations
         return Response(ApplicationSerializer(application).data)
@@ -93,7 +95,7 @@ def run_service(action, *args):
 class SubmitApplicationView(APIView):
     """POST /api/tutor/application/submit/ — send for review once everything is complete."""
 
-    permission_classes = [IsTutorAccount]
+    permission_classes = [IsTutorAccount, EmailVerified]
 
     def post(self, request):
         application = get_object_or_404(TutorApplication, user=request.user)
@@ -122,9 +124,11 @@ class DocumentUploadView(APIView):
 
     permission_classes = [IsTutorAccount]
     parser_classes = [MultiPartParser]
+    throttle_scope = "upload"
 
+    @transaction.atomic
     def post(self, request):
-        application = get_object_or_404(TutorApplication, user=request.user)
+        application = get_object_or_404(TutorApplication.objects.select_for_update(), user=request.user)
         if not application.is_editable:
             return not_editable_response(application)
         if application.documents.count() >= MAX_DOCUMENTS:
@@ -154,25 +158,32 @@ class DocumentDeleteView(APIView):
 
     permission_classes = [IsTutorAccount]
 
+    @transaction.atomic
     def delete(self, request, pk):
         # Filtering by owner means another tutor's document id simply returns 404.
-        document = get_object_or_404(ApplicationDocument, pk=pk, application__user=request.user)
-        if not document.application.is_editable:
-            return not_editable_response(document.application)
-        document.file.delete(save=False)
+        application = get_object_or_404(TutorApplication.objects.select_for_update(), user=request.user)
+        document = get_object_or_404(ApplicationDocument, pk=pk, application=application)
+        if not application.is_editable:
+            return not_editable_response(application)
+        name = document.file.name
         document.delete()
+        transaction.on_commit(lambda: document.file.storage.delete(name))
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class StaffDocumentDownloadView(APIView):
     """
     GET /api/staff/documents/<id>/download/
-    The ONLY way to read a verification document. Staff only.
+    The ONLY way to read a verification document. Staff with the
+    "Can view application document" permission only (superusers have it).
     """
 
     permission_classes = [IsStaff]
 
     def get(self, request, pk):
+        if not request.user.has_perm("tutors.view_applicationdocument"):
+            return Response({"detail": "You don't have permission to view verification documents."},
+                            status=status.HTTP_403_FORBIDDEN)
         document = get_object_or_404(ApplicationDocument, pk=pk)
         try:
             handle = document.file.open("rb")
@@ -185,4 +196,6 @@ class StaffDocumentDownloadView(APIView):
         )
         response["X-Content-Type-Options"] = "nosniff"
         response["Cache-Control"] = "private, no-store"
+        # Uploaded files are untrusted: even when shown in the browser they may not run scripts.
+        response["Content-Security-Policy"] = "sandbox; default-src 'none'; img-src 'self'; style-src 'unsafe-inline'"
         return response

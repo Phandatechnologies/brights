@@ -10,10 +10,11 @@ class UserSerializer(serializers.ModelSerializer):
     """What the API reveals about the logged-in user. Read-only."""
 
     is_minor = serializers.BooleanField(read_only=True)
+    email_verified = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = User
-        fields = ["id", "email", "first_name", "last_name", "date_of_birth", "account_type", "is_minor"]
+        fields = ["id", "email", "first_name", "last_name", "date_of_birth", "account_type", "is_minor", "email_verified"]
         read_only_fields = fields
 
 
@@ -79,3 +80,16 @@ class RegisterSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, trim_whitespace=False)
+
+
+class TokenSerializer(serializers.Serializer):
+    uid = serializers.CharField(max_length=64)
+    token = serializers.CharField(max_length=128)
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class PasswordResetConfirmSerializer(TokenSerializer):
+    new_password = serializers.CharField(write_only=True, trim_whitespace=False)

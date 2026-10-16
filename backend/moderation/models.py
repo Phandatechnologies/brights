@@ -17,6 +17,9 @@ class Report(models.Model):
     description = models.TextField()
     incident_date = models.DateField(null=True, blank=True)
     is_urgent = models.BooleanField(default=False, db_index=True)
+    # True when this report hides the tutor until it is closed: a child-safety report from a
+    # learner or parent who contacted the tutor through Brights (prevents abuse by strangers).
+    holds_tutor = models.BooleanField(default=False, db_index=True)
     reporter_was_minor = models.BooleanField(default=False)
 
     status = models.CharField(max_length=10, choices=ReportStatus.CHOICES, default=ReportStatus.OPEN, db_index=True)

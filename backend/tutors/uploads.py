@@ -43,6 +43,42 @@ class PrivateStorage(FileSystemStorage):
 private_storage = PrivateStorage()
 
 
+def get_private_storage():
+    """
+    The storage used for verification documents and tutor photos.
+    Local disk by default; a private S3-compatible bucket (e.g. Cloudflare R2) when
+    PRIVATE_STORAGE_BACKEND=s3. Either way files have no public URL: the bucket is
+    private and Brights streams files through permission-checked views.
+    """
+    if settings.PRIVATE_STORAGE_BACKEND == "s3":
+        return _s3_storage()
+    return private_storage
+
+
+_s3 = None
+
+
+def _s3_storage():
+    global _s3
+    if _s3 is None:
+        from storages.backends.s3 import S3Storage
+
+        _s3 = S3Storage(
+            bucket_name=settings.S3_BUCKET,
+            endpoint_url=settings.S3_ENDPOINT_URL,
+            access_key=settings.S3_ACCESS_KEY_ID,
+            secret_key=settings.S3_SECRET_ACCESS_KEY,
+            region_name=settings.S3_REGION,
+            location="private",
+            default_acl=None,          # objects inherit the bucket's private setting
+            querystring_auth=True,     # any generated URL would be signed and short-lived
+            querystring_expire=60,
+            file_overwrite=False,
+            signature_version="s3v4",
+        )
+    return _s3
+
+
 def _reset_private_storage(*, setting, **kwargs):
     """Let tests point PRIVATE_MEDIA_ROOT at a temporary folder with override_settings."""
     if setting == "PRIVATE_MEDIA_ROOT":

@@ -16,7 +16,8 @@ from tutors.models import ApplicationSubject, Subject, TutorApplication
 
 def make_user(email, account_type, age, **extra):
     return User.objects.create_user(email=email, password="Sunflower-Maths-42", first_name=email.split("@")[0].title(),
-                                    last_name="Test", date_of_birth=dob_for_age(age), account_type=account_type, **extra)
+                                    last_name="Test", date_of_birth=dob_for_age(age), account_type=account_type,
+                                    email_verified_at=timezone.now(), **extra)
 
 
 class ContactTestCase(APITestCase):
@@ -155,3 +156,12 @@ class HistoryTests(ContactTestCase):
         self.contact(self.parent)
         self.client.force_authenticate(self.adult_learner)
         self.assertEqual(self.client.get(reverse("contact-history")).json(), [])
+
+
+class RealSessionTests(ContactTestCase):
+    """Uses a real login session (not force_authenticate), like a browser does."""
+
+    def test_contact_through_real_session(self):
+        self.client.login(email="parent@example.com", password="Sunflower-Maths-42")
+        response = self.client.post(reverse("contact-tutor", args=[self.tutor.pk]), {}, format="json")
+        self.assertEqual(response.status_code, 200)

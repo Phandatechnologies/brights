@@ -49,6 +49,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     guardian_name = models.CharField(max_length=150, blank=True)
     guardian_consent_given_at = models.DateTimeField(null=True, blank=True)
 
+    # Set when the user clicks the link in their verification email (or resets their password).
+    email_verified_at = models.DateTimeField(null=True, blank=True)
+
     is_active = models.BooleanField(default=True)  # False = suspended / cannot log in
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
@@ -66,6 +69,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         # Store emails in lowercase so "Thabo@Mail.com" and "thabo@mail.com" are one account.
         self.email = (self.email or "").strip().lower()
         super().save(*args, **kwargs)
+
+    @property
+    def email_verified(self) -> bool:
+        return self.email_verified_at is not None
 
     @property
     def age(self) -> int:

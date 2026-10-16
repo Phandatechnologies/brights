@@ -11,6 +11,7 @@ export type User = {
   date_of_birth: string
   account_type: AccountType | ''
   is_minor: boolean
+  email_verified: boolean
 }
 
 export type RegisterInput = {
@@ -31,4 +32,9 @@ export const authApi = {
   login: (email: string, password: string) => apiFetch<User>('/api/auth/login/', json({ email, password })),
   register: (input: RegisterInput) => apiFetch<User>('/api/auth/register/', json(input)),
   logout: () => apiFetch<void>('/api/auth/logout/', { method: 'POST' }),
+  verifyEmail: (uid: string, token: string) => apiFetch<{ verified: boolean }>('/api/auth/verify-email/', json({ uid, token })),
+  resendVerification: () => apiFetch<{ sent: boolean }>('/api/auth/resend-verification/', { method: 'POST' }),
+  requestPasswordReset: (email: string) => apiFetch<{ detail: string }>('/api/auth/password-reset/', json({ email })),
+  confirmPasswordReset: (uid: string, token: string, new_password: string) =>
+    apiFetch<{ detail: string }>('/api/auth/password-reset/confirm/', json({ uid, token, new_password })),
 }

@@ -42,6 +42,9 @@ export function LoginPage() {
         <PasswordField label="Password" name="password" autoComplete="current-password" required
           value={password} onChange={(e) => setPassword(e.target.value)} />
         <SubmitButton busy={busy}>Log in</SubmitButton>
+        <p className="text-center text-sm">
+          <Link to="/forgot-password" className="font-medium text-brand-blue hover:underline">Forgot your password?</Link>
+        </p>
       </form>
     </AuthCard>
   )

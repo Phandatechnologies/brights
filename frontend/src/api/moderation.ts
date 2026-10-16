@@ -13,5 +13,5 @@ export const REPORT_CATEGORIES: { value: ReportCategory; label: string }[] = [
 
 export const moderationApi = {
   report: (tutorId: number | string, data: { category: ReportCategory; description: string; incident_date: string | null }) =>
-    apiFetch<{ id: number; urgent: boolean }>(`/api/tutors/${tutorId}/report/`, { method: 'POST', body: JSON.stringify(data) }),
+    apiFetch<{ id: number; urgent: boolean; tutor_hidden: boolean }>(`/api/tutors/${tutorId}/report/`, { method: 'POST', body: JSON.stringify(data) }),
 }

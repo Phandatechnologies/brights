@@ -9,6 +9,8 @@ type AuthState = {
   login: (email: string, password: string) => Promise<User>
   register: (input: RegisterInput) => Promise<User>
   logout: () => Promise<void>
+  /** Re-fetch the logged-in user (e.g. after verifying their email). */
+  refresh: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthState | null>(null)
@@ -44,9 +46,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await ensureCsrfCookie() // Django rotates the token on logout
   }, [])
 
+  const refresh = useCallback(async () => {
+    try {
+      setUser(await authApi.me())
+    } catch {
+      setUser(null)
+    }
+  }, [])
+
   const value = useMemo(
-    () => ({ user, loading, login, register, logout }),
-    [user, loading, login, register, logout],
+    () => ({ user, loading, login, register, logout, refresh }),
+    [user, loading, login, register, logout, refresh],
   )
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-from tutors.uploads import private_storage
+from tutors.uploads import get_private_storage
 
 from .rules import PROVINCES, PhotoStatus
 
@@ -45,7 +45,7 @@ class TutorProfile(models.Model):
     whatsapp_number = models.CharField(max_length=16, blank=True)
 
     # Optional photo: stored privately, shown publicly only once an admin approves it.
-    photo = models.FileField(storage=private_storage, upload_to=photo_upload_path, blank=True, max_length=255)
+    photo = models.FileField(storage=get_private_storage, upload_to=photo_upload_path, blank=True, max_length=255)
     photo_status = models.CharField(max_length=20, choices=PhotoStatus.CHOICES, default=PhotoStatus.NONE)
     photo_note = models.CharField(max_length=300, blank=True, help_text="Reason shown to the tutor if rejected")
 

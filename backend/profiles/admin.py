@@ -1,4 +1,6 @@
 from django.contrib import admin, messages
+from django.contrib.admin import helpers
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils.html import format_html
 
@@ -28,8 +30,9 @@ class TutorProfileAdmin(admin.ModelAdmin):
               "teaches_online", "teaches_in_person", "area", "availability", "whatsapp_number", "updated_at"]
 
     def get_readonly_fields(self, request, obj=None):
-        # Only the photo decision fields can be edited by admins.
-        return [f for f in self.fields if f not in ("photo_status", "photo_note")]
+        # Admins only write the rejection reason here. Approving goes through the
+        # "Approve selected photos" action, which shows every photo first.
+        return [f for f in self.fields if f != "photo_note"]
 
     def has_add_permission(self, request):
         return False
@@ -54,8 +57,29 @@ class TutorProfileAdmin(admin.ModelAdmin):
 
     @admin.action(description="Approve selected photos")
     def approve_photos(self, request, queryset):
-        count = queryset.exclude(photo="").update(photo_status=PhotoStatus.APPROVED, photo_note="")
-        self.message_user(request, f"Approved {count} photo(s).", messages.SUCCESS)
+        """
+        Step 1 shows every selected photo. Step 2 approves only photos that are still
+        exactly the ones shown, so a photo swapped in the meantime is never approved unseen.
+        """
+        profiles = list(queryset.exclude(photo="").select_related("user"))
+        if request.POST.get("confirm") != "yes":
+            return TemplateResponse(request, "admin/profiles/approve_photos.html", {
+                **self.admin_site.each_context(request),
+                "title": "Approve these photos?",
+                "opts": self.model._meta,
+                "profiles": [(p, reverse("staff-tutor-photo", args=[p.pk])) for p in profiles],
+                "action_checkbox_name": helpers.ACTION_CHECKBOX_NAME,
+            })
+        approved, changed = 0, 0
+        for profile in profiles:
+            seen = request.POST.get(f"seen_{profile.pk}")
+            updated = TutorProfile.objects.filter(pk=profile.pk, photo=seen).exclude(photo="").update(
+                photo_status=PhotoStatus.APPROVED, photo_note="")
+            approved += updated
+            changed += 0 if updated else 1
+        self.message_user(request, f"Approved {approved} photo(s).", messages.SUCCESS)
+        if changed:
+            self.message_user(request, f"{changed} photo(s) changed while you were reviewing and were not approved. Please review them again.", messages.WARNING)
 
     @admin.action(description="Reject selected photos (then add a reason on each profile)")
     def reject_photos(self, request, queryset):

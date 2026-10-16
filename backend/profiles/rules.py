@@ -51,3 +51,30 @@ def normalise_sa_mobile(raw: str) -> str | None:
     if re.fullmatch(r"[678]\d{8}", digits):
         return "+27" + digits
     return None
+
+
+CONTACT_DETAILS_MESSAGE = (
+    "Please don't include phone numbers, emails, links or social media handles. "
+    "Learners contact you safely through Brights."
+)
+
+
+def contains_contact_details(text: str) -> bool:
+    """
+    True if the text looks like it contains a phone number, email address, link or
+    @handle. Tutors share their number only through the WhatsApp contact flow, which
+    is logged and has protections for minors.
+    """
+    if not text:
+        return False
+    lowered = text.lower()
+    digits_only = re.sub(r"[\s\-().+/]", "", text)
+    if re.search(r"\d{9,}", digits_only):                      # 0821234567, 082 123 4567, +27 82…
+        return True
+    if re.search(r"[\w.+-]+@[\w-]+\.[\w.]+", text):            # emails
+        return True
+    if re.search(r"(https?://|www\.|wa\.me|t\.me|\.co\.za|\.com\b)", lowered):  # links
+        return True
+    if re.search(r"(^|\s)@[a-z0-9_.]{2,}", lowered):            # @handles
+        return True
+    return False

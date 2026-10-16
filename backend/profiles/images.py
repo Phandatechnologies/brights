@@ -15,7 +15,7 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 
 from .rules import MAX_PHOTO_BYTES, PHOTO_MAX_SIDE
 
-MAX_PIXELS = 40_000_000  # refuse absurdly large images (decompression-bomb protection)
+MAX_PIXELS = 12_000_000  # e.g. 4000 x 3000; refuse bigger (protects server memory)
 
 
 class InvalidPhoto(ValueError):
@@ -30,14 +30,16 @@ def clean_photo(uploaded) -> ContentFile:
         if image.format not in ("JPEG", "PNG"):
             raise InvalidPhoto("Upload a JPG or PNG photo.")
         if image.width * image.height > MAX_PIXELS:
-            raise InvalidPhoto("That image is too large. Try a smaller photo.")
+            raise InvalidPhoto("That image is too large. Try a smaller photo (under 12 megapixels).")
+        if image.format == "JPEG":
+            image.draft("RGB", (PHOTO_MAX_SIDE * 2, PHOTO_MAX_SIDE * 2))  # decode at reduced size
         image.load()
     except (UnidentifiedImageError, OSError, Image.DecompressionBombError):
         raise InvalidPhoto("Upload a JPG or PNG photo.")
 
-    image = ImageOps.exif_transpose(image)          # keep the photo the right way up
-    image = image.convert("RGB")                    # drops transparency and any embedded profiles
-    image.thumbnail((PHOTO_MAX_SIDE, PHOTO_MAX_SIDE))
+    image.thumbnail((PHOTO_MAX_SIDE, PHOTO_MAX_SIDE))  # shrink first, so later steps use little memory
+    image = ImageOps.exif_transpose(image)              # keep the photo the right way up
+    image = image.convert("RGB")                        # drops transparency and any embedded profiles
 
     output = io.BytesIO()
     image.save(output, format="JPEG", quality=85, optimize=True)  # no EXIF is written

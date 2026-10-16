@@ -8,6 +8,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from accounts.permissions import EmailVerified
+from accounts.rules import AccountType
 from contact.models import ContactEvent
 from profiles.models import TutorProfile
 from profiles.queries import discoverable_profiles
@@ -36,7 +38,7 @@ class ReportTutorView(APIView):
     (so a tutor already hidden by an earlier report can still be reported).
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, EmailVerified]
 
     def post(self, request, pk):
         user = request.user
@@ -58,13 +60,17 @@ class ReportTutorView(APIView):
 
         data = ReportSerializer(data=request.data)
         data.is_valid(raise_exception=True)
+        urgent = data.validated_data["category"] in Category.URGENT
+        # Only someone with a real connection to the tutor can hide them instantly.
+        holds = urgent and contacted and user.account_type in (AccountType.LEARNER, AccountType.PARENT)
         with transaction.atomic():
             report = Report.objects.create(
                 reporter=user, tutor=tutor, **data.validated_data,
-                is_urgent=data.validated_data["category"] in Category.URGENT,
+                is_urgent=urgent, holds_tutor=holds,
                 reporter_was_minor=bool(getattr(user, "is_minor", False)),
             )
             transaction.on_commit(lambda: notifications.notify_reporter_received(report))
             if report.is_urgent:
                 transaction.on_commit(lambda: notifications.notify_admins_urgent(report))
-        return Response({"id": report.pk, "urgent": report.is_urgent}, status=status.HTTP_201_CREATED)
+        return Response({"id": report.pk, "urgent": report.is_urgent, "tutor_hidden": report.holds_tutor},
+                        status=status.HTTP_201_CREATED)

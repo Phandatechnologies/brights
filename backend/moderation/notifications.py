@@ -21,7 +21,11 @@ def notify_admins_urgent(report):
     link = settings.BACKEND_URL.rstrip("/") + reverse("admin:moderation_report_review", args=[report.pk])
     send_mail(
         f"URGENT: child-safety report #{report.pk}",
-        "A child-safety report was submitted. The tutor has been hidden from search until it is reviewed.\n\n"
+        "A child-safety report was submitted. "
+        + ("The tutor has been hidden from search until it is reviewed.\n\n" if report.holds_tutor
+           else "The reporter has not contacted this tutor through Brights, so the tutor is still visible. "
+                "Review it urgently.\n\n")
+        +
         f"Review it now:\n{link}\n",
         None, recipients,
     )

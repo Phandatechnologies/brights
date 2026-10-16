@@ -1,0 +1,12 @@
+# Never send secrets, local data or build leftovers into the image.
+.git
+**/.env
+**/.env.*
+!backend/.env.example
+backend/venv
+backend/private_media
+backend/staticfiles
+**/__pycache__
+frontend/node_modules
+frontend/dist
+docs
