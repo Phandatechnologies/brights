@@ -32,9 +32,11 @@ services:
       # Database (Neon)
       - key: DATABASE_URL
         sync: false
-      # Private documents and photos (Cloudflare R2)
+      # Private documents and photos (Neon storage or Cloudflare R2)
       - key: PRIVATE_STORAGE_BACKEND
         value: s3
+      - key: S3_REGION
+        sync: false            # Neon: eu-central-1 · R2: auto
       - key: S3_BUCKET
         sync: false
       - key: S3_ENDPOINT_URL
@@ -58,3 +60,5 @@ services:
         sync: false            # e.g. Brights <hello@your-domain>
       - key: REPORT_ALERT_EMAILS
         sync: false            # monitored safety inbox
+      - key: YOUTUBE_CHANNEL_URL
+        sync: false            # optional, e.g. https://www.youtube.com/@brights

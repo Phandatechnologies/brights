@@ -44,7 +44,11 @@ This is not a certification. Review it again before launch and after big changes
 - `DEBUG` is off by default. HTTPS redirect, HSTS (30 days), secure cookies, nosniff, X-Frame-Options
   DENY, Referrer-Policy same-origin and Cross-Origin-Opener-Policy are set.
 - The React app is served with a strict Content-Security-Policy (only its own scripts, styles,
-  fonts and images).
+  fonts and images). The only outside sources allowed are YouTube thumbnails (`i.ytimg.com`) and
+  the privacy-enhanced YouTube player (`www.youtube-nocookie.com`, frames only) for the tutor how-to
+  videos. Video links are reduced to an 11-character YouTube ID before saving, so nothing else can be embedded.
+- Tutor profile views are counted per day as a number only; who viewed a profile is never stored
+  (one count per visitor per day, using a hashed key in the cache).
 - Request bodies over 8 MB are refused before being read.
 - The Docker image runs as a non-root user and contains no secrets. Logs omit query strings, so
   tokens in email links aren't logged.

@@ -54,6 +54,9 @@ export type TutorInsights = {
   top_requests: { subject: string; grade: number | null; count: number }[]
 }
 
+export type GuideVideo = { id: number; title: string; description: string; topic: string; topic_label: string; youtube_id: string }
+export type GuideVideos = { channel_url: string; videos: GuideVideo[] }
+
 export const profilesApi = {
   areas: () => apiFetch<{ provinces: Province[]; areas: Area[] }>('/api/areas/'),
   search: (params: URLSearchParams) => apiFetch<SearchPage>(`/api/tutors/?${params.toString()}`),
@@ -61,6 +64,7 @@ export const profilesApi = {
 
   ownProfile: () => apiFetch<OwnProfile>('/api/tutor/profile/'),
   insights: () => apiFetch<TutorInsights>('/api/tutor/insights/'),
+  guides: () => apiFetch<GuideVideos>('/api/tutor/guides/'),
   updateOwnProfile: (data: OwnProfileUpdate) =>
     apiFetch<OwnProfile>('/api/tutor/profile/', { method: 'PATCH', body: JSON.stringify(data) }),
   uploadPhoto(file: File) {

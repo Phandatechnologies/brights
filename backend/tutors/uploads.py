@@ -46,7 +46,7 @@ private_storage = PrivateStorage()
 def get_private_storage():
     """
     The storage used for verification documents and tutor photos.
-    Local disk by default; a private S3-compatible bucket (e.g. Cloudflare R2) when
+    Local disk by default; a private S3-compatible bucket (e.g. Neon storage or Cloudflare R2) when
     PRIVATE_STORAGE_BACKEND=s3. Either way files have no public URL: the bucket is
     private and Brights streams files through permission-checked views.
     """
@@ -75,6 +75,8 @@ def _s3_storage():
             querystring_expire=60,
             file_overwrite=False,
             signature_version="s3v4",
+            # bucket in the path (https://host/bucket/key): required by Neon storage, fine for R2
+            addressing_style="path",
         )
     return _s3
 

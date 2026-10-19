@@ -4,6 +4,7 @@ import { ApiError } from '../../api/client'
 import { profilesApi, type OwnProfile, type TutorInsights } from '../../api/profiles'
 import { tutorApi, type TutorApplication } from '../../api/tutor'
 import type { User } from '../../api/auth'
+import { GuideVideos } from '../../components/GuideVideos'
 
 type Loaded = {
   application: TutorApplication | null
@@ -48,6 +49,8 @@ export function TutorHome({ user }: { user: User }) {
       {approved && insights && <MonthNumbers insights={insights} />}
 
       {profile && application && <Checklist profile={profile} approved={approved} />}
+
+      <GuideVideos />
 
       {approved && profile?.is_listed && <ShareProfile profileId={profile.id} firstName={user.first_name} />}
 

@@ -44,6 +44,8 @@ The free pilot setup stores data with Render (Frankfurt), Neon (Frankfurt), Clou
 
 - [ ] Confirm each provider offers adequate protection (e.g. EU GDPR coverage, data processing agreements).
 - [ ] Mention cross-border storage in the privacy policy.
+- [ ] Mention YouTube in the privacy policy: tutor how-to videos use YouTube's privacy-enhanced player,
+      which only contacts Google when a tutor presses play.
 - [ ] Consider moving to South African hosting before full launch (the code supports it; see DEPLOYMENT.md).
 
 ## Operators (section 21)

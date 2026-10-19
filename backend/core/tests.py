@@ -108,4 +108,9 @@ class PrivateStorageSwitchTests(SimpleTestCase):
         self.assertIsNone(storage.default_acl)
         self.assertTrue(storage.querystring_auth)
         self.assertEqual(storage.location, "private")
+        self.assertEqual(storage.addressing_style, "path")  # Neon storage needs path-style
+        # The signed URL a client would build puts the bucket in the path, not the host name.
+        url = storage.url("doc.pdf")
+        self.assertTrue(url.startswith("https://acc.r2.cloudflarestorage.com/brights-private/private/doc.pdf?"), url)
+        self.assertIn("X-Amz-Signature=", url)
         uploads._s3 = None
