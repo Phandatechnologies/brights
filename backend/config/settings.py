@@ -216,7 +216,9 @@ CONTENT_SECURITY_POLICY = "; ".join([
     "default-src 'self'",
     "script-src 'self'",
     "style-src 'self'",
-    "img-src 'self' data:",
+    # Tutor how-to videos: YouTube thumbnails, and the privacy-enhanced YouTube player.
+    "img-src 'self' data: https://i.ytimg.com",
+    "frame-src https://www.youtube-nocookie.com",
     "font-src 'self'",
     "connect-src 'self'",
     "object-src 'none'",
@@ -293,6 +295,9 @@ BACKEND_URL = env("BACKEND_URL", "http://localhost:8000")
 # Who is emailed immediately about urgent (child-safety) reports. Comma-separated.
 # If empty, all active superusers are emailed.
 REPORT_ALERT_EMAILS = [e.strip() for e in env("REPORT_ALERT_EMAILS", "").split(",") if e.strip()]
+
+# Brights' YouTube channel, linked from the tutor how-to videos (optional, e.g. https://www.youtube.com/@brights).
+YOUTUBE_CHANNEL_URL = env("YOUTUBE_CHANNEL_URL", "")
 
 
 # --- Production security ------------------------------------------------------------

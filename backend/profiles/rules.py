@@ -78,3 +78,33 @@ def contains_contact_details(text: str) -> bool:
     if re.search(r"(^|\s)@[a-z0-9_.]{2,}", lowered):            # @handles
         return True
     return False
+
+
+# --- Tutor guide videos -----------------------------------------------------------------
+
+_YOUTUBE_ID = re.compile(r"^[A-Za-z0-9_-]{11}$")
+
+
+def youtube_video_id(value: str) -> str | None:
+    """
+    The 11-character video ID from a YouTube link (watch, youtu.be, shorts, embed, live)
+    or from a bare ID. Returns None for anything else, so only YouTube videos can be embedded.
+    """
+    from urllib.parse import parse_qs, urlparse
+
+    value = (value or "").strip()
+    if _YOUTUBE_ID.match(value):
+        return value
+    url = urlparse(value if "://" in value else f"https://{value}")
+    host = (url.hostname or "").lower().removeprefix("www.").removeprefix("m.")
+    candidate = None
+    if host == "youtu.be":
+        candidate = url.path.lstrip("/").split("/")[0]
+    elif host in ("youtube.com", "youtube-nocookie.com", "music.youtube.com"):
+        if url.path == "/watch":
+            candidate = (parse_qs(url.query).get("v") or [""])[0]
+        else:
+            parts = url.path.strip("/").split("/")
+            if len(parts) >= 2 and parts[0] in ("shorts", "embed", "live", "v"):
+                candidate = parts[1]
+    return candidate if candidate and _YOUTUBE_ID.match(candidate) else None

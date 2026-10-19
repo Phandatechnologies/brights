@@ -4,7 +4,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils.html import format_html
 
-from .models import Area, TutorProfile
+from .models import Area, GuideVideo, TutorProfile
 from .rules import PhotoStatus
 
 
@@ -85,3 +85,17 @@ class TutorProfileAdmin(admin.ModelAdmin):
     def reject_photos(self, request, queryset):
         count = queryset.exclude(photo="").update(photo_status=PhotoStatus.REJECTED)
         self.message_user(request, f"Rejected {count} photo(s). Open each profile to add a reason the tutor will see.", messages.WARNING)
+
+
+@admin.register(GuideVideo)
+class GuideVideoAdmin(admin.ModelAdmin):
+    """How-to videos on the tutor's Home. Paste the YouTube link; tick Published when it's public."""
+
+    list_display = ["title", "topic", "order", "is_published", "watch"]
+    list_editable = ["order", "is_published"]
+    list_filter = ["topic", "is_published"]
+    fields = ["title", "description", "topic", "youtube_id", "order", "is_published"]
+
+    @admin.display(description="YouTube")
+    def watch(self, video):
+        return format_html('<a href="https://www.youtube.com/watch?v={}" target="_blank" rel="noopener">Open</a>', video.youtube_id)

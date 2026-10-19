@@ -97,3 +97,42 @@ class ProfileViewDay(models.Model):
 
     def __str__(self):
         return f"{self.profile} — {self.date}: {self.count}"
+
+
+class GuideVideo(models.Model):
+    """
+    A how-to video for tutors (hosted on Brights' YouTube channel), shown on the tutor's Home.
+    Staff add them in the admin by pasting the YouTube link.
+    """
+
+    class Topic(models.TextChoices):
+        GETTING_STARTED = "getting_started", "Getting started"
+        IN_PERSON = "in_person", "Tutoring in person"
+        ONLINE = "online", "Tutoring online"
+
+    title = models.CharField(max_length=120)
+    description = models.CharField(max_length=300, blank=True, help_text="One or two sentences shown under the title.")
+    topic = models.CharField(max_length=20, choices=Topic.choices, default=Topic.GETTING_STARTED)
+    youtube_id = models.CharField(
+        "YouTube link", max_length=200,  # room to paste a full link; clean() keeps just the ID
+        help_text="Paste the video's YouTube link (e.g. https://youtu.be/…). Only the video ID is stored.",
+    )
+    order = models.PositiveSmallIntegerField(default=0, help_text="Lower numbers show first.")
+    is_published = models.BooleanField(default=False, help_text="Tick when the video is public on YouTube.")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["order", "created_at"]
+
+    def __str__(self):
+        return self.title
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+
+        from .rules import youtube_video_id
+
+        video_id = youtube_video_id(self.youtube_id)
+        if not video_id:
+            raise ValidationError({"youtube_id": "That doesn't look like a YouTube video link."})
+        self.youtube_id = video_id

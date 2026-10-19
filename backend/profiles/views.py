@@ -13,7 +13,7 @@ from tutors.permissions import IsStaff, IsTutorAccount
 
 from .images import InvalidPhoto, clean_photo
 from .insights import record_view, tutor_insights
-from .models import Area, TutorProfile
+from .models import Area, GuideVideo, TutorProfile
 from .queries import discoverable_profiles, search
 from .rules import PROVINCES, PhotoStatus
 from .serializers import AreaSerializer, OwnProfileSerializer, PublicTutorSerializer
@@ -177,3 +177,22 @@ class OwnInsightsView(APIView):
     def get(self, request):
         profile, _ = TutorProfile.objects.get_or_create(user=request.user)
         return Response(tutor_insights(profile))
+
+
+class GuideVideosView(APIView):
+    """GET /api/tutor/guides/ — published how-to videos for the tutor's Home."""
+
+    permission_classes = [IsTutorAccount]
+
+    def get(self, request):
+        from django.conf import settings
+
+        videos = GuideVideo.objects.filter(is_published=True)
+        return Response({
+            "channel_url": settings.YOUTUBE_CHANNEL_URL,
+            "videos": [
+                {"id": v.pk, "title": v.title, "description": v.description, "topic": v.topic,
+                 "topic_label": v.get_topic_display(), "youtube_id": v.youtube_id}
+                for v in videos
+            ],
+        })
