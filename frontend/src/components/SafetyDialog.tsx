@@ -24,7 +24,7 @@ export function SafetyDialog({ open, busy, onConfirm, onCancel }: {
     <dialog ref={ref} onCancel={onCancel} aria-labelledby="safety-title"
       className="m-auto w-[min(32rem,calc(100%-2rem))] rounded-2xl p-0 backdrop:bg-brand-navy/40">
       <div className="p-6 sm:p-7">
-        <h2 id="safety-title" className="text-2xl font-bold text-brand-navy">Before you message a tutor</h2>
+        <h2 id="safety-title" className="text-2xl font-bold text-heading">Before you message a tutor</h2>
         <p className="mt-2 text-slate-700">Because you're under 18, please read this first.</p>
         <ul className="mt-4 space-y-3 text-slate-800">
           <li><strong>Tell a parent or guardian</strong> which tutor you're contacting, and show them the chat if they ask.</li>

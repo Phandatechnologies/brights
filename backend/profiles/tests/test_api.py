@@ -162,6 +162,12 @@ class OwnProfileTests(ProfileTestCase):
         self.assertEqual(body["whatsapp_number"], "+27821234567")
         self.assertTrue(body["is_listed"])
 
+    def test_own_profile_includes_public_id_and_id_is_read_only(self):
+        self.assertEqual(self.client.get(self.url).json()["id"], self.profile.pk)
+        response = self.client.patch(self.url, {"id": self.profile.pk + 999}, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["id"], self.profile.pk)
+
     def test_validation(self):
         bad = self.client.patch(self.url, {"hourly_rate": 10, "whatsapp_number": "012 345 6789"}, format="json")
         self.assertEqual(bad.status_code, 400)

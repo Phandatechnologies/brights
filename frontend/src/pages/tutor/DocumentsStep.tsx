@@ -94,13 +94,13 @@ function DocumentSlot({ kind, label, files, onChanged }: {
 
   const done = files.length > 0
   return (
-    <section className={`rounded-xl border bg-white p-4 sm:p-5 ${done ? 'border-brand-teal/50' : 'border-slate-200'}`} aria-labelledby={`${inputId}-title`}>
+    <section className={`rounded-xl border bg-surface p-4 sm:p-5 ${done ? 'border-brand-teal/50' : 'border-slate-200'}`} aria-labelledby={`${inputId}-title`}>
       <div className="flex items-start gap-3">
         <span aria-hidden="true" className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
           done ? 'bg-brand-teal text-white' : 'border-2 border-slate-300'
         }`}>{done ? '✓' : ''}</span>
         <div className="flex-1">
-          <h3 id={`${inputId}-title`} className="font-sans font-semibold text-brand-navy">{label}</h3>
+          <h3 id={`${inputId}-title`} className="font-sans font-semibold text-heading">{label}</h3>
           <p className="mt-0.5 text-sm text-slate-600">{HINTS[kind]}</p>
 
           {files.length > 0 && (
@@ -125,7 +125,7 @@ function DocumentSlot({ kind, label, files, onChanged }: {
             <input ref={input} id={inputId} type="file" accept={ACCEPTED_FILES} className="peer sr-only"
               onChange={(e) => handleFile(e.target.files?.[0])} disabled={busy} />
             <label htmlFor={inputId}
-              className={`inline-flex cursor-pointer items-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-brand-navy transition hover:bg-slate-50 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-blue/40 ${
+              className={`inline-flex cursor-pointer items-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-heading transition hover:bg-slate-50 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-blue/40 ${
                 busy ? 'pointer-events-none opacity-60' : ''
               }`}>
               {busy ? 'Uploading…' : done ? 'Add another file' : 'Choose file'}

@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from tutors.permissions import IsStaff, IsTutorAccount
 
 from .images import InvalidPhoto, clean_photo
+from .insights import record_view, tutor_insights
 from .models import Area, TutorProfile
 from .queries import discoverable_profiles, search
 from .rules import PROVINCES, PhotoStatus
@@ -67,6 +68,7 @@ class TutorDetailView(APIView):
 
     def get(self, request, pk):
         profile = get_object_or_404(discoverable_profiles(), pk=pk)
+        record_view(request, profile)
         return Response(PublicTutorSerializer(profile).data)
 
 
@@ -165,3 +167,13 @@ class StaffPhotoView(APIView):
         response = _photo_response(profile)
         response["Cache-Control"] = "private, no-store"
         return response
+
+
+class OwnInsightsView(APIView):
+    """GET /api/tutor/insights/ — this month's and last month's numbers for the tutor's Home."""
+
+    permission_classes = [IsTutorAccount]
+
+    def get(self, request):
+        profile, _ = TutorProfile.objects.get_or_create(user=request.user)
+        return Response(tutor_insights(profile))

@@ -13,7 +13,7 @@ export function ApplicationSummary({ application }: { application: TutorApplicat
   const showDecisions = ['approved', 'suspended'].includes(application.status)
   const pathway = PATHWAYS.find((p) => p.value === application.pathway)
   return (
-    <dl className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
+    <dl className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-surface">
       <div className="p-5">
         <dt className="text-sm text-slate-500">Application type</dt>
         <dd className="mt-1 font-medium text-slate-900">{pathway?.title}</dd>
@@ -39,7 +39,7 @@ export function ApplicationSummary({ application }: { application: TutorApplicat
                       {s.subject.name}
                       {s.matric_mark !== null && <span className="ml-2 tabular-nums text-slate-500">{s.matric_mark}%</span>}
                       {showDecisions && s.decision !== 'pending' && (
-                        <span className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${
+                        <span className={`ml-2 inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${
                           s.decision === 'approved' ? 'bg-brand-teal/15 text-pass' : 'bg-brand-orange/10 text-below'
                         }`}>
                           {s.decision === 'approved' ? 'Approved' : 'Not approved'}

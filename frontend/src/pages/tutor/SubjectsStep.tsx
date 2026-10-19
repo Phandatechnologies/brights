@@ -2,6 +2,7 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { ApiError } from '../../api/client'
 import { tutorApi, type Subject, type TutorApplication } from '../../api/tutor'
 import { FormAlert } from '../../components/Form'
+import { SearchSelect } from '../../components/SearchSelect'
 import { GRADES, MIN_SUBJECT_MARK, markProblem } from '../../lib/tutorRules'
 import { StepFooter } from './ApplicationEditor'
 
@@ -23,7 +24,6 @@ export function SubjectsStep({ application, subjects, onSaved, onBack }: Props) 
       grades: s.grades,
     })),
   )
-  const [adding, setAdding] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [serverProblems, setServerProblems] = useState<string[]>([])
   const [busy, setBusy] = useState(false)
@@ -36,7 +36,6 @@ export function SubjectsStep({ application, subjects, onSaved, onBack }: Props) 
   function addSubject(id: string) {
     const subject = subjects.find((s) => String(s.id) === id)
     if (subject) setRows((current) => [...current, { subject, mark: '', grades: [] }])
-    setAdding('')
   }
 
   function updateRow(index: number, change: Partial<Row>) {
@@ -94,9 +93,9 @@ export function SubjectsStep({ application, subjects, onSaved, onBack }: Props) 
           const problem = academic && row.mark !== '' ? markProblem(toMark(row.mark)) : null
           const fieldId = `mark-${row.subject.id}`
           return (
-            <li key={row.subject.id} className={`rounded-xl border bg-white p-4 sm:p-5 ${problem ? 'border-red-300' : 'border-slate-200'}`}>
+            <li key={row.subject.id} className={`rounded-xl border bg-surface p-4 sm:p-5 ${problem ? 'border-red-300' : 'border-slate-200'}`}>
               <div className="flex items-start justify-between gap-4">
-                <h3 className="font-sans text-lg font-semibold text-brand-navy">{row.subject.name}</h3>
+                <h3 className="font-sans text-lg font-semibold text-heading">{row.subject.name}</h3>
                 <button type="button" onClick={() => setRows((c) => c.filter((_, i) => i !== index))}
                   className="rounded-md px-2 py-1 text-sm text-slate-500 hover:bg-slate-100 hover:text-red-700"
                   aria-label={`Remove ${row.subject.name}`}>
@@ -127,7 +126,7 @@ export function SubjectsStep({ application, subjects, onSaved, onBack }: Props) 
                       return (
                         <button key={grade} type="button" aria-pressed={on} onClick={() => toggleGrade(index, grade)}
                           className={`min-w-[3.25rem] rounded-full border px-3 py-2 text-sm font-medium transition ${
-                            on ? 'border-brand-navy bg-brand-navy text-white' : 'border-slate-300 bg-white text-slate-700 hover:border-slate-400'
+                            on ? 'border-brand-navy bg-brand-navy text-white' : 'border-slate-300 bg-surface text-slate-700 hover:border-slate-400'
                           }`}>
                           Gr {grade}
                         </button>
@@ -146,11 +145,9 @@ export function SubjectsStep({ application, subjects, onSaved, onBack }: Props) 
         <label htmlFor="add-subject" className="mb-1 block text-sm font-medium text-slate-700">
           {rows.length ? 'Add another subject' : 'Add a subject'}
         </label>
-        <select id="add-subject" value={adding} onChange={(e) => addSubject(e.target.value)}
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 sm:max-w-sm">
-          <option value="">Choose a subject…</option>
-          {available.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-        </select>
+        <SearchSelect id="add-subject" value="" resetOnSelect placeholder="Search subjects, e.g. maths or isiZulu"
+          options={available.map((s) => ({ value: String(s.id), label: s.name }))}
+          onChange={addSubject} className="sm:max-w-sm" />
       </div>
 
       <StepFooter onBack={onBack} busy={busy} />

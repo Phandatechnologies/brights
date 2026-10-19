@@ -49,6 +49,10 @@ class TutorProfile(models.Model):
     photo_status = models.CharField(max_length=20, choices=PhotoStatus.CHOICES, default=PhotoStatus.NONE)
     photo_note = models.CharField(max_length=300, blank=True, help_text="Reason shown to the tutor if rejected")
 
+    # The tutor's own on/off switch: off hides them from search and new contacts
+    # (e.g. while they're full or on holiday) without changing anything else.
+    accepting_learners = models.BooleanField(default=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -73,3 +77,20 @@ class TutorProfile(models.Model):
         if not self.whatsapp_number:
             missing.append("Your WhatsApp number")
         return missing
+
+
+class ProfileViewDay(models.Model):
+    """
+    How many times a tutor's public profile was viewed on one day. Only a number:
+    who viewed it is never stored. A visitor counts once per profile per day.
+    """
+
+    profile = models.ForeignKey(TutorProfile, on_delete=models.CASCADE, related_name="view_days")
+    date = models.DateField()
+    count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["profile", "date"], name="one_view_counter_per_profile_per_day")]
+
+    def __str__(self):
+        return f"{self.profile} — {self.date}: {self.count}"

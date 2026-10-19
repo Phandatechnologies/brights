@@ -22,7 +22,7 @@ export function ApplicationEditor({ application, subjects, onChange }: Props) {
     <div>
       {application.status === 'more_info' && (
         <div role="status" className="mb-8 rounded-xl border border-brand-gold/60 bg-brand-gold/10 p-5">
-          <p className="font-semibold text-brand-navy">Our team needs more information</p>
+          <p className="font-semibold text-heading">Our team needs more information</p>
           {application.reviewer_message && (
             <p className="mt-2 whitespace-pre-line text-slate-800">{application.reviewer_message}</p>
           )}
@@ -44,7 +44,7 @@ export function ApplicationEditor({ application, subjects, onChange }: Props) {
                   className="group w-full text-left"
                 >
                   <span className={`block h-1.5 rounded-full transition ${current || done ? 'bg-brand-navy' : 'bg-slate-200 group-hover:bg-slate-300'}`} />
-                  <span className={`mt-2 block text-xs sm:text-sm ${current ? 'font-semibold text-brand-navy' : 'text-slate-500'}`}>
+                  <span className={`mt-2 block text-xs sm:text-sm ${current ? 'font-semibold text-heading' : 'text-slate-500'}`}>
                     <span className="tabular-nums">{index + 1}.</span> <span className="hidden sm:inline">{label}</span>
                   </span>
                 </button>
@@ -52,7 +52,7 @@ export function ApplicationEditor({ application, subjects, onChange }: Props) {
             )
           })}
         </ol>
-        <p className="mt-3 text-sm font-medium text-brand-navy sm:hidden">{STEPS[step]}</p>
+        <p className="mt-3 text-sm font-medium text-heading sm:hidden">{STEPS[step]}</p>
       </nav>
 
       {step === 0 && <TypeStep application={application} onSaved={(a) => { onChange(a); next() }} />}

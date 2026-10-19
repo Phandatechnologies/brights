@@ -55,12 +55,12 @@ export function ReviewStep({ application, onSubmitted, onBack, onEditStep }: Pro
     <div>
       {missing.length > 0 ? (
         <div className="rounded-xl border border-slate-200 bg-chalk p-5">
-          <p className="font-semibold text-brand-navy">Still needed before you can submit</p>
+          <p className="font-semibold text-heading">Still needed before you can submit</p>
           <ul className="mt-3 space-y-2">
             {missing.map((item) => (
               <li key={item.text} className="flex flex-wrap items-baseline justify-between gap-2 text-slate-800">
                 <span>{item.text}</span>
-                <button type="button" onClick={() => onEditStep(item.step)} className="text-sm font-medium text-brand-blue hover:underline">
+                <button type="button" onClick={() => onEditStep(item.step)} className="text-sm font-medium text-link hover:underline">
                   Add it
                 </button>
               </li>

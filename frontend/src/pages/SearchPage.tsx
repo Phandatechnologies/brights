@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { profilesApi, type Area, type Province, type SearchPage as SearchResult } from '../api/profiles'
 import { tutorApi, type Subject } from '../api/tutor'
+import { SearchSelect } from '../components/SearchSelect'
 import { TutorAvatar } from '../components/TutorAvatar'
 import { formatRand, lessonModes } from '../lib/format'
 import { GRADES } from '../lib/tutorRules'
@@ -11,7 +12,7 @@ const FILTER_KEYS = ['subject', 'grade', 'mode', 'province', 'area', 'min_price'
 type Loaded = { key: string; data: SearchResult } | { key: string; error: string }
 
 const selectClass =
-  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20'
+  'w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5 text-slate-900 outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20'
 
 /** /tutors — public tutor search. Filters live in the URL so searches can be shared. */
 export function SearchPage() {
@@ -66,25 +67,24 @@ export function SearchPage() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
-      <h1 className="text-3xl font-bold tracking-[-0.02em] text-brand-navy sm:text-4xl">Find a tutor</h1>
+      <h1 className="text-3xl font-bold tracking-[-0.02em] text-heading sm:text-4xl">Find a tutor</h1>
       <p className="mt-2 max-w-2xl text-slate-600">
         Every tutor here has been checked by our team. Online tutors can teach you from anywhere in South Africa.
       </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[17rem_1fr]">
-        <aside aria-label="Filters" className="lg:sticky lg:top-6 lg:self-start">
-          <details className="rounded-xl border border-slate-200 bg-white p-4" open={filtersOpen}
+        <aside aria-label="Filters" className="lg:sticky lg:top-24 lg:self-start">
+          <details className="rounded-xl border border-slate-200 bg-surface p-4" open={filtersOpen}
             onToggle={(e) => setFiltersOpen(e.currentTarget.open)}>
-            <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-brand-navy">
+            <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-heading">
               <span>Filters{hasFilters && <span className="ml-2 rounded-full bg-brand-navy px-2 py-0.5 text-xs text-white">On</span>}</span>
               <span className="text-sm font-normal text-slate-500">{filtersOpen ? 'Hide' : 'Show'}</span>
             </summary>
             <div className="mt-4 space-y-4">
               <Field label="Subject" id="f-subject">
-                <select id="f-subject" className={selectClass} value={params.get('subject') ?? ''} onChange={(e) => setFilter('subject', e.target.value)}>
-                  <option value="">Any subject</option>
-                  {subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-                </select>
+                <SearchSelect id="f-subject" emptyLabel="Any subject" value={params.get('subject') ?? ''}
+                  options={subjects.map((s) => ({ value: String(s.id), label: s.name }))}
+                  onChange={(v) => setFilter('subject', v)} />
               </Field>
               <Field label="Grade" id="f-grade">
                 <select id="f-grade" className={selectClass} value={params.get('grade') ?? ''} onChange={(e) => setFilter('grade', e.target.value)}>
@@ -99,7 +99,7 @@ export function SearchPage() {
                     const active = (params.get('mode') ?? '') === value
                     return (
                       <button key={value} type="button" aria-pressed={active} onClick={() => setFilter('mode', value)}
-                        className={`px-2 py-2 font-medium transition ${active ? 'bg-brand-navy text-white' : 'bg-white text-slate-700 hover:bg-slate-50'}`}>
+                        className={`px-2 py-2 font-medium transition ${active ? 'bg-brand-navy text-white' : 'bg-surface text-slate-700 hover:bg-slate-50'}`}>
                         {label}
                       </button>
                     )
@@ -113,10 +113,9 @@ export function SearchPage() {
                 </select>
               </Field>
               <Field label="Area" id="f-area">
-                <select id="f-area" className={selectClass} value={params.get('area') ?? ''} onChange={(e) => setFilter('area', e.target.value)}>
-                  <option value="">Any area</option>
-                  {areaOptions.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-                </select>
+                <SearchSelect id="f-area" emptyLabel="Any area" value={params.get('area') ?? ''}
+                  options={areaOptions.map((a) => ({ value: String(a.id), label: a.name }))}
+                  onChange={(v) => setFilter('area', v)} />
               </Field>
               <fieldset>
                 <legend className="mb-1 text-sm font-medium text-slate-700">Price per hour (R)</legend>
@@ -128,7 +127,7 @@ export function SearchPage() {
               </fieldset>
               {hasFilters && (
                 <button type="button" onClick={() => setParams(new URLSearchParams(), { replace: true })}
-                  className="text-sm font-medium text-brand-blue hover:underline">
+                  className="text-sm font-medium text-link hover:underline">
                   Clear filters
                 </button>
               )}
@@ -143,7 +142,7 @@ export function SearchPage() {
             </p>
             <label className="flex items-center gap-2 text-sm text-slate-600">
               Sort by
-              <select className="rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-slate-900" value={params.get('sort') ?? ''}
+              <select className="rounded-lg border border-slate-300 bg-surface px-2 py-1.5 text-slate-900" value={params.get('sort') ?? ''}
                 onChange={(e) => setFilter('sort', e.target.value)}>
                 <option value="">Newest</option>
                 <option value="price_low">Price: low to high</option>
@@ -156,7 +155,7 @@ export function SearchPage() {
 
           {result && result.results.length === 0 && !loading && (
             <div className="mt-6 rounded-xl border border-dashed border-slate-300 p-10 text-center">
-              <p className="font-semibold text-brand-navy">No tutors match these filters yet</p>
+              <p className="font-semibold text-heading">No tutors match these filters yet</p>
               <p className="mt-1 text-slate-600">Try another area, include online lessons, or widen the price range.</p>
             </div>
           )}
@@ -165,12 +164,12 @@ export function SearchPage() {
             {result?.results.map((tutor) => (
               <li key={tutor.id}>
                 <Link to={`/tutors/${tutor.id}`}
-                  className="block rounded-xl border border-slate-200 bg-white p-5 transition hover:border-brand-blue/50 hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40">
+                  className="block rounded-xl border border-slate-200 bg-surface p-5 transition hover:border-brand-blue/50 hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40">
                   <div className="flex gap-4">
                     <TutorAvatar name={tutor.full_name} photoUrl={tutor.photo_url} />
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-baseline justify-between gap-x-4">
-                        <h2 className="font-sans text-lg font-semibold text-brand-navy">{tutor.full_name}</h2>
+                        <h2 className="font-sans text-lg font-semibold text-heading">{tutor.full_name}</h2>
                         <p className="font-display text-lg font-semibold text-ink">
                           {formatRand(tutor.hourly_rate)}<span className="text-sm font-normal text-slate-500"> / hour</span>
                         </p>
@@ -196,10 +195,10 @@ export function SearchPage() {
           {result && totalPages > 1 && (
             <nav aria-label="Pages" className="mt-8 flex items-center justify-between">
               <button type="button" disabled={page <= 1} onClick={() => goToPage(page - 1)}
-                className="rounded-lg px-4 py-2 font-medium text-brand-navy hover:bg-slate-100 disabled:opacity-40">Previous</button>
+                className="rounded-lg px-4 py-2 font-medium text-heading hover:bg-slate-100 disabled:opacity-40">Previous</button>
               <span className="text-sm text-slate-600">Page {page} of {totalPages}</span>
               <button type="button" disabled={page >= totalPages} onClick={() => goToPage(page + 1)}
-                className="rounded-lg px-4 py-2 font-medium text-brand-navy hover:bg-slate-100 disabled:opacity-40">Next</button>
+                className="rounded-lg px-4 py-2 font-medium text-heading hover:bg-slate-100 disabled:opacity-40">Next</button>
             </nav>
           )}
         </div>
@@ -229,6 +228,6 @@ function PriceInput({ label, value, onCommit, placeholder }: {
       onChange={(e) => setDraft(e.target.value.replace(/[^0-9]/g, '').slice(0, 5))}
       onBlur={() => draft !== value && onCommit(draft)}
       onKeyDown={(e) => { if (e.key === 'Enter') onCommit(draft) }}
-      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 tabular-nums outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
+      className="w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5 tabular-nums outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
   )
 }

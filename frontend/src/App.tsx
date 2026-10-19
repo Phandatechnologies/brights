@@ -2,7 +2,9 @@ import { BrowserRouter, Route, Routes } from 'react-router'
 import { AuthProvider } from './auth/AuthContext'
 import { GuestOnly, RequireAuth } from './auth/RouteGuards'
 import { Layout } from './components/Layout'
+import { AccountPage } from './pages/AccountPage'
 import { DashboardPage } from './pages/DashboardPage'
+import { MyTutorsPage } from './pages/MyTutorsPage'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { NotFoundPage } from './pages/NotFoundPage'
@@ -38,6 +40,8 @@ export default function App() {
 
             <Route element={<RequireAuth />}>
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/my-tutors" element={<MyTutorsPage />} />
+              <Route path="/account" element={<AccountPage />} />
               <Route path="/tutor/apply" element={<ApplyPage />} />
               <Route path="/tutor/profile" element={<ProfileEditorPage />} />
               <Route path="/tutors/:id/report" element={<ReportPage />} />

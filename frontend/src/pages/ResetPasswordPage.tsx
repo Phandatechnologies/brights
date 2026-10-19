@@ -44,7 +44,7 @@ export function ResetPasswordPage() {
       ) : (
         <form onSubmit={submit} className="space-y-4" noValidate>
           <FormAlert message={error} />
-          {error && <p className="text-sm"><Link to="/forgot-password" className="font-medium text-brand-blue hover:underline">Request a new link</Link></p>}
+          {error && <p className="text-sm"><Link to="/forgot-password" className="font-medium text-link hover:underline">Request a new link</Link></p>}
           <PasswordField label="New password" name="new_password" autoComplete="new-password" value={password}
             errors={errors.new_password} onChange={(e) => setPassword(e.target.value)} />
           <PasswordField label="Confirm new password" name="confirm" autoComplete="new-password" value={confirm}

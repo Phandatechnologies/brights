@@ -15,13 +15,13 @@ export function PathwayCards({ value, onChange }: { value: Pathway | null; onCha
             <label
               key={option.value}
               className={`flex cursor-pointer gap-3 rounded-xl border p-4 transition ${
-                selected ? 'border-brand-blue bg-brand-blue/5 ring-1 ring-brand-blue' : 'border-slate-300 bg-white hover:border-slate-400'
+                selected ? 'border-brand-blue bg-brand-blue/5 ring-1 ring-brand-blue' : 'border-slate-300 bg-surface hover:border-slate-400'
               }`}
             >
               <input type="radio" name="pathway" value={option.value} checked={selected}
                 onChange={() => onChange(option.value)} className="mt-1 accent-brand-blue" />
               <span>
-                <span className="block font-semibold text-brand-navy">{option.title}</span>
+                <span className="block font-semibold text-heading">{option.title}</span>
                 <span className="mt-1 block text-sm leading-relaxed text-slate-600">{option.description}</span>
               </span>
             </label>

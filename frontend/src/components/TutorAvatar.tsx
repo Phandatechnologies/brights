@@ -6,7 +6,7 @@ export function TutorAvatar({ name, photoUrl, size = 'md' }: { name: string; pho
   }
   const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]?.toUpperCase()).join('')
   return (
-    <span aria-hidden="true" className={`${box} flex shrink-0 items-center justify-center rounded-full bg-brand-navy/10 font-display font-semibold text-brand-navy`}>
+    <span aria-hidden="true" className={`${box} flex shrink-0 items-center justify-center rounded-full bg-brand-navy/10 font-display font-semibold text-heading`}>
       {initials}
     </span>
   )

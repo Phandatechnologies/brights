@@ -77,7 +77,7 @@ export function RegisterPage() {
   return (
     <AuthCard
       title="Create your account"
-      subtitle={<>Already have one? <Link to="/login" className="font-medium text-brand-blue hover:underline">Log in</Link></>}
+      subtitle={<>Already have one? <Link to="/login" className="font-medium text-link hover:underline">Log in</Link></>}
     >
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         <FormAlert message={error} />

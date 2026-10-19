@@ -29,7 +29,7 @@ export function VerifyEmailPage() {
       {state.kind === 'checking' && <p className="text-slate-600">Confirming your email…</p>}
       {state.kind === 'done' && (
         <>
-          <h1 className="text-3xl font-bold text-brand-navy">Email confirmed</h1>
+          <h1 className="text-3xl font-bold text-heading">Email confirmed</h1>
           <p className="mt-3 text-slate-700">Thanks! Your account is fully set up.</p>
           <Link to={user ? '/dashboard' : '/login'} className="mt-6 inline-block rounded-full bg-brand-navy px-6 py-3 font-semibold text-white hover:bg-brand-blue">
             {user ? 'Go to your dashboard' : 'Log in'}
@@ -38,10 +38,10 @@ export function VerifyEmailPage() {
       )}
       {state.kind === 'failed' && (
         <>
-          <h1 className="text-3xl font-bold text-brand-navy">We couldn't confirm your email</h1>
+          <h1 className="text-3xl font-bold text-heading">We couldn't confirm your email</h1>
           <p className="mt-3 text-slate-700">{state.message}</p>
           <p className="mt-2 text-slate-600">Log in and use “Send a new link” on your dashboard.</p>
-          <Link to="/dashboard" className="mt-6 inline-block font-medium text-brand-blue hover:underline">Go to your dashboard</Link>
+          <Link to="/dashboard" className="mt-6 inline-block font-medium text-link hover:underline">Go to your dashboard</Link>
         </>
       )}
     </section>

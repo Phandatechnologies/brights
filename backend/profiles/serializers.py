@@ -72,9 +72,10 @@ class OwnProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = TutorProfile
         fields = [
+            "id",  # public profile id, for the tutor's "preview as a learner" link
             "bio", "hourly_rate", "teaches_online", "teaches_in_person", "area", "area_detail",
             "availability", "whatsapp_number", "photo_status", "photo_note", "photo_url",
-            "missing_fields", "is_listed",
+            "accepting_learners", "missing_fields", "is_listed",
         ]
         read_only_fields = ["photo_status", "photo_note"]
 

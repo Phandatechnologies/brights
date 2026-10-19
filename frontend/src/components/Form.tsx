@@ -23,7 +23,7 @@ export function TextField({ label, name, errors, hint, trailing, className = '',
           name={name}
           aria-invalid={hasError}
           aria-describedby={describedBy}
-          className={`block w-full rounded-lg border bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:ring-2 ${
+          className={`block w-full rounded-lg border bg-surface px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:ring-2 ${
             trailing ? 'pr-12' : ''
           } ${
             hasError

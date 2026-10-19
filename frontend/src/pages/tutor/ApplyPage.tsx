@@ -38,7 +38,7 @@ export function ApplyPage() {
     return (
       <Shell>
         <p className="text-slate-700">Only tutor accounts can apply to tutor.</p>
-        <Link to="/dashboard" className="mt-4 inline-block font-medium text-brand-blue hover:underline">Back to dashboard</Link>
+        <Link to="/dashboard" className="mt-4 inline-block font-medium text-link hover:underline">Back to dashboard</Link>
       </Shell>
     )
   }
@@ -51,7 +51,18 @@ export function ApplyPage() {
   const { application, subjects } = state
   return (
     <Shell>
-      {!application && <PathwayChooser onStarted={setApplication} />}
+      {!application && !user?.email_verified && (
+        <div role="status" className="rounded-xl border border-brand-gold/60 bg-brand-gold/10 p-5">
+          <p className="font-semibold text-heading">Confirm your email to start</p>
+          <p className="mt-1 text-slate-700">
+            We sent a confirmation link to <strong>{user?.email}</strong>. Open it, then come back here to start your application.
+          </p>
+          <Link to="/dashboard" className="mt-3 inline-block font-medium text-link hover:underline">
+            Back to dashboard (resend the link there)
+          </Link>
+        </div>
+      )}
+      {!application && user?.email_verified && <PathwayChooser onStarted={setApplication} />}
       {application && application.is_editable && (
         <ApplicationEditor application={application} subjects={subjects} onChange={setApplication} />
       )}
@@ -63,7 +74,7 @@ export function ApplyPage() {
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <section className="mx-auto max-w-3xl px-4 py-10 sm:py-14">
-      <h1 className="text-3xl font-bold tracking-[-0.02em] text-brand-navy sm:text-4xl">Tutor application</h1>
+      <h1 className="text-3xl font-bold tracking-[-0.02em] text-heading sm:text-4xl">Tutor application</h1>
       <div className="mt-8">{children}</div>
     </section>
   )

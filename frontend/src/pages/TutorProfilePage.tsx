@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useLocation, useParams } from 'react-router'
 import { ApiError } from '../api/client'
 import { profilesApi, type PublicTutor } from '../api/profiles'
 import { FullPageSpinner } from '../components/FullPageSpinner'
@@ -12,6 +12,8 @@ type State = { id: string; tutor: PublicTutor } | { id: string; error: string }
 
 /** /tutors/:id — a tutor's public profile. */
 export function TutorProfilePage() {
+  // Set by the tutor's own "Preview as a learner" link.
+  const preview = Boolean((useLocation().state as { preview?: boolean } | null)?.preview)
   const { id = '' } = useParams()
   const [state, setState] = useState<State | null>(null)
 
@@ -31,8 +33,8 @@ export function TutorProfilePage() {
   if ('error' in state) {
     return (
       <section className="mx-auto max-w-3xl px-4 py-16 text-center">
-        <p className="font-display text-2xl font-semibold text-brand-navy">{state.error}</p>
-        <Link to="/tutors" className="mt-4 inline-block font-medium text-brand-blue hover:underline">Back to search</Link>
+        <p className="font-display text-2xl font-semibold text-heading">{state.error}</p>
+        <Link to="/tutors" className="mt-4 inline-block font-medium text-link hover:underline">Back to search</Link>
       </section>
     )
   }
@@ -40,25 +42,32 @@ export function TutorProfilePage() {
   const { tutor } = state
   return (
     <section className="mx-auto max-w-4xl px-4 py-10 sm:py-14">
-      <Link to="/tutors" className="text-sm font-medium text-brand-blue hover:underline">Back to search</Link>
+      {preview ? (
+        <div role="status" className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-brand-teal/50 bg-brand-teal/10 px-4 py-3">
+          <p className="text-sm font-medium text-heading">Preview: this is what learners and parents see.</p>
+          <Link to="/tutor/profile" className="text-sm font-semibold text-link hover:underline">Back to my profile</Link>
+        </div>
+      ) : (
+        <Link to="/tutors" className="text-sm font-medium text-link hover:underline">Back to search</Link>
+      )}
 
       <div className="mt-6 grid gap-10 md:grid-cols-[1fr_18rem]">
         <div>
           <div className="flex items-center gap-5">
             <TutorAvatar name={tutor.full_name} photoUrl={tutor.photo_url} size="lg" />
             <div>
-              <h1 className="text-3xl font-bold tracking-[-0.02em] text-brand-navy sm:text-4xl">{tutor.full_name}</h1>
+              <h1 className="text-3xl font-bold tracking-[-0.02em] text-heading sm:text-4xl">{tutor.full_name}</h1>
               <p className="mt-1 flex items-center gap-1.5 font-medium text-pass">
                 <Spark className="h-4 w-4 text-brand-gold" />{tutor.verification}
               </p>
             </div>
           </div>
 
-          <h2 className="mt-10 text-xl font-semibold text-brand-navy">About</h2>
+          <h2 className="mt-10 text-xl font-semibold text-heading">About</h2>
           <p className="mt-2 whitespace-pre-line leading-relaxed text-ink/85">{tutor.bio}</p>
 
-          <h2 className="mt-10 text-xl font-semibold text-brand-navy">Subjects</h2>
-          <ul className="mt-3 divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
+          <h2 className="mt-10 text-xl font-semibold text-heading">Subjects</h2>
+          <ul className="mt-3 divide-y divide-slate-200 rounded-xl border border-slate-200 bg-surface">
             {tutor.subjects.map((s) => (
               <li key={s.id} className="flex flex-wrap justify-between gap-x-4 px-5 py-3">
                 <span className="font-medium text-ink">{s.name}</span>
@@ -69,7 +78,7 @@ export function TutorProfilePage() {
         </div>
 
         <aside className="md:pt-2">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 md:sticky md:top-6">
+          <div className="rounded-2xl border border-slate-200 bg-surface p-6 md:sticky md:top-24">
             <p className="font-display text-3xl font-semibold text-ink">
               {formatRand(tutor.hourly_rate)}<span className="text-base font-normal text-slate-500"> / hour</span>
             </p>

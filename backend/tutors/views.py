@@ -45,7 +45,7 @@ class MyApplicationView(APIView):
     """
     The logged-in tutor's own application.
     GET    — view it (404 if not started)
-    POST   — start a draft: {"pathway": "academic" | "teacher"}
+    POST   — start a draft: {"pathway": "academic" | "teacher"} (email must be verified)
     PATCH  — update while draft / more info required
     """
 
@@ -60,6 +60,8 @@ class MyApplicationView(APIView):
         return Response(ApplicationSerializer(self.get_application(request)).data)
 
     def post(self, request):
+        # Starting an application needs a confirmed email (raises 403 "email_unverified").
+        EmailVerified().has_permission(request, self)
         if TutorApplication.objects.filter(user=request.user).exists():
             return Response({"detail": "You already have an application."}, status=status.HTTP_409_CONFLICT)
         pathway = request.data.get("pathway")

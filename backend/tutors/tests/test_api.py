@@ -91,6 +91,14 @@ class AccessTests(ApplicationTestCase):
     def test_new_application_is_a_draft(self):
         self.assertEqual(self.start().json()["status"], "draft")
 
+    def test_unverified_tutor_cannot_start(self):
+        self.tutor.email_verified_at = None
+        self.tutor.save()
+        response = self.start()
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.json()["code"], "email_unverified")
+        self.assertFalse(TutorApplication.objects.filter(user=self.tutor).exists())
+
 
 class SubjectRuleApiTests(ApplicationTestCase):
     def setUp(self):

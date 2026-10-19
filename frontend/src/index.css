@@ -2,6 +2,9 @@
 @import "@fontsource-variable/bricolage-grotesque/opsz.css";
 @import "@fontsource-variable/instrument-sans/index.css";
 
+/* `dark:` utilities apply when <html> has the "dark" class (set by public/theme-init.js). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /*
  * Brights design tokens.
  * Brand colours are sampled from the logo. Tailwind turns each --color-* into
@@ -19,12 +22,62 @@
   --color-pass: #0b7f78;     /* darker teal for text on white (readable contrast) */
   --color-below: #b54708;    /* darker orange for text on white */
 
+  /* Colours by job. Components use these, so dark mode only has to change the values. */
+  --color-page: #ffffff;     /* page background */
+  --color-surface: #ffffff;  /* cards, inputs, bars */
+  --color-heading: #043386;  /* headings and strong brand text */
+  --color-link: #004cde;     /* links and text buttons */
+
   --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
-  @apply bg-white font-sans text-ink antialiased;
+  @apply bg-page font-sans text-ink antialiased;
+}
+
+:root { color-scheme: light; }
+
+/*
+ * Dark mode: same components, different values. Slate is flipped so "dark text"
+ * classes become light text and "light background" classes become dark ones.
+ * Every text colour here was checked for at least 4.5:1 contrast on the dark surfaces.
+ */
+.dark {
+  color-scheme: dark; /* native date pickers, selects and scrollbars go dark too */
+
+  --color-page: #0b1120;
+  --color-surface: #121b2e;
+  --color-chalk: #1a2438;
+  --color-ink: #e5eaf2;
+  --color-heading: #c9d9ff;
+  --color-link: #8fb3ff;
+  --color-pass: #4fd8cf;
+  --color-below: #ffa36b;
+  --color-brand-navy: #2a5bd7; /* buttons and bold sections: white text still 5.9:1 */
+  --color-brand-blue: #3d6ef0;
+
+  --color-slate-50: #162036;
+  --color-slate-100: #1c2740;
+  --color-slate-200: #2a374d;
+  --color-slate-300: #3b4a63;
+  --color-slate-400: #6b7a91;
+  --color-slate-500: #8f9cb2;
+  --color-slate-600: #aab6c6;
+  --color-slate-700: #cbd5e1;
+  --color-slate-800: #e2e8f0;
+  --color-slate-900: #f1f5f9;
+
+  --color-red-50: #3a1519;
+  --color-red-200: #6b2228;
+  --color-red-300: #8c2d34;
+  --color-red-400: #b8434b;
+  --color-red-700: #fca5a5;
+  --color-red-800: #fecaca;
+  --color-red-900: #fee2e2;
+  --color-emerald-700: #6ee7b7;
+  --color-amber-700: #fcd34d;
+  --color-amber-900: #fde68a;
 }
 
 h1, h2, h3 {

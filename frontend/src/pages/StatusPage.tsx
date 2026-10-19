@@ -5,7 +5,7 @@ type State = { kind: 'loading' } | { kind: 'loaded'; health: HealthResponse } | 
 
 function StatusRow({ label, ok, text }: { label: string; ok: boolean; text: string }) {
   return (
-    <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
+    <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-surface px-4 py-3">
       <span className="font-medium text-slate-700">{label}</span>
       <span className={`flex items-center gap-2 text-sm font-semibold ${ok ? 'text-emerald-700' : 'text-red-700'}`}>
         <span className={`h-2.5 w-2.5 rounded-full ${ok ? 'bg-emerald-500' : 'bg-red-500'}`} />
@@ -27,7 +27,7 @@ export function StatusPage() {
 
   return (
     <section className="mx-auto max-w-sm px-4 py-16">
-      <h1 className="mb-6 text-center text-2xl font-bold text-brand-navy">System status</h1>
+      <h1 className="mb-6 text-center text-2xl font-bold text-heading">System status</h1>
       {state.kind === 'loading' && <p className="text-center text-slate-500">Checking the API…</p>}
       {state.kind === 'error' && <StatusRow label="API" ok={false} text="Unreachable — is Django running?" />}
       {state.kind === 'loaded' && (

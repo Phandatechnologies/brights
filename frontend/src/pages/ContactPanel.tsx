@@ -80,7 +80,7 @@ export function ContactPanel({ tutor }: { tutor: PublicTutor }) {
       <div>
         <label htmlFor="contact-subject" className="mb-1 block text-sm font-medium text-slate-700">Subject</label>
         <select id="contact-subject" value={subjectId} onChange={(e) => { setSubjectId(e.target.value); setGrade('') }}
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2">
+          className="w-full rounded-lg border border-slate-300 bg-surface px-3 py-2">
           <option value="">Choose a subject…</option>
           {tutor.subjects.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
@@ -89,7 +89,7 @@ export function ContactPanel({ tutor }: { tutor: PublicTutor }) {
         <div>
           <label htmlFor="contact-grade" className="mb-1 block text-sm font-medium text-slate-700">Grade</label>
           <select id="contact-grade" value={grade} onChange={(e) => setGrade(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2">
+            className="w-full rounded-lg border border-slate-300 bg-surface px-3 py-2">
             <option value="">Choose a grade…</option>
             {subject.grades.map((g) => <option key={g} value={g}>Grade {g}</option>)}
           </select>

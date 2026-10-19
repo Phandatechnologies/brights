@@ -6,6 +6,7 @@ import { tutorApi, type TutorApplication } from '../../api/tutor'
 import { useAuth } from '../../auth/AuthContext'
 import { FieldError, FormAlert, TextField } from '../../components/Form'
 import { FullPageSpinner } from '../../components/FullPageSpinner'
+import { SearchSelect } from '../../components/SearchSelect'
 
 const MAX_BIO = 1000
 const PHOTO_COPY: Record<string, string> = {
@@ -51,7 +52,7 @@ export function ProfileEditorPage() {
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <section className="mx-auto max-w-3xl px-4 py-10 sm:py-14">
-      <h1 className="text-3xl font-bold tracking-[-0.02em] text-brand-navy sm:text-4xl">Your tutor profile</h1>
+      <h1 className="text-3xl font-bold tracking-[-0.02em] text-heading sm:text-4xl">Your tutor profile</h1>
       <div className="mt-8">{children}</div>
     </section>
   )
@@ -61,20 +62,34 @@ function ListingBanner({ profile, application }: { profile: OwnProfile; applicat
   if (profile.is_listed) {
     return (
       <div role="status" className="rounded-xl border border-brand-teal/50 bg-brand-teal/10 p-5">
-        <p className="font-semibold text-brand-navy">Your profile is live in search</p>
+        <p className="font-semibold text-heading">Your profile is live in search</p>
         <p className="mt-1 text-slate-700">Learners and parents can find you for your approved subjects.</p>
+        <Link to={`/tutors/${profile.id}`} state={{ preview: true }} className="mt-3 inline-block font-semibold text-link hover:underline">
+          Preview as a learner →
+        </Link>
       </div>
     )
   }
   const approved = application?.status === 'approved'
+  if (approved && !profile.accepting_learners) {
+    return (
+      <div role="status" className="rounded-xl border border-slate-200 bg-chalk p-5">
+        <p className="font-semibold text-heading">You've paused new learners</p>
+        <p className="mt-1 text-slate-700">
+          You're hidden from search until you switch "Taking new learners" back on from your{' '}
+          <Link to="/dashboard" className="font-medium text-link hover:underline">Home</Link>.
+        </p>
+      </div>
+    )
+  }
   return (
     <div role="status" className="rounded-xl border border-slate-200 bg-chalk p-5">
-      <p className="font-semibold text-brand-navy">Your profile isn't in search yet</p>
+      <p className="font-semibold text-heading">Your profile isn't in search yet</p>
       <ul className="mt-2 list-disc space-y-1 pl-5 text-slate-700">
         {!approved && (
           <li>
             Your tutor application needs to be approved.{' '}
-            <Link to="/tutor/apply" className="font-medium text-brand-blue hover:underline">Check your application</Link>
+            <Link to="/tutor/apply" className="font-medium text-link hover:underline">Check your application</Link>
           </li>
         )}
         {profile.missing_fields.map((item) => <li key={item}>{item}</li>)}
@@ -141,7 +156,7 @@ function ProfileForm({ loaded, onSaved }: { loaded: Loaded; onSaved: (p: OwnProf
           <textarea id="bio" rows={6} value={bio} maxLength={MAX_BIO} onChange={(e) => setBio(e.target.value)}
             aria-describedby="bio-hint"
             placeholder="How you teach, what learners can expect, and anything that makes you a good fit."
-            className="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 leading-relaxed outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
+            className="block w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5 leading-relaxed outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
           <p id="bio-hint" className="mt-1 text-right text-xs text-slate-500">{bio.length} / {MAX_BIO}</p>
           <FieldError messages={errors.bio} />
         </div>
@@ -170,17 +185,15 @@ function ProfileForm({ loaded, onSaved }: { loaded: Loaded; onSaved: (p: OwnProf
             <div>
               <label htmlFor="province" className="mb-1 block text-sm font-medium text-slate-700">Province</label>
               <select id="province" value={province} onChange={(e) => { setProvince(e.target.value); setArea('') }}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5">
+                className="w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5">
                 {provinces.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
               </select>
             </div>
             <div>
               <label htmlFor="area" className="mb-1 block text-sm font-medium text-slate-700">Area</label>
-              <select id="area" value={area} onChange={(e) => setArea(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5">
-                <option value="">Choose your area…</option>
-                {areas.filter((a) => a.province === province).map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-              </select>
+              <SearchSelect id="area" value={area} placeholder="Search areas, e.g. Soshanguve"
+                options={areas.filter((a) => a.province === province).map((a) => ({ value: String(a.id), label: a.name }))}
+                onChange={setArea} />
               <p className="mt-1 text-sm text-slate-500">A general area only. Never share your address.</p>
               <FieldError messages={errors.area} />
             </div>
@@ -243,7 +256,7 @@ function PhotoSection({ profile, onChange }: { profile: OwnProfile; onChange: (p
         <span className="flex h-28 w-28 items-center justify-center rounded-full bg-brand-navy/10 text-sm text-slate-500">No photo</span>
       )}
       <div className="flex-1">
-        <h2 id="photo-heading" className="font-sans text-lg font-semibold text-brand-navy">Profile photo (optional)</h2>
+        <h2 id="photo-heading" className="font-sans text-lg font-semibold text-heading">Profile photo (optional)</h2>
         <p className="mt-1 text-sm text-slate-600">
           {profile.photo_status === 'none'
             ? 'A clear, friendly photo of your face. Our team approves every photo before it appears.'
@@ -256,7 +269,7 @@ function PhotoSection({ profile, onChange }: { profile: OwnProfile; onChange: (p
           <input ref={input} id="photo-input" type="file" accept="image/jpeg,image/png" className="peer sr-only"
             onChange={(e) => upload(e.target.files?.[0])} disabled={busy} />
           <label htmlFor="photo-input"
-            className={`cursor-pointer rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-brand-navy hover:bg-slate-50 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-blue/40 ${busy ? 'pointer-events-none opacity-60' : ''}`}>
+            className={`cursor-pointer rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-heading hover:bg-slate-50 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-blue/40 ${busy ? 'pointer-events-none opacity-60' : ''}`}>
             {busy ? 'Uploading…' : profile.photo_url ? 'Replace photo' : 'Upload photo'}
           </label>
           {profile.photo_url && (

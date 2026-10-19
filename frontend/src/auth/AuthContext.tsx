@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { authApi, type RegisterInput, type User } from '../api/auth'
-import { ensureCsrfCookie } from '../api/client'
+import { ApiError, ensureCsrfCookie } from '../api/client'
 
 type AuthState = {
   user: User | null
@@ -49,8 +49,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(async () => {
     try {
       setUser(await authApi.me())
-    } catch {
-      setUser(null)
+    } catch (err) {
+      // Only a real "not logged in" answer logs the user out here; a dropped
+      // connection (common on phones) leaves them signed in.
+      if (err instanceof ApiError && (err.status === 401 || err.status === 403)) setUser(null)
     }
   }, [])
 

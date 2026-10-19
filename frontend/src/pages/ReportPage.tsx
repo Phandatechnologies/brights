@@ -47,7 +47,7 @@ export function ReportPage() {
     return (
       <section className="mx-auto max-w-2xl px-4 py-14">
         <div role="status" className="rounded-2xl border border-brand-teal/50 bg-brand-teal/10 p-6">
-          <h1 className="text-2xl font-bold text-brand-navy">Thank you. We've received your report.</h1>
+          <h1 className="text-2xl font-bold text-heading">Thank you. We've received your report.</h1>
           <p className="mt-3 leading-relaxed text-slate-700">
             {sent.hidden
               ? 'Because this is a child-safety concern, the tutor has been removed from search while our team reviews it.'
@@ -58,14 +58,14 @@ export function ReportPage() {
           </p>
         </div>
         <EmergencyNote />
-        <Link to="/dashboard" className="mt-6 inline-block font-medium text-brand-blue hover:underline">Back to your dashboard</Link>
+        <Link to="/dashboard" className="mt-6 inline-block font-medium text-link hover:underline">Back to your dashboard</Link>
       </section>
     )
   }
 
   return (
     <section className="mx-auto max-w-2xl px-4 py-10 sm:py-14">
-      <h1 className="text-3xl font-bold tracking-[-0.02em] text-brand-navy">Report {tutorName}</h1>
+      <h1 className="text-3xl font-bold tracking-[-0.02em] text-heading">Report {tutorName}</h1>
       <p className="mt-2 leading-relaxed text-slate-700">
         Reports go only to the Brights safety team. The tutor won't see your name or what you wrote.
       </p>
@@ -79,7 +79,7 @@ export function ReportPage() {
             {REPORT_CATEGORIES.map((c) => (
               <label key={c.value}
                 className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition ${
-                  category === c.value ? 'border-brand-blue bg-brand-blue/5 ring-1 ring-brand-blue' : 'border-slate-300 bg-white hover:border-slate-400'
+                  category === c.value ? 'border-brand-blue bg-brand-blue/5 ring-1 ring-brand-blue' : 'border-slate-300 bg-surface hover:border-slate-400'
                 }`}>
                 <input type="radio" name="category" value={c.value} checked={category === c.value}
                   onChange={() => setCategory(c.value)} className="accent-brand-blue" />
@@ -101,7 +101,7 @@ export function ReportPage() {
           <textarea id="description" rows={7} maxLength={MAX} value={description} onChange={(e) => setDescription(e.target.value)}
             aria-describedby="description-hint"
             placeholder="Describe what happened, when, and anything the tutor said or did. Include as much detail as you can."
-            className="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 leading-relaxed outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
+            className="block w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5 leading-relaxed outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
           <p id="description-hint" className="mt-1 text-right text-xs text-slate-500">{description.length} / {MAX}</p>
           <FieldError messages={errors.description} />
         </div>
@@ -109,7 +109,7 @@ export function ReportPage() {
         <div className="max-w-xs">
           <label htmlFor="incident-date" className="mb-1 block font-medium text-slate-800">When did it happen? (optional)</label>
           <input id="incident-date" type="date" max={TODAY} value={incidentDate} onChange={(e) => setIncidentDate(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5" />
+            className="w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5" />
           <FieldError messages={errors.incident_date} />
         </div>
 

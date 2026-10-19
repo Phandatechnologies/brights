@@ -22,6 +22,7 @@ def discoverable_profiles():
       - their application is approved (so not pending, rejected or suspended),
       - they have at least one approved subject,
       - their profile is complete,
+      - they're taking new learners (their own on/off switch),
       - no open child-safety report from someone who contacted them is waiting for review.
     """
     from moderation.models import Report
@@ -36,6 +37,7 @@ def discoverable_profiles():
             user__is_active=True,
             user__tutor_application__status=Status.APPROVED,
             hourly_rate__isnull=False,
+            accepting_learners=True,
         )
         .exclude(bio="")
         .exclude(whatsapp_number="")

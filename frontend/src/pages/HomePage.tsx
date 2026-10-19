@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { ThemeSwitch } from '../components/ThemeSwitch'
 import { useAuth } from '../auth/AuthContext'
 import { Spark } from '../components/Spark'
 
@@ -51,7 +52,7 @@ function Hero({ signedIn }: { signedIn: boolean }) {
         <div className="relative max-w-xl md:max-w-[26rem] lg:max-w-[34rem]">
           <Spark className="spark absolute -top-10 right-0 h-12 w-12 text-brand-gold md:-right-14 md:-top-12 md:h-14 md:w-14 lg:-right-20 lg:h-16 lg:w-16" />
 
-          <h1 className="text-[2.75rem] font-bold leading-[0.98] tracking-[-0.03em] text-brand-navy sm:text-6xl lg:text-[4.75rem]">
+          <h1 className="text-[2.75rem] font-bold leading-[0.98] tracking-[-0.03em] text-heading sm:text-6xl lg:text-[4.75rem]">
             Find a tutor who's been where you are.
           </h1>
           <p className="mt-6 max-w-md text-lg leading-relaxed text-ink/80">
@@ -77,7 +78,7 @@ function Hero({ signedIn }: { signedIn: boolean }) {
                 </Link>
                 <Link
                   to="/register?as=tutor"
-                  className="font-semibold text-brand-navy underline decoration-brand-gold decoration-[3px] underline-offset-[6px] transition hover:decoration-brand-navy"
+                  className="font-semibold text-heading underline decoration-brand-gold decoration-[3px] underline-offset-[6px] transition hover:decoration-brand-navy"
                 >
                   I want to tutor
                 </Link>
@@ -94,9 +95,9 @@ function ResultsSlip() {
   const canTutor = SAMPLE_RESULTS.filter((r) => r.mark >= PASS_MARK).length
   return (
     <figure className="mx-auto w-full max-w-md">
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_24px_60px_-28px_rgba(4,51,134,0.35)] md:-rotate-[1.5deg]">
+      <div className="rounded-2xl border border-slate-200 bg-surface p-6 shadow-[0_24px_60px_-28px_rgba(4,51,134,0.35)] md:-rotate-[1.5deg]">
         <div className="flex items-baseline justify-between border-b border-dashed border-slate-300 pb-4">
-          <p className="font-display text-xl font-semibold text-brand-navy">Thabo's Matric results</p>
+          <p className="font-display text-xl font-semibold text-heading">Thabo's Matric results</p>
           <p className="text-sm text-slate-500">Example</p>
         </div>
         <ul className="divide-y divide-slate-100">
@@ -127,10 +128,10 @@ function ResultsSlip() {
 
 function Verification() {
   return (
-    <section className="bg-white py-20 md:py-28">
+    <section className="bg-surface py-20 md:py-28">
       <div className="mx-auto grid max-w-6xl items-center gap-14 px-4 md:grid-cols-2">
         <div className="max-w-lg">
-          <h2 className="text-4xl font-bold leading-tight tracking-[-0.02em] text-brand-navy md:text-5xl">
+          <h2 className="text-4xl font-bold leading-tight tracking-[-0.02em] text-heading md:text-5xl">
             Checked subject by subject, by a real person.
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-ink/80">
@@ -153,14 +154,14 @@ function HowItWorks() {
   return (
     <section className="bg-chalk py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-4">
-        <h2 className="max-w-2xl text-4xl font-bold leading-tight tracking-[-0.02em] text-brand-navy md:text-5xl">
+        <h2 className="max-w-2xl text-4xl font-bold leading-tight tracking-[-0.02em] text-heading md:text-5xl">
           From sign-up to first lesson
         </h2>
         <ol className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {LEARNER_STEPS.map((step, index) => (
             <li key={step.title} className="border-t-2 border-brand-navy/15 pt-5">
-              <span className="font-display text-4xl font-bold text-brand-blue/80 tabular-nums">{index + 1}</span>
-              <h3 className="mt-3 text-xl font-semibold text-brand-navy">{step.title}</h3>
+              <span className="font-display text-4xl font-bold text-link/80 tabular-nums">{index + 1}</span>
+              <h3 className="mt-3 text-xl font-semibold text-heading">{step.title}</h3>
               <p className="mt-2 leading-relaxed text-ink/75">{step.body}</p>
             </li>
           ))}
@@ -177,9 +178,9 @@ function Safety() {
     { title: 'Problems get looked at', body: 'Anyone can report a tutor. We investigate, and we suspend accounts that break the rules.' },
   ]
   return (
-    <section className="bg-white py-20 md:py-28">
+    <section className="bg-surface py-20 md:py-28">
       <div className="mx-auto grid max-w-6xl gap-12 px-4 md:grid-cols-[1fr_1.4fr]">
-        <h2 className="text-4xl font-bold leading-tight tracking-[-0.02em] text-brand-navy md:text-5xl">
+        <h2 className="text-4xl font-bold leading-tight tracking-[-0.02em] text-heading md:text-5xl">
           Built with younger learners in mind
         </h2>
         <dl className="space-y-8">
@@ -187,7 +188,7 @@ function Safety() {
             <div key={point.title} className="flex gap-4">
               <Spark className="mt-1 h-5 w-5 shrink-0 text-brand-gold" />
               <div>
-                <dt className="text-xl font-semibold text-brand-navy">{point.title}</dt>
+                <dt className="text-xl font-semibold text-heading">{point.title}</dt>
                 <dd className="mt-1 leading-relaxed text-ink/75">{point.body}</dd>
               </div>
             </div>
@@ -214,7 +215,7 @@ function TutorInvite() {
         </div>
         <Link
           to="/register?as=tutor"
-          className="shrink-0 rounded-full bg-brand-gold px-7 py-3.5 font-semibold text-brand-navy transition hover:bg-white focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/40"
+          className="shrink-0 rounded-full bg-brand-gold px-7 py-3.5 font-semibold text-[#043386] transition hover:bg-[#ffd36a] focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/40"
         >
           Apply to tutor
         </Link>
@@ -232,6 +233,26 @@ export function HomePage() {
       <HowItWorks />
       <Safety />
       {!user && <TutorInvite />}
+      <Footer />
     </>
+  )
+}
+
+/** Only the landing page has a footer; app pages end with their content. */
+function Footer() {
+  return (
+    <footer className="border-t border-slate-200 bg-surface">
+      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+        <p>Brights is a Phanda Technologies product.</p>
+        <ThemeSwitch compact />
+        <p>
+          Photo by{' '}
+          <a href="https://unsplash.com/@silverkblack" className="underline hover:text-slate-700" target="_blank" rel="noreferrer">
+            Vitaly Gariev
+          </a>{' '}
+          on Unsplash
+        </p>
+      </div>
+    </footer>
   )
 }

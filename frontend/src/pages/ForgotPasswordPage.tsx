@@ -27,7 +27,7 @@ export function ForgotPasswordPage() {
   }
 
   return (
-    <AuthCard title="Reset your password" subtitle={<Link to="/login" className="font-medium text-brand-blue hover:underline">Back to log in</Link>}>
+    <AuthCard title="Reset your password" subtitle={<Link to="/login" className="font-medium text-link hover:underline">Back to log in</Link>}>
       {sent ? (
         <p role="status" className="leading-relaxed text-slate-700">
           If an account exists for <strong>{email}</strong>, we've emailed a link to reset your password. It works for 3 days.

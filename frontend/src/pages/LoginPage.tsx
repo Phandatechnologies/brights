@@ -3,13 +3,15 @@ import { Link, useLocation, useNavigate } from 'react-router'
 import { ApiError } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
 import { FormAlert, PasswordField, SubmitButton, TextField } from '../components/Form'
+import { homeFor } from '../lib/home'
 import { AuthCard } from './AuthCard'
 
 export function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const returnTo = (location.state as { from?: string } | null)?.from ?? '/dashboard'
+  // Set when the user was sent here from a page that needs login; they go back there.
+  const returnTo = (location.state as { from?: string } | null)?.from
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -21,8 +23,8 @@ export function LoginPage() {
     setBusy(true)
     setError(null)
     try {
-      await login(email, password)
-      navigate(returnTo, { replace: true })
+      const user = await login(email, password)
+      navigate(returnTo ?? homeFor(user), { replace: true })
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.')
     } finally {
@@ -33,7 +35,7 @@ export function LoginPage() {
   return (
     <AuthCard
       title="Welcome back"
-      subtitle={<>New to Brights? <Link to="/register" className="font-medium text-brand-blue hover:underline">Create an account</Link></>}
+      subtitle={<>New to Brights? <Link to="/register" className="font-medium text-link hover:underline">Create an account</Link></>}
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <FormAlert message={error} />
@@ -43,7 +45,7 @@ export function LoginPage() {
           value={password} onChange={(e) => setPassword(e.target.value)} />
         <SubmitButton busy={busy}>Log in</SubmitButton>
         <p className="text-center text-sm">
-          <Link to="/forgot-password" className="font-medium text-brand-blue hover:underline">Forgot your password?</Link>
+          <Link to="/forgot-password" className="font-medium text-link hover:underline">Forgot your password?</Link>
         </p>
       </form>
     </AuthCard>

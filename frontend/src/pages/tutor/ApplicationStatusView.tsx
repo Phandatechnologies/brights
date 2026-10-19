@@ -58,7 +58,7 @@ export function ApplicationStatusView({ application, onChange }: {
   return (
     <div className="space-y-6">
       <div role="status" className={`rounded-xl border p-6 ${copy?.tone ?? 'border-slate-200'}`}>
-        <p className="font-display text-2xl font-semibold text-brand-navy">{copy?.title ?? application.status_label}</p>
+        <p className="font-display text-2xl font-semibold text-heading">{copy?.title ?? application.status_label}</p>
         <p className="mt-2 leading-relaxed text-slate-700">{copy?.body}</p>
         {submitted && <p className="mt-3 text-sm text-slate-500">Submitted on {submitted}</p>}
         {application.status === 'approved' && (
@@ -67,7 +67,7 @@ export function ApplicationStatusView({ application, onChange }: {
           </Link>
         )}
         {application.reviewer_message && (
-          <div className="mt-4 rounded-lg bg-white/70 p-4">
+          <div className="mt-4 rounded-lg bg-surface/70 p-4">
             <p className="text-sm font-medium text-slate-500">Note from the Brights team</p>
             <p className="mt-1 whitespace-pre-line text-slate-800">{application.reviewer_message}</p>
           </div>
