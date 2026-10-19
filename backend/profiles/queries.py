@@ -9,6 +9,7 @@ from tutors.models import ApplicationSubject
 from tutors.rules import Status, SubjectDecision
 
 from .models import TutorProfile
+from .rules import PhotoStatus
 
 
 def approved_subjects():
@@ -21,7 +22,7 @@ def discoverable_profiles():
       - their account is active (not deactivated),
       - their application is approved (so not pending, rejected or suspended),
       - they have at least one approved subject,
-      - their profile is complete,
+      - their profile is complete, including a photo our team has approved,
       - they're taking new learners (their own on/off switch),
       - no open child-safety report from someone who contacted them is waiting for review.
     """
@@ -38,6 +39,7 @@ def discoverable_profiles():
             user__tutor_application__status=Status.APPROVED,
             hourly_rate__isnull=False,
             accepting_learners=True,
+            photo_status=PhotoStatus.APPROVED,  # a photo is required to be listed
         )
         .exclude(bio="")
         .exclude(whatsapp_number="")

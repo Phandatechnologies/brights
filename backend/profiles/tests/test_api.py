@@ -50,7 +50,8 @@ class ProfileTestCase(APITestCase):
                                               grades=list(grades), decision=decision)
         defaults = dict(bio="I love maths.", hourly_rate=rate, teaches_online=online, teaches_in_person=in_person,
                         area=area if area is not None else (self.centurion if in_person else None),
-                        whatsapp_number="+27821234567")
+                        whatsapp_number="+27821234567",
+                        photo_status="approved")  # listed tutors need an approved photo
         defaults.update(profile)
         return TutorProfile.objects.create(user=user, **defaults)
 
@@ -179,9 +180,21 @@ class OwnProfileTests(ProfileTestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_cannot_approve_own_photo(self):
+        TutorProfile.objects.filter(pk=self.profile.pk).update(photo_status="none")
         self.client.patch(self.url, {"photo_status": "approved"}, format="json")
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.photo_status, "none")
+
+    def test_photo_is_required_to_be_listed(self):
+        body = self.client.patch(self.url, {"bio": "Patient maths tutor.", "whatsapp_number": "082 123 4567"}, format="json").json()
+        self.assertTrue(body["is_listed"])
+        for status, missing in (("none", True), ("rejected", True), ("pending", False)):
+            TutorProfile.objects.filter(pk=self.profile.pk).update(photo_status=status)
+            body = self.client.get(self.url).json()
+            self.assertFalse(body["is_listed"], status)
+            self.assertEqual("A profile photo" in body["missing_fields"], missing, status)
+        self.client.force_authenticate(None)
+        self.assertEqual(self.search(), [])
 
 
 class PhotoTests(ProfileTestCase):
@@ -200,7 +213,8 @@ class PhotoTests(ProfileTestCase):
         self.assertEqual(self.profile.photo_status, "pending")
         self.assertTrue(self.profile.photo.name.endswith(".jpg"))
         self.client.force_authenticate(None)
-        self.assertIsNone(self.client.get(reverse("tutor-detail", args=[self.profile.pk])).json()["photo_url"])
+        # A photo is required to be listed, so while the new one waits for review the tutor is hidden.
+        self.assertEqual(self.client.get(reverse("tutor-detail", args=[self.profile.pk])).status_code, 404)
         self.assertEqual(self.client.get(reverse("tutor-photo", args=[self.profile.pk])).status_code, 404)
 
     def test_approved_photo_is_public(self):

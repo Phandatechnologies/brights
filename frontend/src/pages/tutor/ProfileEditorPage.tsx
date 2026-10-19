@@ -10,9 +10,9 @@ import { SearchSelect } from '../../components/SearchSelect'
 
 const MAX_BIO = 1000
 const PHOTO_COPY: Record<string, string> = {
-  pending: 'Waiting for approval. Learners will see it once our team approves it.',
-  approved: 'Approved and visible on your profile.',
-  rejected: 'Not approved.',
+  pending: "Waiting for approval. You'll appear in search once our team approves it (usually within a day).",
+  approved: 'Approved and showing on your profile.',
+  rejected: 'Not approved. Please upload a different photo.',
 }
 
 type Loaded = { profile: OwnProfile; application: TutorApplication | null; provinces: Province[]; areas: Area[] }
@@ -93,6 +93,7 @@ function ListingBanner({ profile, application }: { profile: OwnProfile; applicat
           </li>
         )}
         {profile.missing_fields.map((item) => <li key={item}>{item}</li>)}
+        {profile.photo_status === 'pending' && <li>Your photo is waiting for approval</li>}
       </ul>
     </div>
   )
@@ -256,12 +257,21 @@ function PhotoSection({ profile, onChange }: { profile: OwnProfile; onChange: (p
         <span className="flex h-28 w-28 items-center justify-center rounded-full bg-brand-navy/10 text-sm text-slate-500">No photo</span>
       )}
       <div className="flex-1">
-        <h2 id="photo-heading" className="font-sans text-lg font-semibold text-heading">Profile photo (optional)</h2>
+        <h2 id="photo-heading" className="font-sans text-lg font-semibold text-heading">Profile photo (required)</h2>
         <p className="mt-1 text-sm text-slate-600">
           {profile.photo_status === 'none'
-            ? 'A clear, friendly photo of your face. Our team approves every photo before it appears.'
+            ? 'Learners see your photo first, and you need one to appear in search. Our team approves every photo.'
             : PHOTO_COPY[profile.photo_status]}
         </p>
+        <ul className="mt-2 list-disc space-y-0.5 pl-5 text-xs text-slate-500">
+          <li>Just you, head and shoulders, facing the camera</li>
+          <li>Good light, no sunglasses, no filters or group photos</li>
+        </ul>
+        {profile.photo_status === 'approved' && (
+          <p className="mt-2 text-xs text-slate-500">
+            Replacing or removing your photo hides you from search until a new photo is approved.
+          </p>
+        )}
         {profile.photo_status === 'rejected' && profile.photo_note && (
           <p className="mt-1 text-sm text-below">Reason: {profile.photo_note}</p>
         )}

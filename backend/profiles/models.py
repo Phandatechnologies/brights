@@ -76,6 +76,9 @@ class TutorProfile(models.Model):
             missing.append("The area you tutor in")
         if not self.whatsapp_number:
             missing.append("Your WhatsApp number")
+        # Required to appear in search. A photo waiting for approval isn't "missing".
+        if self.photo_status in (PhotoStatus.NONE, PhotoStatus.REJECTED):
+            missing.append("A profile photo")
         return missing
 
 

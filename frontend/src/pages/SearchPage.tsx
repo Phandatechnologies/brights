@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router'
+import { useSearchParams } from 'react-router'
 import { profilesApi, type Area, type Province, type SearchPage as SearchResult } from '../api/profiles'
 import { tutorApi, type Subject } from '../api/tutor'
 import { SearchSelect } from '../components/SearchSelect'
-import { TutorAvatar } from '../components/TutorAvatar'
-import { formatRand, lessonModes } from '../lib/format'
+import { TutorCard } from '../components/TutorCard'
 import { GRADES } from '../lib/tutorRules'
 
 const FILTER_KEYS = ['subject', 'grade', 'mode', 'province', 'area', 'min_price', 'max_price', 'sort'] as const
@@ -160,34 +159,10 @@ export function SearchPage() {
             </div>
           )}
 
-          <ul className={`mt-6 space-y-4 transition ${loading ? 'opacity-50' : ''}`}>
+          <ul className={`mt-6 grid gap-4 sm:grid-cols-2 transition ${loading ? 'opacity-50' : ''}`}>
             {result?.results.map((tutor) => (
               <li key={tutor.id}>
-                <Link to={`/tutors/${tutor.id}`}
-                  className="block rounded-xl border border-slate-200 bg-surface p-5 transition hover:border-brand-blue/50 hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40">
-                  <div className="flex gap-4">
-                    <TutorAvatar name={tutor.full_name} photoUrl={tutor.photo_url} />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-baseline justify-between gap-x-4">
-                        <h2 className="font-sans text-lg font-semibold text-heading">{tutor.full_name}</h2>
-                        <p className="font-display text-lg font-semibold text-ink">
-                          {formatRand(tutor.hourly_rate)}<span className="text-sm font-normal text-slate-500"> / hour</span>
-                        </p>
-                      </div>
-                      <p className="text-sm text-slate-600">
-                        {lessonModes(tutor.teaches_online, tutor.teaches_in_person)}
-                        {tutor.area && tutor.teaches_in_person && `, ${tutor.area.name}`}
-                      </p>
-                      <p className="mt-1 text-sm font-medium text-pass">{tutor.verification}</p>
-                      <ul className="mt-3 flex flex-wrap gap-2">
-                        {tutor.subjects.map((s) => (
-                          <li key={s.id} className="rounded-full bg-chalk px-3 py-1 text-sm text-slate-700">{s.name}</li>
-                        ))}
-                      </ul>
-                      <p className="mt-3 line-clamp-2 text-slate-600">{tutor.bio}</p>
-                    </div>
-                  </div>
-                </Link>
+                <TutorCard tutor={tutor} />
               </li>
             ))}
           </ul>

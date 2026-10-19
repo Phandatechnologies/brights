@@ -218,9 +218,9 @@ function Checklist({ profile, approved }: { profile: OwnProfile; approved: boole
     { text: 'Your WhatsApp number', done: !missing.has('Your WhatsApp number'), action: fix },
   ]
 
-  // Photo is optional, but say where it stands.
-  if (profile.photo_status === 'none') items.push({ text: 'A profile photo (optional)', done: false, action: { label: 'Add', to: '/tutor/profile' } })
-  if (profile.photo_status === 'pending') items.push({ text: 'Profile photo', done: false, note: 'Waiting for our team to approve it.' })
+  // A photo is required to appear in search; say where it stands.
+  if (profile.photo_status === 'none') items.push({ text: 'A profile photo', done: false, action: { label: 'Add', to: '/tutor/profile' } })
+  if (profile.photo_status === 'pending') items.push({ text: 'Profile photo', done: false, note: "Waiting for our team to approve it. You'll appear in search once it's approved." })
   if (profile.photo_status === 'rejected') items.push({ text: 'Profile photo', done: false, note: profile.photo_note || 'Not approved. Please upload a different photo.', action: { label: 'Replace', to: '/tutor/profile' } })
   if (profile.photo_status === 'approved') items.push({ text: 'Profile photo', done: true })
 

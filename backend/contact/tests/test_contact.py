@@ -36,7 +36,7 @@ class ContactTestCase(APITestCase):
         ApplicationSubject.objects.create(application=app, subject=self.maths, matric_mark=80, grades=[10, 11, 12],
                                           decision="approved")
         return TutorProfile.objects.create(user=user, bio="Maths tutor", hourly_rate=200, teaches_online=True,
-                                           whatsapp_number=number)
+                                           whatsapp_number=number, photo_status="approved")
 
     def contact(self, user, tutor=None, **data):
         self.client.force_authenticate(user)

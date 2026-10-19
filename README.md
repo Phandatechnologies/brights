@@ -43,6 +43,16 @@ npm run dev                  # http://localhost:5173
 
 In development, Vite forwards `/api/*` requests to Django on port 8000, so run both servers at the same time.
 
+### Try it on your phone
+
+With your phone on the same Wi-Fi (or with the laptop on your phone's hotspot), run this from the `brights` folder:
+
+```powershell
+.\phone-dev.ps1
+```
+
+It finds the laptop's current network address, opens both servers with that address allowed, and prints the link to open on your phone. Close the two server windows to stop.
+
 ## Before every release
 
 ```powershell

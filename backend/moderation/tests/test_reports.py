@@ -34,7 +34,7 @@ class ReportTestCase(APITestCase):
         ApplicationSubject.objects.create(application=app, subject=Subject.objects.get(name="Mathematics"),
                                           matric_mark=80, grades=[10], decision="approved")
         self.tutor = TutorProfile.objects.create(user=tutor_user, bio="Maths", hourly_rate=200, teaches_online=True,
-                                                 whatsapp_number="+27821234567")
+                                                 whatsapp_number="+27821234567", photo_status="approved")
         self.parent = make_user("parent@example.com")
         self.admin = User.objects.create_superuser(email="admin@example.com", password="Admin-Pass-91", first_name="Ada",
                                                    last_name="Admin", date_of_birth=dob_for_age(40))
@@ -90,7 +90,7 @@ class SubmitTests(ReportTestCase):
             ApplicationSubject.objects.create(application=app, subject=Subject.objects.get(name="Mathematics"),
                                               matric_mark=80, grades=[10], decision="approved")
             profile = TutorProfile.objects.create(user=other, bio="x", hourly_rate=100, teaches_online=True,
-                                                  whatsapp_number="+27821234500")
+                                                  whatsapp_number="+27821234500", photo_status="approved")
             self.assertEqual(self.report(tutor=profile).status_code, 201)
         self.assertEqual(self.report().status_code, 429)
 

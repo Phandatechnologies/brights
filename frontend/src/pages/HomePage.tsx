@@ -1,5 +1,7 @@
-import { Link } from 'react-router'
+import { Link, Navigate } from 'react-router'
+import { FullPageSpinner } from '../components/FullPageSpinner'
 import { ThemeSwitch } from '../components/ThemeSwitch'
+import { homeFor } from '../lib/home'
 import { useAuth } from '../auth/AuthContext'
 import { Spark } from '../components/Spark'
 
@@ -21,7 +23,7 @@ const LEARNER_STEPS = [
   { title: 'Agree on the details', body: "You and the tutor arrange times and payment directly. Brights doesn't handle payments." },
 ]
 
-function Hero({ signedIn }: { signedIn: boolean }) {
+function Hero() {
   return (
     <section className="relative isolate overflow-hidden bg-chalk">
       {/* On phones the photo sits above the text; from md up it fills a right-hand panel. */}
@@ -61,29 +63,18 @@ function Hero({ signedIn }: { signedIn: boolean }) {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-            {signedIn ? (
-              <Link
-                to="/dashboard"
-                className="rounded-full bg-brand-navy px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand-navy/20 transition hover:bg-brand-blue focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-blue/30"
-              >
-                Go to your dashboard
-              </Link>
-            ) : (
-              <>
-                <Link
-                  to="/tutors"
-                  className="rounded-full bg-brand-navy px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand-navy/20 transition hover:bg-brand-blue focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-blue/30"
-                >
-                  Find a tutor
-                </Link>
-                <Link
-                  to="/register?as=tutor"
-                  className="font-semibold text-heading underline decoration-brand-gold decoration-[3px] underline-offset-[6px] transition hover:decoration-brand-navy"
-                >
-                  I want to tutor
-                </Link>
-              </>
-            )}
+            <Link
+              to="/tutors"
+              className="rounded-full bg-brand-navy px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand-navy/20 transition hover:bg-brand-blue focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-blue/30"
+            >
+              Find a tutor
+            </Link>
+            <Link
+              to="/register?as=tutor"
+              className="font-semibold text-heading underline decoration-brand-gold decoration-[3px] underline-offset-[6px] transition hover:decoration-brand-navy"
+            >
+              I want to tutor
+            </Link>
           </div>
         </div>
       </div>
@@ -225,14 +216,17 @@ function TutorInvite() {
 }
 
 export function HomePage() {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
+  // The landing page is only for visitors. Logged-in people go straight to their own home.
+  if (loading) return <FullPageSpinner />
+  if (user) return <Navigate to={homeFor(user)} replace />
   return (
     <>
-      <Hero signedIn={Boolean(user)} />
+      <Hero />
       <Verification />
       <HowItWorks />
       <Safety />
-      {!user && <TutorInvite />}
+      <TutorInvite />
       <Footer />
     </>
   )
