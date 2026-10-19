@@ -27,3 +27,9 @@ frontend/dist/
 .idea/
 Thumbs.db
 .DS_Store
+
+# Keys and passwords saved in notes: keep them in a password manager, never in the project
+*[Kk]ey*.txt
+*[Ss]ecret*
+*[Pp]assword*
+*credentials*

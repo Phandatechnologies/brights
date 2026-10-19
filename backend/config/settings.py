@@ -47,6 +47,15 @@ ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS")
 # In development this is the Vite dev server, e.g. http://localhost:5173
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 
+# On Render, the service's own address is provided automatically (e.g. brights-ab12.onrender.com),
+# so it doesn't have to be typed in by hand. A custom domain still goes in the two settings above.
+RENDER_EXTERNAL_HOSTNAME = env("RENDER_EXTERNAL_HOSTNAME", "")
+RENDER_EXTERNAL_URL = env("RENDER_EXTERNAL_URL", "")
+if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+if RENDER_EXTERNAL_URL and RENDER_EXTERNAL_URL not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append(RENDER_EXTERNAL_URL)
+
 # The Django admin lives at this path. Changing it from "admin/" in production
 # cuts down automated login attempts (it is not a substitute for strong passwords).
 ADMIN_URL = env("DJANGO_ADMIN_URL", "admin/").strip("/") + "/"
@@ -289,8 +298,9 @@ EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", default=True)
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", "Brights <no-reply@brights.local>")
 
 # Used to build links in emails.
-FRONTEND_URL = env("FRONTEND_URL", "http://localhost:5173")
-BACKEND_URL = env("BACKEND_URL", "http://localhost:8000")
+# Used to build links in emails. On Render they default to the service's own address.
+FRONTEND_URL = env("FRONTEND_URL") or RENDER_EXTERNAL_URL or "http://localhost:5173"
+BACKEND_URL = env("BACKEND_URL") or RENDER_EXTERNAL_URL or "http://localhost:8000"
 
 # Who is emailed immediately about urgent (child-safety) reports. Comma-separated.
 # If empty, all active superusers are emailed.

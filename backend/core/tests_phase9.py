@@ -6,7 +6,7 @@ from unittest import mock
 
 from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, override_settings
+from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from PIL import Image
@@ -154,3 +154,35 @@ class StaffDocumentPermissionTests(TestCase):
         self.client.force_login(staff)
         response = self.client.get(reverse("staff-document-download", args=[1]))
         self.assertEqual(response.status_code, 403)
+
+
+class RenderAddressTests(SimpleTestCase):
+    """On Render, the service's own address is allowed without typing it into settings."""
+
+    def settings_from_env(self, **env):
+        import json
+        import os
+        import subprocess
+        import sys
+
+        code = ("import json, django; from django.conf import settings; django.setup(); "
+                "print(json.dumps([settings.ALLOWED_HOSTS, settings.CSRF_TRUSTED_ORIGINS, settings.FRONTEND_URL]))")
+        # Explicit empty values stop backend/.env from filling these in (it never overrides set variables).
+        blank = {k: "" for k in ("DJANGO_ALLOWED_HOSTS", "DJANGO_CSRF_TRUSTED_ORIGINS", "FRONTEND_URL", "BACKEND_URL",
+                                 "RENDER_EXTERNAL_HOSTNAME", "RENDER_EXTERNAL_URL")}
+        full_env = {**os.environ, "DJANGO_SETTINGS_MODULE": "config.settings", **blank, **env}
+        out = subprocess.run([sys.executable, "-c", code], env=full_env, capture_output=True, text=True, check=True)
+        return json.loads(out.stdout.strip().splitlines()[-1])
+
+    def test_render_address_is_allowed_automatically(self):
+        hosts, origins, frontend = self.settings_from_env(
+            RENDER_EXTERNAL_HOSTNAME="brights-ab12.onrender.com", RENDER_EXTERNAL_URL="https://brights-ab12.onrender.com")
+        self.assertIn("brights-ab12.onrender.com", hosts)
+        self.assertIn("https://brights-ab12.onrender.com", origins)
+        self.assertEqual(frontend, "https://brights-ab12.onrender.com")
+
+    def test_without_render_nothing_extra_is_allowed(self):
+        hosts, origins, frontend = self.settings_from_env(DJANGO_ALLOWED_HOSTS="example.com")
+        self.assertEqual(hosts, ["example.com"])
+        self.assertEqual(origins, [])
+        self.assertEqual(frontend, "http://localhost:5173")

@@ -15,14 +15,8 @@ services:
         generateValue: true    # Render creates a strong random key
       - key: DJANGO_DEBUG
         value: "False"
-      - key: DJANGO_ALLOWED_HOSTS
-        sync: false            # e.g. brights.onrender.com
-      - key: DJANGO_CSRF_TRUSTED_ORIGINS
-        sync: false            # e.g. https://brights.onrender.com
-      - key: FRONTEND_URL
-        sync: false            # e.g. https://brights.onrender.com
-      - key: BACKEND_URL
-        sync: false            # same as FRONTEND_URL (one service)
+      # The service's own address (xxx.onrender.com) is picked up automatically from Render.
+      # Add DJANGO_ALLOWED_HOSTS / DJANGO_CSRF_TRUSTED_ORIGINS / FRONTEND_URL only for a custom domain.
       - key: DJANGO_ADMIN_URL
         sync: false            # a hard-to-guess path, e.g. staff-7f3k9/
       - key: TRUSTED_PROXY_COUNT
