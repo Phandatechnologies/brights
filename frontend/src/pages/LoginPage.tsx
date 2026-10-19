@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router'
 import { ApiError } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
 import { FormAlert, PasswordField, SubmitButton, TextField } from '../components/Form'
-import { homeFor } from '../lib/home'
+import { afterLogin } from '../lib/home'
 import { AuthCard } from './AuthCard'
 
 export function LoginPage() {
@@ -24,7 +24,7 @@ export function LoginPage() {
     setError(null)
     try {
       const user = await login(email, password)
-      navigate(returnTo ?? homeFor(user), { replace: true })
+      navigate(afterLogin(user, returnTo), { replace: true })
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.')
     } finally {
