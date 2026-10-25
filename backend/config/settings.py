@@ -295,6 +295,8 @@ EMAIL_PORT = int(env("EMAIL_PORT", "587"))
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", default=True)
+# Give up on a mail server after this many seconds, so a slow or blocked one can't freeze a request.
+EMAIL_TIMEOUT = int(env("EMAIL_TIMEOUT", "10"))
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", "Brights <no-reply@brights.local>")
 
 # Used to build links in emails.

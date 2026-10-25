@@ -87,6 +87,8 @@ not possible yet, any S3-compatible storage works with the same `S3_*` settings.
 
 ## 4. Email: Brevo
 
+Render's free plan blocks the usual email ports (25, 465 and 587) since September 2025, so `render.yaml` sends through Brevo's port **2525** instead. On a paid server or another host, 587 works too.
+
 1. Sign up at brevo.com. Add and verify the **sender** address you'll send from
    (ideally on your own domain; until then a verified personal address works for a pilot).
 2. In **SMTP & API**, create an SMTP key. Note:

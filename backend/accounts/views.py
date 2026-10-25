@@ -136,8 +136,9 @@ class ResendVerificationView(APIView):
     throttle_scope = "auth"
 
     def post(self, request):
-        if not request.user.email_verified:
-            send_verification_email(request.user)
+        if not request.user.email_verified and not send_verification_email(request.user):
+            return Response({"detail": "We couldn't send the email just now. Please try again in a few minutes."},
+                            status=status.HTTP_503_SERVICE_UNAVAILABLE)
         return Response({"sent": True})
 
 

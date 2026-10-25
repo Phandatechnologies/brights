@@ -2,7 +2,7 @@
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
+from core.mail import send_email
 from django.urls import reverse
 
 
@@ -19,7 +19,7 @@ def notify_admins_urgent(report):
     if not recipients:
         return
     link = settings.BACKEND_URL.rstrip("/") + reverse("admin:moderation_report_review", args=[report.pk])
-    send_mail(
+    send_email(
         f"URGENT: child-safety report #{report.pk}",
         "A child-safety report was submitted. "
         + ("The tutor has been hidden from search until it is reviewed.\n\n" if report.holds_tutor
@@ -33,7 +33,7 @@ def notify_admins_urgent(report):
 
 def notify_reporter_received(report):
     if report.reporter:
-        send_mail(
+        send_email(
             "We received your report",
             f"Hi {report.reporter.first_name},\n\nThank you for telling us. Our team will review your report "
             "and take action if needed. For your privacy and the tutor's, we won't share the details of what "
@@ -45,7 +45,7 @@ def notify_reporter_received(report):
 
 def notify_reporter_closed(report):
     if report.reporter:
-        send_mail(
+        send_email(
             "We've reviewed your report",
             f"Hi {report.reporter.first_name},\n\nOur team has finished reviewing your report. Thank you for "
             "helping keep Brights safe.\n\nThe Brights team",
@@ -55,7 +55,7 @@ def notify_reporter_closed(report):
 
 def notify_tutor_warning(report, message):
     user = report.tutor.user
-    send_mail(
+    send_email(
         "A warning about your Brights tutor account",
         f"Hi {user.first_name},\n\nOur team has reviewed a concern about your conduct on Brights.\n\n{message}\n\n"
         "Further concerns may lead to your account being suspended.\n\nThe Brights team",

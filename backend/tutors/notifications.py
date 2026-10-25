@@ -5,7 +5,7 @@ In development, EMAIL_BACKEND prints emails in the runserver terminal.
 """
 
 from django.conf import settings
-from django.core.mail import send_mail
+from core.mail import send_email
 
 from .rules import Status
 
@@ -36,4 +36,4 @@ def notify_status_change(application):
         f"Log in to see the details and any note from our team:\n{link}\n\n"
         "The Brights team"
     )
-    send_mail(SUBJECTS[status], body, None, [user.email], fail_silently=False)
+    send_email(SUBJECTS[status], body, None, [user.email])
