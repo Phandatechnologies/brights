@@ -34,7 +34,7 @@ export function VerifyEmailBanner() {
   }
 
   return (
-    <div role="status" className="mt-6 rounded-xl border border-brand-gold/60 bg-brand-gold/10 p-5">
+    <div role="status" className="mt-6 rounded-xl border border-brand-sun/60 bg-brand-sun/10 p-5">
       <p className="font-semibold text-heading">Please confirm your email</p>
       <p className="mt-1 text-slate-700">
         We sent a link to <strong>{user.email}</strong>. You need to confirm it before you can contact tutors,

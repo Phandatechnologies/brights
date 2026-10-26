@@ -7,5 +7,5 @@
   document.documentElement.classList.toggle('dark', dark)
   // Browser bar colour on phones (the meta tags come before this script in <head>).
   var metas = document.querySelectorAll('meta[name="theme-color"]')
-  for (var i = 0; i < metas.length; i++) metas[i].setAttribute('content', dark ? '#0b1120' : '#ffffff')
+  for (var i = 0; i < metas.length; i++) metas[i].setAttribute('content', dark ? '#0b1512' : '#ffffff')
 })()

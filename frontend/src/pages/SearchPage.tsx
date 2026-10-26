@@ -11,7 +11,7 @@ const FILTER_KEYS = ['subject', 'grade', 'mode', 'province', 'area', 'min_price'
 type Loaded = { key: string; data: SearchResult } | { key: string; error: string }
 
 const selectClass =
-  'w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5 text-slate-900 outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20'
+  'w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5 text-slate-900 outline-none focus:border-brand focus:ring-2 focus:ring-brand/20'
 
 /** /tutors — public tutor search. Filters live in the URL so searches can be shared. */
 export function SearchPage() {
@@ -76,7 +76,7 @@ export function SearchPage() {
           <details className="rounded-xl border border-slate-200 bg-surface p-4" open={filtersOpen}
             onToggle={(e) => setFiltersOpen(e.currentTarget.open)}>
             <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-heading">
-              <span>Filters{hasFilters && <span className="ml-2 rounded-full bg-brand-navy px-2 py-0.5 text-xs text-white">On</span>}</span>
+              <span>Filters{hasFilters && <span className="ml-2 rounded-full bg-brand-deep px-2 py-0.5 text-xs text-white">On</span>}</span>
               <span className="text-sm font-normal text-slate-500">{filtersOpen ? 'Hide' : 'Show'}</span>
             </summary>
             <div className="mt-4 space-y-4">
@@ -98,7 +98,7 @@ export function SearchPage() {
                     const active = (params.get('mode') ?? '') === value
                     return (
                       <button key={value} type="button" aria-pressed={active} onClick={() => setFilter('mode', value)}
-                        className={`px-2 py-2 font-medium transition ${active ? 'bg-brand-navy text-white' : 'bg-surface text-slate-700 hover:bg-slate-50'}`}>
+                        className={`px-2 py-2 font-medium transition ${active ? 'bg-brand-deep text-white' : 'bg-surface text-slate-700 hover:bg-slate-50'}`}>
                         {label}
                       </button>
                     )
@@ -203,6 +203,6 @@ function PriceInput({ label, value, onCommit, placeholder }: {
       onChange={(e) => setDraft(e.target.value.replace(/[^0-9]/g, '').slice(0, 5))}
       onBlur={() => draft !== value && onCommit(draft)}
       onKeyDown={(e) => { if (e.key === 'Enter') onCommit(draft) }}
-      className="w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5 tabular-nums outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
+      className="w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5 tabular-nums outline-none focus:border-brand focus:ring-2 focus:ring-brand/20" />
   )
 }

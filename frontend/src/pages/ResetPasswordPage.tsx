@@ -39,7 +39,7 @@ export function ResetPasswordPage() {
       {done ? (
         <div role="status" className="space-y-4">
           <p className="text-slate-700">Your password has been changed, and you've been logged out on other devices.</p>
-          <Link to="/login" className="inline-block rounded-full bg-brand-navy px-6 py-3 font-semibold text-white hover:bg-brand-blue">Log in</Link>
+          <Link to="/login" className="inline-block rounded-full bg-brand-deep px-6 py-3 font-semibold text-white hover:bg-brand">Log in</Link>
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-4" noValidate>

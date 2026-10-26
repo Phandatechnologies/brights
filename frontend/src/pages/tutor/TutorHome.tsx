@@ -14,7 +14,7 @@ type Loaded = {
 
 const card = 'rounded-2xl border border-slate-200 bg-surface p-5 shadow-sm sm:p-6'
 const primaryButton =
-  'inline-block rounded-full bg-brand-navy px-6 py-3 font-semibold text-white transition hover:bg-brand-blue focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-blue/30'
+  'inline-block rounded-full bg-brand-deep px-6 py-3 font-semibold text-white transition hover:bg-brand focus:outline-none focus-visible:ring-4 focus-visible:ring-brand/30'
 
 /** The tutor's Home: status, this month's numbers, what to fix, and sharing. */
 export function TutorHome({ user }: { user: User }) {
@@ -123,7 +123,7 @@ function ListingSwitch({ profile, onChange }: { profile: OwnProfile; onChange: (
     ? { dot: 'bg-pass', title: 'Live in search', text: 'Learners and parents can find and contact you.' }
     : !on
       ? { dot: 'bg-slate-400', title: 'Paused', text: "You're hidden from search and new learners can't contact you. Your profile and numbers are kept." }
-      : { dot: 'bg-brand-gold', title: 'Not in search yet', text: 'Finish the steps below so learners can find you.' }
+      : { dot: 'bg-brand-sun', title: 'Not in search yet', text: 'Finish the steps below so learners can find you.' }
 
   return (
     <div className={card}>
@@ -136,7 +136,7 @@ function ListingSwitch({ profile, onChange }: { profile: OwnProfile; onChange: (
           <p className="mt-1 text-sm text-slate-600">{status.text}</p>
         </div>
         <button type="button" role="switch" aria-checked={on} aria-label="Taking new learners" onClick={toggle} disabled={busy}
-          className={`relative mt-0.5 h-8 w-14 shrink-0 rounded-full transition focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-blue/30 disabled:opacity-60 ${on ? 'bg-brand-blue' : 'bg-slate-300'}`}>
+          className={`relative mt-0.5 h-8 w-14 shrink-0 rounded-full transition focus:outline-none focus-visible:ring-4 focus-visible:ring-brand/30 disabled:opacity-60 ${on ? 'bg-brand' : 'bg-slate-300'}`}>
           <span className={`absolute top-1 h-6 w-6 rounded-full bg-[#ffffff] shadow transition-all ${on ? 'left-7' : 'left-1'}`} />
         </button>
       </div>
@@ -249,7 +249,7 @@ function Checklist({ profile, approved }: { profile: OwnProfile; approved: boole
         {items.map((item) => (
           <li key={item.text} className="flex items-center gap-3 py-2.5">
             <span aria-hidden="true"
-              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${item.done ? 'bg-brand-teal/20 text-pass' : 'border-2 border-slate-300'}`}>
+              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${item.done ? 'bg-brand-soft/20 text-pass' : 'border-2 border-slate-300'}`}>
               {item.done ? '✓' : ''}
             </span>
             <div className="min-w-0 flex-1">

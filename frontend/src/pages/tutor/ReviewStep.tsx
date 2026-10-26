@@ -68,7 +68,7 @@ export function ReviewStep({ application, onSubmitted, onBack, onEditStep }: Pro
           </ul>
         </div>
       ) : (
-        <p className="rounded-xl border border-brand-teal/50 bg-brand-teal/10 p-5 text-slate-800">
+        <p className="rounded-xl border border-brand-soft/50 bg-brand-soft/10 p-5 text-slate-800">
           Everything's in place. Check the details below, then submit for review.
         </p>
       )}

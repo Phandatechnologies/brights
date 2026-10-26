@@ -7,7 +7,7 @@ export function TutorCard({ tutor }: { tutor: PublicTutor }) {
   const place = tutor.teaches_in_person && tutor.area ? tutor.area.name : null
   return (
     <Link to={`/tutors/${tutor.id}`}
-      className="group block h-full overflow-hidden rounded-2xl border border-slate-200 bg-surface transition hover:border-brand-blue/50 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40">
+      className="group block h-full overflow-hidden rounded-2xl border border-slate-200 bg-surface transition hover:border-brand/50 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40">
       <div className="relative aspect-[4/3] bg-chalk">
         {tutor.photo_url ? (
           // Faces sit in the upper part of most portraits, so crop from just above centre.
@@ -36,7 +36,7 @@ export function TutorCard({ tutor }: { tutor: PublicTutor }) {
 function Initials({ name }: { name: string }) {
   const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]?.toUpperCase()).join('')
   return (
-    <div aria-hidden="true" className="flex h-full w-full items-center justify-center bg-brand-navy font-display text-6xl font-bold text-white/90">
+    <div aria-hidden="true" className="flex h-full w-full items-center justify-center bg-brand-deep font-display text-6xl font-bold text-white/90">
       {initials}
     </div>
   )

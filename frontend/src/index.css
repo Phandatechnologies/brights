@@ -7,26 +7,28 @@
 
 /*
  * Brights design tokens.
- * Brand colours are sampled from the logo. Tailwind turns each --color-* into
- * utilities (bg-brand-navy, text-brand-teal…) and each --font-* into font-display / font-sans.
+ * Brand colours come from the "Bright b" logo (public/brights-logo.svg). Tailwind turns each
+ * --color-* into utilities (bg-brand-deep, text-brand-sun…) and each --font-* into font-display / font-sans.
+ * The names describe the job, not the hue, so a future rebrand only changes the values here.
  */
 @theme {
-  --color-brand-navy: #043386;
-  --color-brand-blue: #004cde;
-  --color-brand-teal: #11c8bf;
-  --color-brand-gold: #feb410;
-  --color-brand-orange: #fe6d06;
+  --color-brand-deep: #0e6b4f;  /* logo green: main buttons and bold sections (white text 6.5:1) */
+  --color-brand: #11805a;       /* lighter green: secondary buttons, focus rings, borders (white text 4.9:1) */
+  --color-brand-soft: #2bb98a;  /* mint: success tints and borders */
+  --color-brand-sun: #ffc53d;   /* the light in the logo: highlights and the spark */
+  --color-brand-warm: #f2783c;  /* warm tint for "needs attention" */
 
-  --color-ink: #17213a;      /* body text: navy-tinted, softer than black */
-  --color-chalk: #f3f6f9;    /* cool off-white that matches the hero photo's wall */
-  --color-pass: #0b7f78;     /* darker teal for text on white (readable contrast) */
+  --color-ink: #14241e;      /* body text: green-tinted, softer than black */
+  --color-chalk: #f2f6f3;    /* soft green-white for light sections */
+  --color-pass: #0a7550;     /* darker green for success text on white (5.7:1) */
   --color-below: #b54708;    /* darker orange for text on white */
 
   /* Colours by job. Components use these, so dark mode only has to change the values. */
   --color-page: #ffffff;     /* page background */
   --color-surface: #ffffff;  /* cards, inputs, bars */
-  --color-heading: #043386;  /* headings and strong brand text */
-  --color-link: #004cde;     /* links and text buttons */
+  --color-heading: #0a3d2e;  /* headings and strong brand text */
+  --color-link: #0b7a57;     /* links and text buttons (5.3:1 on white) */
+  --color-slate-500: #5b6b65; /* small grey text: green-grey, readable on the light green panels (5.1:1) */
 
   --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
@@ -46,27 +48,27 @@ body {
 .dark {
   color-scheme: dark; /* native date pickers, selects and scrollbars go dark too */
 
-  --color-page: #0b1120;
-  --color-surface: #121b2e;
-  --color-chalk: #1a2438;
-  --color-ink: #e5eaf2;
-  --color-heading: #c9d9ff;
-  --color-link: #8fb3ff;
-  --color-pass: #4fd8cf;
+  --color-page: #0b1512;
+  --color-surface: #12201b;
+  --color-chalk: #182a23;
+  --color-ink: #e3ece7;
+  --color-heading: #bfe9d6;
+  --color-link: #7fe0b8;
+  --color-pass: #6fdcb4;
   --color-below: #ffa36b;
-  --color-brand-navy: #2a5bd7; /* buttons and bold sections: white text still 5.9:1 */
-  --color-brand-blue: #3d6ef0;
+  --color-brand-deep: #0f6649; /* buttons and bold sections: white text 7:1, 80% white 5:1 */
+  --color-brand: #148059;
 
-  --color-slate-50: #162036;
-  --color-slate-100: #1c2740;
-  --color-slate-200: #2a374d;
-  --color-slate-300: #3b4a63;
-  --color-slate-400: #6b7a91;
-  --color-slate-500: #8f9cb2;
-  --color-slate-600: #aab6c6;
-  --color-slate-700: #cbd5e1;
-  --color-slate-800: #e2e8f0;
-  --color-slate-900: #f1f5f9;
+  --color-slate-50: #14211c;
+  --color-slate-100: #1a2a24;
+  --color-slate-200: #263a32;
+  --color-slate-300: #354b42;
+  --color-slate-400: #64796f;
+  --color-slate-500: #8a9c94;
+  --color-slate-600: #a8b8b0;
+  --color-slate-700: #c9d5cf;
+  --color-slate-800: #e0e8e4;
+  --color-slate-900: #f0f5f2;
 
   --color-red-50: #3a1519;
   --color-red-200: #6b2228;

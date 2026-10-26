@@ -21,7 +21,7 @@ function apply(choice: ThemeChoice) {
   const dark = choice === 'dark' || (choice === 'system' && darkQuery().matches)
   document.documentElement.classList.toggle('dark', dark)
   // Colour of the phone's browser bar.
-  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', dark ? '#0b1120' : '#ffffff'))
+  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', dark ? '#0b1512' : '#ffffff'))
 }
 
 export function setThemeChoice(choice: ThemeChoice) {

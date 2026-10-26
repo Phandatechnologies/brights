@@ -91,13 +91,13 @@ export function RegisterPage() {
                 <label
                   key={option.value}
                   className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition ${
-                    selected ? 'border-brand-blue bg-brand-blue/5 ring-1 ring-brand-blue' : 'border-slate-300 hover:border-slate-400'
+                    selected ? 'border-brand bg-brand/5 ring-1 ring-brand' : 'border-slate-300 hover:border-slate-400'
                   }`}
                 >
                   <input
                     type="radio" name="account_type" value={option.value} checked={selected}
                     onChange={() => update('account_type', option.value)}
-                    className="mt-1 accent-brand-blue"
+                    className="mt-1 accent-brand"
                   />
                   <span>
                     <span className="block font-medium text-slate-900">{option.title}</span>
@@ -126,7 +126,7 @@ export function RegisterPage() {
           onChange={(e) => update('date_of_birth', e.target.value)} />
 
         {needsGuardian && (
-          <div className="space-y-3 rounded-lg border border-brand-gold/60 bg-brand-gold/10 p-4">
+          <div className="space-y-3 rounded-lg border border-brand-sun/60 bg-brand-sun/10 p-4">
             <p className="text-sm text-slate-800">
               Because you're under 18, a parent or guardian needs to agree to you using Brights.
             </p>
@@ -137,7 +137,7 @@ export function RegisterPage() {
               <input
                 type="checkbox" name="guardian_consent" checked={form.guardian_consent}
                 onChange={(e) => update('guardian_consent', e.target.checked)}
-                className="mt-0.5 accent-brand-blue"
+                className="mt-0.5 accent-brand"
               />
               My parent or guardian has agreed to me creating a Brights account.
             </label>

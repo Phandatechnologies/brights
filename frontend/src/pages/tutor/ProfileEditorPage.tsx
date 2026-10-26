@@ -61,7 +61,7 @@ function Shell({ children }: { children: React.ReactNode }) {
 function ListingBanner({ profile, application }: { profile: OwnProfile; application: TutorApplication | null }) {
   if (profile.is_listed) {
     return (
-      <div role="status" className="rounded-xl border border-brand-teal/50 bg-brand-teal/10 p-5">
+      <div role="status" className="rounded-xl border border-brand-soft/50 bg-brand-soft/10 p-5">
         <p className="font-semibold text-heading">Your profile is live in search</p>
         <p className="mt-1 text-slate-700">Learners and parents can find you for your approved subjects.</p>
         <Link to={`/tutors/${profile.id}`} state={{ preview: true }} className="mt-3 inline-block font-semibold text-link hover:underline">
@@ -149,7 +149,7 @@ function ProfileForm({ loaded, onSaved }: { loaded: Loaded; onSaved: (p: OwnProf
       <PhotoSection profile={profile} onChange={onSaved} />
 
       <form onSubmit={save} className="space-y-6" noValidate>
-        {saved && <p role="status" className="rounded-lg bg-brand-teal/10 px-4 py-3 text-sm font-medium text-pass">Profile saved.</p>}
+        {saved && <p role="status" className="rounded-lg bg-brand-soft/10 px-4 py-3 text-sm font-medium text-pass">Profile saved.</p>}
         <FormAlert message={error} />
 
         <div>
@@ -157,7 +157,7 @@ function ProfileForm({ loaded, onSaved }: { loaded: Loaded; onSaved: (p: OwnProf
           <textarea id="bio" rows={6} value={bio} maxLength={MAX_BIO} onChange={(e) => setBio(e.target.value)}
             aria-describedby="bio-hint"
             placeholder="How you teach, what learners can expect, and anything that makes you a good fit."
-            className="block w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5 leading-relaxed outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
+            className="block w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5 leading-relaxed outline-none focus:border-brand focus:ring-2 focus:ring-brand/20" />
           <p id="bio-hint" className="mt-1 text-right text-xs text-slate-500">{bio.length} / {MAX_BIO}</p>
           <FieldError messages={errors.bio} />
         </div>
@@ -175,8 +175,8 @@ function ProfileForm({ loaded, onSaved }: { loaded: Loaded; onSaved: (p: OwnProf
         <fieldset>
           <legend className="mb-2 text-sm font-medium text-slate-700">How do you teach?</legend>
           <div className="flex flex-wrap gap-6">
-            <label className="flex items-center gap-2"><input type="checkbox" checked={online} onChange={(e) => setOnline(e.target.checked)} className="accent-brand-blue" /> Online</label>
-            <label className="flex items-center gap-2"><input type="checkbox" checked={inPerson} onChange={(e) => setInPerson(e.target.checked)} className="accent-brand-blue" /> In person</label>
+            <label className="flex items-center gap-2"><input type="checkbox" checked={online} onChange={(e) => setOnline(e.target.checked)} className="accent-brand" /> Online</label>
+            <label className="flex items-center gap-2"><input type="checkbox" checked={inPerson} onChange={(e) => setInPerson(e.target.checked)} className="accent-brand" /> In person</label>
           </div>
           <p className="mt-1 text-sm text-slate-500">Online tutors can be found anywhere in South Africa.</p>
         </fieldset>
@@ -207,7 +207,7 @@ function ProfileForm({ loaded, onSaved }: { loaded: Loaded; onSaved: (p: OwnProf
 
         <div className="flex justify-end border-t border-slate-200 pt-6">
           <button type="submit" disabled={busy}
-            className="rounded-full bg-brand-navy px-6 py-3 font-semibold text-white transition hover:bg-brand-blue disabled:opacity-60">
+            className="rounded-full bg-brand-deep px-6 py-3 font-semibold text-white transition hover:bg-brand disabled:opacity-60">
             {busy ? 'Saving…' : 'Save profile'}
           </button>
         </div>
@@ -254,7 +254,7 @@ function PhotoSection({ profile, onChange }: { profile: OwnProfile; onChange: (p
       {profile.photo_url ? (
         <img src={profile.photo_url} alt="Your profile photo" className="h-28 w-28 rounded-full object-cover" />
       ) : (
-        <span className="flex h-28 w-28 items-center justify-center rounded-full bg-brand-navy/10 text-sm text-slate-500">No photo</span>
+        <span className="flex h-28 w-28 items-center justify-center rounded-full bg-brand-deep/10 text-sm text-slate-500">No photo</span>
       )}
       <div className="flex-1">
         <h2 id="photo-heading" className="font-sans text-lg font-semibold text-heading">Profile photo (required)</h2>
@@ -279,7 +279,7 @@ function PhotoSection({ profile, onChange }: { profile: OwnProfile; onChange: (p
           <input ref={input} id="photo-input" type="file" accept="image/jpeg,image/png" className="peer sr-only"
             onChange={(e) => upload(e.target.files?.[0])} disabled={busy} />
           <label htmlFor="photo-input"
-            className={`cursor-pointer rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-heading hover:bg-slate-50 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-blue/40 ${busy ? 'pointer-events-none opacity-60' : ''}`}>
+            className={`cursor-pointer rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-heading hover:bg-slate-50 peer-focus-visible:ring-2 peer-focus-visible:ring-brand/40 ${busy ? 'pointer-events-none opacity-60' : ''}`}>
             {busy ? 'Uploading…' : profile.photo_url ? 'Replace photo' : 'Upload photo'}
           </label>
           {profile.photo_url && (

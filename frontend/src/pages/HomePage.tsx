@@ -52,7 +52,7 @@ function Hero() {
 
       <div className="relative mx-auto flex max-w-6xl px-4 pb-14 pt-8 md:min-h-[min(86vh,760px)] md:items-center md:py-24">
         <div className="relative max-w-xl md:max-w-[26rem] lg:max-w-[34rem]">
-          <Spark className="spark absolute -top-10 right-0 h-12 w-12 text-brand-gold md:-right-14 md:-top-12 md:h-14 md:w-14 lg:-right-20 lg:h-16 lg:w-16" />
+          <Spark className="spark absolute -top-10 right-0 h-12 w-12 text-brand-sun md:-right-14 md:-top-12 md:h-14 md:w-14 lg:-right-20 lg:h-16 lg:w-16" />
 
           <h1 className="text-[2.75rem] font-bold leading-[0.98] tracking-[-0.03em] text-heading sm:text-6xl lg:text-[4.75rem]">
             Find a tutor who's been where you are.
@@ -65,13 +65,13 @@ function Hero() {
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
             <Link
               to="/tutors"
-              className="rounded-full bg-brand-navy px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand-navy/20 transition hover:bg-brand-blue focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-blue/30"
+              className="rounded-full bg-brand-deep px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand-deep/20 transition hover:bg-brand focus:outline-none focus-visible:ring-4 focus-visible:ring-brand/30"
             >
               Find a tutor
             </Link>
             <Link
               to="/register?as=tutor"
-              className="font-semibold text-heading underline decoration-brand-gold decoration-[3px] underline-offset-[6px] transition hover:decoration-brand-navy"
+              className="font-semibold text-heading underline decoration-brand-sun decoration-[3px] underline-offset-[6px] transition hover:decoration-brand-deep"
             >
               I want to tutor
             </Link>
@@ -100,7 +100,7 @@ function ResultsSlip() {
                 <span className="w-12 text-right font-display text-lg font-semibold tabular-nums text-ink">{mark}%</span>
                 <span
                   className={`w-28 rounded-full px-3 py-1 text-center text-sm font-medium ${
-                    ok ? 'bg-brand-teal/15 text-pass' : 'bg-brand-orange/10 text-below'
+                    ok ? 'bg-brand-soft/15 text-pass' : 'bg-brand-warm/10 text-below'
                   }`}
                 >
                   {ok ? 'Can tutor' : 'Below 60%'}
@@ -150,7 +150,7 @@ function HowItWorks() {
         </h2>
         <ol className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {LEARNER_STEPS.map((step, index) => (
-            <li key={step.title} className="border-t-2 border-brand-navy/15 pt-5">
+            <li key={step.title} className="border-t-2 border-brand-deep/15 pt-5">
               <span className="font-display text-4xl font-bold text-link/80 tabular-nums">{index + 1}</span>
               <h3 className="mt-3 text-xl font-semibold text-heading">{step.title}</h3>
               <p className="mt-2 leading-relaxed text-ink/75">{step.body}</p>
@@ -177,7 +177,7 @@ function Safety() {
         <dl className="space-y-8">
           {points.map((point) => (
             <div key={point.title} className="flex gap-4">
-              <Spark className="mt-1 h-5 w-5 shrink-0 text-brand-gold" />
+              <Spark className="mt-1 h-5 w-5 shrink-0 text-brand-sun" />
               <div>
                 <dt className="text-xl font-semibold text-heading">{point.title}</dt>
                 <dd className="mt-1 leading-relaxed text-ink/75">{point.body}</dd>
@@ -192,7 +192,7 @@ function Safety() {
 
 function TutorInvite() {
   return (
-    <section className="relative overflow-hidden bg-brand-navy py-20 text-white md:py-24">
+    <section className="relative overflow-hidden bg-brand-deep py-20 text-white md:py-24">
       <Spark className="absolute -right-10 -top-10 h-56 w-56 text-white/5" />
       <div className="relative mx-auto flex max-w-6xl flex-col items-start gap-8 px-4 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl">
@@ -206,7 +206,7 @@ function TutorInvite() {
         </div>
         <Link
           to="/register?as=tutor"
-          className="shrink-0 rounded-full bg-brand-gold px-7 py-3.5 font-semibold text-[#043386] transition hover:bg-[#ffd36a] focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/40"
+          className="shrink-0 rounded-full bg-brand-sun px-7 py-3.5 font-semibold text-[#0a3d2e] transition hover:bg-[#ffd56e] focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-sun/40"
         >
           Apply to tutor
         </Link>

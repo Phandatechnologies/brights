@@ -21,7 +21,7 @@ export function ApplicationEditor({ application, subjects, onChange }: Props) {
   return (
     <div>
       {application.status === 'more_info' && (
-        <div role="status" className="mb-8 rounded-xl border border-brand-gold/60 bg-brand-gold/10 p-5">
+        <div role="status" className="mb-8 rounded-xl border border-brand-sun/60 bg-brand-sun/10 p-5">
           <p className="font-semibold text-heading">Our team needs more information</p>
           {application.reviewer_message && (
             <p className="mt-2 whitespace-pre-line text-slate-800">{application.reviewer_message}</p>
@@ -43,7 +43,7 @@ export function ApplicationEditor({ application, subjects, onChange }: Props) {
                   aria-current={current ? 'step' : undefined}
                   className="group w-full text-left"
                 >
-                  <span className={`block h-1.5 rounded-full transition ${current || done ? 'bg-brand-navy' : 'bg-slate-200 group-hover:bg-slate-300'}`} />
+                  <span className={`block h-1.5 rounded-full transition ${current || done ? 'bg-brand-deep' : 'bg-slate-200 group-hover:bg-slate-300'}`} />
                   <span className={`mt-2 block text-xs sm:text-sm ${current ? 'font-semibold text-heading' : 'text-slate-500'}`}>
                     <span className="tabular-nums">{index + 1}.</span> <span className="hidden sm:inline">{label}</span>
                   </span>
@@ -82,7 +82,7 @@ export function StepFooter({ onBack, busy, disabled, nextLabel = 'Save and conti
         type={onNext ? 'button' : 'submit'}
         onClick={onNext}
         disabled={busy || disabled}
-        className="rounded-full bg-brand-navy px-6 py-3 font-semibold text-white transition hover:bg-brand-blue focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-blue/30 disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-full bg-brand-deep px-6 py-3 font-semibold text-white transition hover:bg-brand focus:outline-none focus-visible:ring-4 focus-visible:ring-brand/30 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {busy ? 'Saving…' : nextLabel}
       </button>

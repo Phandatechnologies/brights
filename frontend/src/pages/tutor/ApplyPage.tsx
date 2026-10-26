@@ -52,7 +52,7 @@ export function ApplyPage() {
   return (
     <Shell>
       {!application && !user?.email_verified && (
-        <div role="status" className="rounded-xl border border-brand-gold/60 bg-brand-gold/10 p-5">
+        <div role="status" className="rounded-xl border border-brand-sun/60 bg-brand-sun/10 p-5">
           <p className="font-semibold text-heading">Confirm your email to start</p>
           <p className="mt-1 text-slate-700">
             We sent a confirmation link to <strong>{user?.email}</strong>. Open it, then come back here to start your application.

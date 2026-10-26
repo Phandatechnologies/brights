@@ -40,7 +40,7 @@ export function ApplicationSummary({ application }: { application: TutorApplicat
                       {s.matric_mark !== null && <span className="ml-2 tabular-nums text-slate-500">{s.matric_mark}%</span>}
                       {showDecisions && s.decision !== 'pending' && (
                         <span className={`ml-2 inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${
-                          s.decision === 'approved' ? 'bg-brand-teal/15 text-pass' : 'bg-brand-orange/10 text-below'
+                          s.decision === 'approved' ? 'bg-brand-soft/15 text-pass' : 'bg-brand-warm/10 text-below'
                         }`}>
                           {s.decision === 'approved' ? 'Approved' : 'Not approved'}
                         </span>

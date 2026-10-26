@@ -22,7 +22,7 @@ export function SafetyDialog({ open, busy, onConfirm, onCancel }: {
 
   return (
     <dialog ref={ref} onCancel={onCancel} aria-labelledby="safety-title"
-      className="m-auto w-[min(32rem,calc(100%-2rem))] rounded-2xl p-0 backdrop:bg-brand-navy/40">
+      className="m-auto w-[min(32rem,calc(100%-2rem))] rounded-2xl p-0 backdrop:bg-brand-deep/40">
       <div className="p-6 sm:p-7">
         <h2 id="safety-title" className="text-2xl font-bold text-heading">Before you message a tutor</h2>
         <p className="mt-2 text-slate-700">Because you're under 18, please read this first.</p>
@@ -34,7 +34,7 @@ export function SafetyDialog({ open, busy, onConfirm, onCancel }: {
           <li>If anything makes you uncomfortable, <strong>stop replying and tell a trusted adult</strong>. You can also report the tutor to Brights.</li>
         </ul>
         <label className="mt-5 flex items-start gap-2 text-slate-800">
-          <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} className="mt-1 accent-brand-blue" />
+          <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} className="mt-1 accent-brand" />
           I've read this and I'll follow it.
         </label>
         <div className="mt-6 flex flex-wrap justify-end gap-3">
@@ -42,7 +42,7 @@ export function SafetyDialog({ open, busy, onConfirm, onCancel }: {
             Not now
           </button>
           <button type="button" onClick={onConfirm} disabled={!checked || busy}
-            className="rounded-full bg-brand-navy px-6 py-2.5 font-semibold text-white transition hover:bg-brand-blue disabled:cursor-not-allowed disabled:opacity-50">
+            className="rounded-full bg-brand-deep px-6 py-2.5 font-semibold text-white transition hover:bg-brand disabled:cursor-not-allowed disabled:opacity-50">
             {busy ? 'Please wait…' : 'Continue'}
           </button>
         </div>

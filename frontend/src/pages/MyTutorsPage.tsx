@@ -31,7 +31,7 @@ export function MyTutorsPage() {
         <div className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-surface p-8 text-center">
           <p className="font-semibold text-slate-900">No tutors yet</p>
           <p className="mt-1 text-slate-600">When you contact a tutor on WhatsApp, they’ll appear here so you can find them again.</p>
-          <Link to="/tutors" className="mt-5 inline-block rounded-full bg-brand-navy px-6 py-3 font-semibold text-white transition hover:bg-brand-blue">
+          <Link to="/tutors" className="mt-5 inline-block rounded-full bg-brand-deep px-6 py-3 font-semibold text-white transition hover:bg-brand">
             Find a tutor
           </Link>
         </div>

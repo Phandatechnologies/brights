@@ -9,12 +9,12 @@ const COPY: Partial<Record<ApplicationStatus, { title: string; body: string; ton
   pending: {
     title: "We're reviewing your application",
     body: "Our team checks every document by hand. We'll update this page when there's news, so check back here.",
-    tone: 'border-brand-blue/30 bg-brand-blue/5',
+    tone: 'border-brand/30 bg-brand/5',
   },
   approved: {
     title: "You're approved",
     body: 'You can tutor the subjects marked Approved below. Complete your tutor profile so learners and parents can find you in search.',
-    tone: 'border-brand-teal/50 bg-brand-teal/10',
+    tone: 'border-brand-soft/50 bg-brand-soft/10',
   },
   rejected: {
     title: 'Your application was not approved',
@@ -62,7 +62,7 @@ export function ApplicationStatusView({ application, onChange }: {
         <p className="mt-2 leading-relaxed text-slate-700">{copy?.body}</p>
         {submitted && <p className="mt-3 text-sm text-slate-500">Submitted on {submitted}</p>}
         {application.status === 'approved' && (
-          <Link to="/tutor/profile" className="mt-4 inline-block rounded-full bg-brand-navy px-6 py-3 font-semibold text-white transition hover:bg-brand-blue">
+          <Link to="/tutor/profile" className="mt-4 inline-block rounded-full bg-brand-deep px-6 py-3 font-semibold text-white transition hover:bg-brand">
             Edit your profile
           </Link>
         )}
@@ -76,7 +76,7 @@ export function ApplicationStatusView({ application, onChange }: {
           <div className="mt-4">
             {canReapply ? (
               <button type="button" onClick={reapply} disabled={busy}
-                className="rounded-full bg-brand-navy px-6 py-3 font-semibold text-white transition hover:bg-brand-blue disabled:opacity-60">
+                className="rounded-full bg-brand-deep px-6 py-3 font-semibold text-white transition hover:bg-brand disabled:opacity-60">
                 {busy ? 'Starting…' : 'Start a new application'}
               </button>
             ) : (

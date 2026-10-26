@@ -112,7 +112,7 @@ export function SubjectsStep({ application, subjects, onSaved, onBack }: Props) 
                         onChange={(e) => updateRow(index, { mark: e.target.value.replace(/[^0-9]/g, '').slice(0, 3) })}
                         aria-invalid={Boolean(problem)} aria-describedby={problem ? `${fieldId}-error` : undefined}
                         className={`w-full rounded-lg border px-3 py-2.5 pr-8 tabular-nums outline-none focus:ring-2 ${
-                          problem ? 'border-red-400 focus:ring-red-200' : 'border-slate-300 focus:border-brand-blue focus:ring-brand-blue/20'
+                          problem ? 'border-red-400 focus:ring-red-200' : 'border-slate-300 focus:border-brand focus:ring-brand/20'
                         }`} />
                       <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-500">%</span>
                     </div>
@@ -126,7 +126,7 @@ export function SubjectsStep({ application, subjects, onSaved, onBack }: Props) 
                       return (
                         <button key={grade} type="button" aria-pressed={on} onClick={() => toggleGrade(index, grade)}
                           className={`min-w-[3.25rem] rounded-full border px-3 py-2 text-sm font-medium transition ${
-                            on ? 'border-brand-navy bg-brand-navy text-white' : 'border-slate-300 bg-surface text-slate-700 hover:border-slate-400'
+                            on ? 'border-brand-deep bg-brand-deep text-white' : 'border-slate-300 bg-surface text-slate-700 hover:border-slate-400'
                           }`}>
                           Gr {grade}
                         </button>

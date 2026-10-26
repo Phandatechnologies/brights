@@ -46,7 +46,7 @@ export function ReportPage() {
   if (sent) {
     return (
       <section className="mx-auto max-w-2xl px-4 py-14">
-        <div role="status" className="rounded-2xl border border-brand-teal/50 bg-brand-teal/10 p-6">
+        <div role="status" className="rounded-2xl border border-brand-soft/50 bg-brand-soft/10 p-6">
           <h1 className="text-2xl font-bold text-heading">Thank you. We've received your report.</h1>
           <p className="mt-3 leading-relaxed text-slate-700">
             {sent.hidden
@@ -79,10 +79,10 @@ export function ReportPage() {
             {REPORT_CATEGORIES.map((c) => (
               <label key={c.value}
                 className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition ${
-                  category === c.value ? 'border-brand-blue bg-brand-blue/5 ring-1 ring-brand-blue' : 'border-slate-300 bg-surface hover:border-slate-400'
+                  category === c.value ? 'border-brand bg-brand/5 ring-1 ring-brand' : 'border-slate-300 bg-surface hover:border-slate-400'
                 }`}>
                 <input type="radio" name="category" value={c.value} checked={category === c.value}
-                  onChange={() => setCategory(c.value)} className="accent-brand-blue" />
+                  onChange={() => setCategory(c.value)} className="accent-brand" />
                 <span className="text-slate-900">{c.label}</span>
               </label>
             ))}
@@ -101,7 +101,7 @@ export function ReportPage() {
           <textarea id="description" rows={7} maxLength={MAX} value={description} onChange={(e) => setDescription(e.target.value)}
             aria-describedby="description-hint"
             placeholder="Describe what happened, when, and anything the tutor said or did. Include as much detail as you can."
-            className="block w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5 leading-relaxed outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20" />
+            className="block w-full rounded-lg border border-slate-300 bg-surface px-3 py-2.5 leading-relaxed outline-none focus:border-brand focus:ring-2 focus:ring-brand/20" />
           <p id="description-hint" className="mt-1 text-right text-xs text-slate-500">{description.length} / {MAX}</p>
           <FieldError messages={errors.description} />
         </div>
@@ -115,7 +115,7 @@ export function ReportPage() {
 
         <div className="flex justify-end border-t border-slate-200 pt-6">
           <button type="submit" disabled={busy}
-            className="rounded-full bg-brand-navy px-6 py-3 font-semibold text-white transition hover:bg-brand-blue disabled:opacity-60">
+            className="rounded-full bg-brand-deep px-6 py-3 font-semibold text-white transition hover:bg-brand disabled:opacity-60">
             {busy ? 'Sending…' : 'Send report'}
           </button>
         </div>

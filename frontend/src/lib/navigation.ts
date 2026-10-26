@@ -35,10 +35,10 @@ export function tabsFor(user: Pick<User, 'account_type'>): NavTab[] {
 }
 
 export const ROLE_BADGES: Record<string, { label: string; className: string }> = {
-  learner: { label: 'Learner', className: 'bg-brand-navy/10 text-heading' },
-  parent: { label: 'Parent', className: 'bg-brand-navy/10 text-heading' },
-  tutor: { label: 'Tutor', className: 'bg-brand-teal/15 text-pass' },
-  '': { label: 'Staff', className: 'bg-brand-gold/20 text-amber-900' },
+  learner: { label: 'Learner', className: 'bg-brand-deep/10 text-heading' },
+  parent: { label: 'Parent', className: 'bg-brand-deep/10 text-heading' },
+  tutor: { label: 'Tutor', className: 'bg-brand-soft/15 text-pass' },
+  '': { label: 'Staff', className: 'bg-brand-sun/20 text-amber-900' },
 }
 
 /** True when `pathname` is this tab or one of its sub-pages. */

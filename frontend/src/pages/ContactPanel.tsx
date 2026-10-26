@@ -20,7 +20,7 @@ export function ContactPanel({ tutor }: { tutor: PublicTutor }) {
   if (!user) {
     return (
       <Link to="/login" state={{ from: location.pathname }}
-        className="block w-full rounded-full bg-brand-navy px-5 py-3 text-center font-semibold text-white transition hover:bg-brand-blue">
+        className="block w-full rounded-full bg-brand-deep px-5 py-3 text-center font-semibold text-white transition hover:bg-brand">
         Log in to contact
       </Link>
     )
@@ -96,7 +96,7 @@ export function ContactPanel({ tutor }: { tutor: PublicTutor }) {
         </div>
       )}
       <button type="button" onClick={requestContact} disabled={busy}
-        className="w-full rounded-full bg-brand-navy px-5 py-3 font-semibold text-white transition hover:bg-brand-blue disabled:opacity-60">
+        className="w-full rounded-full bg-brand-deep px-5 py-3 font-semibold text-white transition hover:bg-brand disabled:opacity-60">
         {busy ? 'Please wait…' : 'Contact on WhatsApp'}
       </button>
       {error && <p role="alert" className="text-sm text-red-700">{error}</p>}

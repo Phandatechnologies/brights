@@ -24,7 +24,7 @@ export function ThemeSwitch({ compact = false }: { compact?: boolean }) {
         return (
           <button key={o.value} type="button" role="radio" aria-checked={active} onClick={() => choose(o.value)}
             className={`rounded-full font-semibold transition ${compact ? 'px-3 py-1' : 'px-4 py-1.5'} ${
-              active ? 'bg-brand-navy text-white' : 'text-slate-600 hover:text-slate-900'}`}>
+              active ? 'bg-brand-deep text-white' : 'text-slate-600 hover:text-slate-900'}`}>
             {o.label}
           </button>
         )

@@ -29,7 +29,7 @@ Ready for a free pilot with volunteer testers (GitHub + Render, see docs/DEPLOYM
 - Guardian details discarded for anyone who isn't a minor learner (data minimisation).
 - `brights_user` has CREATEDB so Django can create a temporary test database.
 - Admin access granted only via Django `is_staff`; never settable through the API.
-- Brand colours come from the Brights logo (navy, blue, teal, gold, orange).
+- Rebrand (Oct 2026): new "Bright b" logo (a lowercase b with a light inside) in green and sunshine yellow. Colour tokens renamed by job, not hue: `brand-deep`, `brand`, `brand-soft`, `brand-sun`, `brand-warm` (all in `frontend/src/index.css`). Logo files: `public/brights-logo.svg`, `favicon.svg`, `favicon.png`, `apple-touch-icon.png`.
 
 ## Implemented
 - Phase 1 (complete): repo initialised, .gitignore verified (`.env` and `venv/` ignored), backend venv with Django, DRF, psycopg, python-dotenv; PostgreSQL database `brights` owned by `brights_user`; `.env` created locally.

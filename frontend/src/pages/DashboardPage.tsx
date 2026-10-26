@@ -38,7 +38,7 @@ export function DashboardPage() {
             <h2 className="font-semibold text-slate-900">What's next</h2>
             <p className="mt-2 text-slate-600">{NEXT_STEPS[user.account_type]}</p>
             {user.account_type !== '' && (
-              <Link to="/tutors" className="mt-5 inline-block rounded-full bg-brand-navy px-6 py-3 font-semibold text-white transition hover:bg-brand-blue">
+              <Link to="/tutors" className="mt-5 inline-block rounded-full bg-brand-deep px-6 py-3 font-semibold text-white transition hover:bg-brand">
                 Find a tutor
               </Link>
             )}

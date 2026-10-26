@@ -51,10 +51,10 @@ function VideoCard({ video }: { video: GuideVideo }) {
           />
         ) : (
           <button type="button" onClick={() => setPlaying(true)} aria-label={`Play video: ${video.title}`}
-            className="group absolute inset-0 h-full w-full focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-blue/40">
+            className="group absolute inset-0 h-full w-full focus:outline-none focus-visible:ring-4 focus-visible:ring-brand/40">
             <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy"
               className="h-full w-full object-cover opacity-90 transition group-hover:opacity-100" />
-            <span aria-hidden="true" className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-brand-navy/90 shadow-lg transition group-hover:scale-105">
+            <span aria-hidden="true" className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-brand-deep/90 shadow-lg transition group-hover:scale-105">
               <svg viewBox="0 0 24 24" className="ml-1 h-6 w-6 fill-white"><path d="M8 5v14l11-7z" /></svg>
             </span>
           </button>

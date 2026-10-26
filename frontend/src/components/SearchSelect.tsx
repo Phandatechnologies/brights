@@ -111,7 +111,7 @@ export function SearchSelect({ id, options, value, onChange, placeholder, emptyL
         onBlur={() => { setOpen(false); setQuery('') }}
         onChange={(e) => { setQuery(e.target.value); setActive(0); setOpen(true) }}
         onKeyDown={onKeyDown}
-        className="w-full rounded-lg border border-slate-300 bg-surface py-2.5 pl-3 pr-9 text-slate-900 outline-none placeholder:text-slate-500 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20"
+        className="w-full rounded-lg border border-slate-300 bg-surface py-2.5 pl-3 pr-9 text-slate-900 outline-none placeholder:text-slate-500 focus:border-brand focus:ring-2 focus:ring-brand/20"
       />
       <svg aria-hidden="true" viewBox="0 0 20 20" className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400">
         <path fill="currentColor" d="M8.5 3a5.5 5.5 0 0 1 4.38 8.83l3.65 3.64a.75.75 0 1 1-1.06 1.06l-3.64-3.65A5.5 5.5 0 1 1 8.5 3Zm0 1.5a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
@@ -134,7 +134,7 @@ export function SearchSelect({ id, options, value, onChange, placeholder, emptyL
               // mousedown, not click: runs before the input's blur closes the list
               onMouseDown={(e) => { e.preventDefault(); choose(option) }}
               onMouseEnter={() => setActive(index)}
-              className={`cursor-pointer px-3 py-2 text-sm ${index === active ? 'bg-brand-blue/10 text-heading' : 'text-slate-800'} ${
+              className={`cursor-pointer px-3 py-2 text-sm ${index === active ? 'bg-brand/10 text-heading' : 'text-slate-800'} ${
                 option.value === value ? 'font-semibold' : ''
               } ${option.value === '' ? 'text-slate-500' : ''}`}
             >

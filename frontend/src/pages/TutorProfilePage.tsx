@@ -43,7 +43,7 @@ export function TutorProfilePage() {
   return (
     <section className="mx-auto max-w-4xl px-4 py-10 sm:py-14">
       {preview ? (
-        <div role="status" className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-brand-teal/50 bg-brand-teal/10 px-4 py-3">
+        <div role="status" className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-brand-soft/50 bg-brand-soft/10 px-4 py-3">
           <p className="text-sm font-medium text-heading">Preview: this is what learners and parents see.</p>
           <Link to="/tutor/profile" className="text-sm font-semibold text-link hover:underline">Back to my profile</Link>
         </div>
@@ -58,7 +58,7 @@ export function TutorProfilePage() {
             <div>
               <h1 className="text-3xl font-bold tracking-[-0.02em] text-heading sm:text-4xl">{tutor.full_name}</h1>
               <p className="mt-1 flex items-center gap-1.5 font-medium text-pass">
-                <Spark className="h-4 w-4 text-brand-gold" />{tutor.verification}
+                <Spark className="h-4 w-4 text-brand-sun" />{tutor.verification}
               </p>
             </div>
           </div>

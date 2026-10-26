@@ -28,7 +28,7 @@ export function TextField({ label, name, errors, hint, trailing, className = '',
           } ${
             hasError
               ? 'border-red-400 focus:border-red-500 focus:ring-red-200'
-              : 'border-slate-300 focus:border-brand-blue focus:ring-brand-blue/20'
+              : 'border-slate-300 focus:border-brand focus:ring-brand/20'
           }`}
           {...props}
         />
@@ -65,7 +65,7 @@ export function PasswordField(props: PasswordFieldProps) {
           aria-label={visible ? 'Hide password' : 'Show password'}
           aria-pressed={visible}
           aria-controls={props.name}
-          className="rounded-md p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
+          className="rounded-md p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand/30"
         >
           {visible ? <EyeOffIcon /> : <EyeIcon />}
         </button>
@@ -119,7 +119,7 @@ export function SubmitButton({ busy, children }: { busy: boolean; children: Reac
     <button
       type="submit"
       disabled={busy}
-      className="w-full rounded-lg bg-brand-navy px-4 py-3 font-semibold text-white shadow-sm transition hover:bg-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/40 disabled:cursor-not-allowed disabled:opacity-60"
+      className="w-full rounded-lg bg-brand-deep px-4 py-3 font-semibold text-white shadow-sm transition hover:bg-brand focus:outline-none focus:ring-2 focus:ring-brand/40 disabled:cursor-not-allowed disabled:opacity-60"
     >
       {busy ? 'Please wait…' : children}
     </button>
