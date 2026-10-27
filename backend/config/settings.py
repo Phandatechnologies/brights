@@ -243,9 +243,14 @@ def _whitenoise_html_headers(headers, path, url):
         headers["Content-Security-Policy"] = CONTENT_SECURITY_POLICY
         headers["X-Frame-Options"] = "DENY"
         headers["Cache-Control"] = "no-cache"
+    elif url in ("/sw.js", "/manifest.webmanifest"):
+        # Installed apps check these for updates; never let an old copy linger.
+        headers["Cache-Control"] = "no-cache"
 
 
 WHITENOISE_ADD_HEADERS_FUNCTION = _whitenoise_html_headers
+# Phones only treat the app description as valid when it has the right file type.
+WHITENOISE_MIMETYPES = {".webmanifest": "application/manifest+json"}
 
 # Private files (tutor verification documents). This folder is never served by a URL;
 # staff download files through a permission-checked API view instead.

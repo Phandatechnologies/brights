@@ -30,8 +30,9 @@ export function DashboardPage() {
         </>
       ) : (
         <>
-          <p className="mt-1 break-all text-slate-600">
-            Signed in as {user.email} ({TYPE_LABELS[user.account_type]})
+          <p className="mt-1 text-slate-600">
+            Signed in as <span className="[overflow-wrap:anywhere]">{user.email}</span>{' '}
+            <span className="whitespace-nowrap">({TYPE_LABELS[user.account_type]})</span>
           </p>
           <VerifyEmailBanner />
           <div className="mt-8 rounded-2xl border border-slate-200 bg-surface p-6 shadow-sm">

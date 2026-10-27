@@ -1,5 +1,6 @@
 import { Link, Navigate } from 'react-router'
 import { FullPageSpinner } from '../components/FullPageSpinner'
+import { InstallApp } from '../components/InstallApp'
 import { ThemeSwitch } from '../components/ThemeSwitch'
 import { homeFor } from '../lib/home'
 import { useAuth } from '../auth/AuthContext'
@@ -239,6 +240,7 @@ function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
         <p>Brights is a Phanda Technologies product.</p>
         <ThemeSwitch compact />
+        <InstallApp compact />
         <p>
           Photo by{' '}
           <a href="https://unsplash.com/@silverkblack" className="underline hover:text-slate-700" target="_blank" rel="noreferrer">

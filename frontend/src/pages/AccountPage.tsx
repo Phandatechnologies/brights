@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { authApi } from '../api/auth'
 import { useAuth } from '../auth/AuthContext'
+import { InstallApp } from '../components/InstallApp'
 import { ThemeSwitch } from '../components/ThemeSwitch'
 import { VerifyEmailBanner } from '../components/VerifyEmailBanner'
 import { ROLE_BADGES } from '../lib/navigation'
@@ -39,6 +40,7 @@ export function AccountPage() {
     <section className="mx-auto max-w-2xl px-4 py-8 sm:py-10">
       <h1 className="text-3xl font-bold text-heading">Account</h1>
       <VerifyEmailBanner />
+      <InstallApp />
 
       <dl className="mt-6 divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-surface shadow-sm">
         {rows.map(([label, value]) => (

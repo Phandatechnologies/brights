@@ -30,6 +30,7 @@ Ready for a free pilot with volunteer testers (GitHub + Render, see docs/DEPLOYM
 - `brights_user` has CREATEDB so Django can create a temporary test database.
 - Admin access granted only via Django `is_staff`; never settable through the API.
 - Rebrand (Oct 2026): new "Bright b" logo (a lowercase b with a light inside) in green and sunshine yellow. Colour tokens renamed by job, not hue: `brand-deep`, `brand`, `brand-soft`, `brand-sun`, `brand-warm` (all in `frontend/src/index.css`). Logo files: `public/brights-logo.svg`, `favicon.svg`, `favicon.png`, `apple-touch-icon.png`.
+- Installable app (Oct 2026): `manifest.webmanifest` (opens full screen, no address bar), icons in `public/icons/` (normal + maskable), `sw.js` service worker that only adds an offline page (it never caches pages, logins or API answers), `offline.html`/`offline.css`. "Get the Brights app" card on Account and an install button in the landing footer: Android gets the browser's Install dialog, iPhone gets the Add to Home Screen steps, and nothing shows inside the installed app. Server sends the manifest as `application/manifest+json` and never caches `sw.js`/the manifest. Tests: `core/tests_pwa.py`.
 
 ## Implemented
 - Phase 1 (complete): repo initialised, .gitignore verified (`.env` and `venv/` ignored), backend venv with Django, DRF, psycopg, python-dotenv; PostgreSQL database `brights` owned by `brights_user`; `.env` created locally.
