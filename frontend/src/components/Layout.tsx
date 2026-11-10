@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router'
 import type { User } from '../api/auth'
 import { useAuth } from '../auth/AuthContext'
 import { isTabActive, ROLE_BADGES, tabsFor, type NavIconName, type NavTab } from '../lib/navigation'
-import { HomeIcon, ProfileCardIcon, SearchIcon, UserIcon, UsersIcon } from './Icons'
+import { ClipboardIcon, HomeIcon, ProfileCardIcon, SearchIcon, UserIcon, UsersIcon } from './Icons'
 
 const ICONS: Record<NavIconName, (p: { className?: string }) => React.ReactNode> = {
   search: SearchIcon,
@@ -10,6 +10,7 @@ const ICONS: Record<NavIconName, (p: { className?: string }) => React.ReactNode>
   user: UserIcon,
   home: HomeIcon,
   profile: ProfileCardIcon,
+  clipboard: ClipboardIcon,
 }
 
 /**
@@ -57,7 +58,7 @@ function GuestTopBar() {
 }
 
 function RoleBadge({ user }: { user: User }) {
-  const badge = ROLE_BADGES[user.account_type] ?? ROLE_BADGES['']
+  const badge = user.is_staff ? ROLE_BADGES[''] : (ROLE_BADGES[user.account_type] ?? ROLE_BADGES[''])
   return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${badge.className}`}>{badge.label}</span>
 }
 

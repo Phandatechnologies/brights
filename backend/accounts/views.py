@@ -9,7 +9,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .emails import send_password_reset_email, send_verification_email
+from . import staff_codes
+from .emails import send_password_reset_email, send_staff_login_code, send_verification_email
 from .models import User
 from .serializers import (
     LoginSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, RegisterSerializer,
@@ -73,11 +74,30 @@ class LoginView(APIView):
                 {"detail": "Invalid email or password."}, status=status.HTTP_400_BAD_REQUEST
             )
         if user.is_staff:
-            # Admin accounts can download ID documents, so they only sign in through the
-            # admin site, which has its own stricter rate limit.
-            return Response({"detail": "Admin accounts sign in through the admin site."},
-                            status=status.HTTP_403_FORBIDDEN)
+            # Staff can open tutors' ID documents, so a password isn't enough: email a code
+            # and only log in once it's typed in (see accounts/staff_codes.py).
+            challenge, code = staff_codes.start(user)
+            if not send_staff_login_code(user, code):
+                return Response({"detail": "We couldn't email your sign-in code just now. Please try again in a few minutes."},
+                                status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            return Response({"code_required": True, "challenge": challenge})
         login(request, user)
+        return Response(UserSerializer(user).data)
+
+
+@method_decorator(csrf_protect, name="dispatch")
+class StaffLoginCodeView(APIView):
+    """POST /api/auth/login/code/ {challenge, code} — step two of a staff login."""
+
+    permission_classes = [AllowAny]
+    throttle_scope = "auth"
+
+    def post(self, request):
+        try:
+            user = staff_codes.check(request.data.get("challenge"), request.data.get("code"))
+        except staff_codes.CodeError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        login(request, user, backend="accounts.backends.LockoutModelBackend")
         return Response(UserSerializer(user).data)
 
 

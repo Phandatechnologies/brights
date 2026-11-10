@@ -1,6 +1,6 @@
 import type { User } from '../api/auth'
 
-export type NavIconName = 'search' | 'users' | 'user' | 'home' | 'profile'
+export type NavIconName = 'search' | 'users' | 'user' | 'home' | 'profile' | 'clipboard'
 
 export type NavTab = {
   to: string
@@ -11,7 +11,15 @@ export type NavTab = {
 }
 
 /** Each kind of account gets its own menu. On phones these become the bottom tab bar. */
-export function tabsFor(user: Pick<User, 'account_type'>): NavTab[] {
+export function tabsFor(user: Pick<User, 'account_type' | 'is_staff'>): NavTab[] {
+  if (user.is_staff) {
+    // The Brights team: the staff area replaces the Django admin for day-to-day work.
+    return [
+      { to: '/staff', label: 'Staff home', icon: 'home' },
+      { to: '/staff/applications', label: 'Applications', icon: 'clipboard' },
+      { to: '/account', label: 'Account', icon: 'user' },
+    ]
+  }
   switch (user.account_type) {
     case 'learner':
     case 'parent':
@@ -26,7 +34,7 @@ export function tabsFor(user: Pick<User, 'account_type'>): NavTab[] {
         { to: '/tutor/profile', label: 'My profile', icon: 'profile' },
         { to: '/account', label: 'Account', icon: 'user' },
       ]
-    default: // staff: they work in the Django admin
+    default: // an account with no type that isn't staff (shouldn't happen): keep it simple
       return [
         { to: '/dashboard', label: 'Home', icon: 'home' },
         { to: '/account', label: 'Account', icon: 'user' },
@@ -43,5 +51,7 @@ export const ROLE_BADGES: Record<string, { label: string; className: string }> =
 
 /** True when `pathname` is this tab or one of its sub-pages. */
 export function isTabActive(tab: NavTab, pathname: string): boolean {
+  // "/staff" is the staff home only; its sub-pages have their own tabs.
+  if (tab.to === '/staff') return pathname === '/staff'
   return [tab.to, ...(tab.alsoActive ?? [])].some((p) => pathname === p || pathname.startsWith(`${p}/`))
 }

@@ -85,6 +85,8 @@ INSTALLED_APPS = [
     "profiles",
     "contact",
     "moderation",
+    "staffos",
+    "staffpanel",
 ]
 
 MIDDLEWARE = [
@@ -346,6 +348,10 @@ LOGGING = {
         "django": {"handlers": ["console"], "level": env("DJANGO_LOG_LEVEL", "INFO"), "propagate": False},
     },
 }
+
+# Phanda Staff OS reads Brights' weekly totals (counts only, nothing about any person) through a signed request.
+# Empty = switched off (404). The same long random value goes in Staff OS as BRIGHTS_METRICS_SECRET.
+STAFF_OS_METRICS_SECRET = env("STAFF_OS_METRICS_SECRET", "")
 
 # During `manage.py test`, many tests send bad or forbidden requests on purpose and Django
 # logs each refusal. Silence that expected noise so a clean run is just dots and "OK".

@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
 import { AuthProvider } from './auth/AuthContext'
-import { GuestOnly, RequireAuth } from './auth/RouteGuards'
+import { GuestOnly, RequireAuth, RequireStaff } from './auth/RouteGuards'
 import { Layout } from './components/Layout'
 import { AccountPage } from './pages/AccountPage'
 import { DashboardPage } from './pages/DashboardPage'
@@ -18,6 +18,9 @@ import { SearchPage } from './pages/SearchPage'
 import { TutorProfilePage } from './pages/TutorProfilePage'
 import { ApplyPage } from './pages/tutor/ApplyPage'
 import { ProfileEditorPage } from './pages/tutor/ProfileEditorPage'
+import { ApplicationReviewPage } from './pages/staff/ApplicationReviewPage'
+import { ApplicationsPage } from './pages/staff/ApplicationsPage'
+import { StaffHomePage } from './pages/staff/StaffHomePage'
 
 export default function App() {
   return (
@@ -45,6 +48,13 @@ export default function App() {
               <Route path="/tutor/apply" element={<ApplyPage />} />
               <Route path="/tutor/profile" element={<ProfileEditorPage />} />
               <Route path="/tutors/:id/report" element={<ReportPage />} />
+            </Route>
+
+            {/* The Brights team's area: replaces the Django admin for day-to-day work. */}
+            <Route element={<RequireStaff />}>
+              <Route path="/staff" element={<StaffHomePage />} />
+              <Route path="/staff/applications" element={<ApplicationsPage />} />
+              <Route path="/staff/applications/:id" element={<ApplicationReviewPage />} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

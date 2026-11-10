@@ -55,11 +55,12 @@ class LoginHardeningTests(APITestCase):
     def login(self, email, password=PASSWORD):
         return self.client.post(reverse("auth-login"), {"email": email, "password": password}, format="json")
 
-    def test_staff_cannot_use_api_login(self):
+    def test_staff_password_alone_does_not_log_in(self):
         User.objects.create_superuser(email="admin@example.com", password=PASSWORD, first_name="A", last_name="D",
                                       date_of_birth=dob_for_age(40))
         response = self.login("admin@example.com")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()["code_required"])  # step two: emailed code (accounts/tests/test_staff_codes.py)
         self.assertEqual(self.client.get(reverse("auth-me")).status_code, 403)
 
     # The per-IP limit (10/minute) is switched off here so only the per-account lockout is tested.

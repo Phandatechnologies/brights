@@ -85,3 +85,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class StaffLoginCode(models.Model):
+    """
+    Step two of a staff login: a 6-digit code emailed to the staff member.
+    Only a keyed hash of the code is stored. Single use, 10 minutes, 5 tries.
+    """
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="+")
+    challenge = models.CharField(max_length=64, unique=True)  # random id the browser sends back with the code
+    code_hash = models.CharField(max_length=64)
+    attempts = models.PositiveSmallIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+    def __str__(self):
+        return f"Login code for {self.user} (expires {self.expires_at:%H:%M})"

@@ -12,6 +12,8 @@ export type User = {
   account_type: AccountType | ''
   is_minor: boolean
   email_verified: boolean
+  /** Brights team member: sees the staff area (/staff). Never settable through the API. */
+  is_staff: boolean
 }
 
 export type RegisterInput = {
@@ -25,11 +27,15 @@ export type RegisterInput = {
   guardian_name: string
 }
 
+/** Staff accounts get this instead of a user after the password: a code has been emailed to them. */
+export type StaffCodeRequired = { code_required: true; challenge: string }
+
 const json = (data: unknown) => ({ method: 'POST', body: JSON.stringify(data) })
 
 export const authApi = {
   me: () => apiFetch<User>('/api/auth/me/'),
-  login: (email: string, password: string) => apiFetch<User>('/api/auth/login/', json({ email, password })),
+  login: (email: string, password: string) => apiFetch<User | StaffCodeRequired>('/api/auth/login/', json({ email, password })),
+  loginCode: (challenge: string, code: string) => apiFetch<User>('/api/auth/login/code/', json({ challenge, code })),
   register: (input: RegisterInput) => apiFetch<User>('/api/auth/register/', json(input)),
   logout: () => apiFetch<void>('/api/auth/logout/', { method: 'POST' }),
   verifyEmail: (uid: string, token: string) => apiFetch<{ verified: boolean }>('/api/auth/verify-email/', json({ uid, token })),

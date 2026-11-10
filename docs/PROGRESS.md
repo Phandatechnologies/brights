@@ -71,6 +71,38 @@ Ready for a free pilot with volunteer testers (GitHub + Render, see docs/DEPLOYM
 - POPIA, especially children's personal information: consent, guardian involvement, data minimisation, retention of verification documents.
 - Guardian consent is a self-declared checkbox — weak evidence; consider guardian email confirmation before launch.
 
+## 10 Nov 2026: staff area, phase 1 (tutor applications) and two-step staff login
+- **Staff area at `/staff`** in the Brights web app, replacing the Django admin for day-to-day work. Staff get their own menu (Staff home, Applications, Account), on phones too.
+  - **Staff home:** applications to review (and how long the oldest has waited), applications waiting on the tutor, photos waiting, and platform totals.
+  - **Applications:** a queue (waiting ones oldest first) with filters and search, and a review page.
+    - The review page shows the applicant, their documents (image preview; open or download), each subject with its Matric mark, and the history.
+    - Actions: approve or decline each subject, approve, ask for more information, reject, suspend and reinstate, with a confirm step for the big ones.
+    - Subjects below 60% start as declined with the reason filled in.
+  - **The rules didn't move.** The new API (`backend/staffpanel`) only calls the existing `tutors/services.py`, so every check, history entry and email is unchanged. Staff without document permission see no document links, and nobody can review their own application.
+- **Two-step staff login** (your choice): password, then a 6-digit code emailed to the staff member (`accounts/staff_codes.py`, migration `accounts/0003`).
+  - The Django admin login page now redirects to this login and returns staff to the admin page afterwards.
+  - Found and fixed during testing: a wrong code's try count was being undone, which would have allowed unlimited guesses.
+- `/api/auth/me/` now includes `is_staff` (read-only).
+- **Tests:** 26 new, 275 in total. A browser test covered the whole flow on a phone and on desktop in dark mode, and all staff and login screens pass the contrast check in light and dark.
+- **Next phases:** profile photos and safety reports, then users and how-to videos.
+
+## 30 Oct 2026: weekly totals for Phanda Staff OS (approved by the CEO, option A)
+- **New read-only address:** `GET /api/internal/staff-os/metrics/?start=&end=`, in a new folder `backend/staffos`. No database changes.
+  - The request must be signed with `STAFF_OS_METRICS_SECRET` (HMAC-SHA256) and be less than 5 minutes old. Without that setting the address doesn't exist (404).
+- **What it sends each week:**
+  - registered learners and registered parents
+  - verified tutors (from the decision history, so suspensions count from their date)
+  - tutor applications sent for review
+  - contacts started, and returning contacts
+  - tutor profile views
+  - safety reports, and urgent ones
+- **Unavailable, with the reason:** lessons booked (no booking record), active users and retention (only the last login is kept).
+- **Learner protection:** whole-platform counts only, no breakdowns, nothing about any person. Staff and suspended accounts are left out.
+- **Tests:** 7 new, 249 in total.
+  - A test confirms that no name, email, date of birth, guardian, phone number or report text can appear in the answer, and that the endpoint only reads.
+  - Checked end to end with Phanda Staff OS: it matched a separate direct database count for one week.
+- **`.gitignore`** now also keeps out files named like "Test accounts", so a notes file with test logins can't be committed by `git add .`.
+
 ## Next steps
 - Deploy the pilot: GitHub (private) → Neon → R2 → Brevo → Render (docs/DEPLOYMENT.md); create the admin; approve tester tutors and their photos.
 - Record the how-to videos (in person, online) and add them under Guide videos in the admin.

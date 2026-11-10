@@ -29,6 +29,13 @@ export const HomeIcon = (p: IconProps) => (
   <Svg {...p}><path d="M3.5 10.5 12 3.5l8.5 7" /><path d="M5.5 9v11h13V9" /><path d="M10 20v-5.5h4V20" /></Svg>
 )
 
+export const ClipboardIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="5" y="4.5" width="14" height="16.5" rx="2.5" /><path d="M9 4.5V3.5h6v1" />
+    <path d="m9 13 2 2 4-4.5" />
+  </Svg>
+)
+
 export const ProfileCardIcon = (p: IconProps) => (
   <Svg {...p}>
     <rect x="3" y="4.5" width="18" height="15" rx="2.5" /><circle cx="9" cy="11" r="2.5" />

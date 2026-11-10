@@ -52,6 +52,13 @@ The free pilot setup stores data with Render (Frankfurt), Neon (Frankfurt), Clou
 
 - [ ] Accept or sign the data processing terms of Render, Neon, Cloudflare and Brevo, and keep copies.
 
+### Phanda Staff OS (internal, same company)
+- Brights sends Phanda Staff OS **weekly whole-platform counts only**: no names, emails, dates of birth, guardians, IDs, WhatsApp numbers, or report contents.
+- There are no breakdowns by age, grade, area, school or subject, so no learner can be singled out.
+- Safety reports are only counted.
+- The request must be signed and recent; the address is off unless `STAFF_OS_METRICS_SECRET` is set.
+- Tested in `backend/staffos/tests/test_totals.py`.
+
 ## Data subject rights (sections 23–25)
 
 - [ ] **Access:** a way for users to request a copy of their data. Not built yet; can be manual by email at first.

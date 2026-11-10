@@ -30,3 +30,14 @@ def send_password_reset_email(user) -> bool:
         "your password won't change.\n\nThe Brights team",
         None, [user.email],
     )
+
+
+def send_staff_login_code(user, code) -> bool:
+    return send_email(
+        f"Your Brights sign-in code: {code}",
+        f"Hi {user.first_name},\n\nYour code to finish signing in to Brights is:\n\n    {code}\n\n"
+        "It works once, for 10 minutes. Never share it: the Brights team will never ask you for it.\n\n"
+        "If you didn't just try to sign in, someone may know your password. Change it straight away "
+        "with \"Forgot your password?\" on the login page.\n\nThe Brights team",
+        None, [user.email],
+    )

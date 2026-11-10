@@ -190,6 +190,16 @@ Store backups encrypted (they contain children's personal information) and delet
   POPIA section 72 controls sending personal information abroad. See docs/POPIA.md.
 - **Hours:** 750 free hours a month covers one always-on service; a second service would run out.
 
+## Optional: weekly totals for Phanda Staff OS
+
+Brights can give Phanda Staff OS its weekly totals: learners, parents, verified tutors, applications, contacts, profile views and safety reports. They are **counts for the whole platform only**. Nothing about any person leaves Brights, and nothing is split by age, grade, area, school or subject. Only a request signed with a shared secret gets an answer.
+
+1. Make a long random secret on your PC: `python -c "import secrets; print(secrets.token_urlsafe(48))"`. Keep it in your password manager. Never send it in chat.
+2. In Render: **brights → Environment → Add** `STAFF_OS_METRICS_SECRET` = that value → **Save**.
+3. Put the same value in Staff OS as `BRIGHTS_METRICS_SECRET` (see Staff OS's `docs/CONNECT-BRIGHTS.md`).
+
+To stop it, delete the setting in Render. The address then no longer exists (404).
+
 ## Moving to a paid or South African host later
 
 Nothing in the code is tied to Render. The same `Dockerfile` runs on any Docker host, including a South African VPS.

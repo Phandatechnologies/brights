@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { Link, Navigate } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
 import { VerifyEmailBanner } from '../components/VerifyEmailBanner'
 import { TutorHome } from './tutor/TutorHome'
@@ -13,12 +13,12 @@ const TYPE_LABELS: Record<string, string> = {
 const NEXT_STEPS: Record<string, string> = {
   learner: 'Search verified tutors by subject, grade, area and price. Tutors you contact are saved under My tutors.',
   parent: 'Find a verified tutor for your child by subject, grade, area and price. Tutors you contact are saved under My tutors.',
-  '': 'Use the Django admin to manage the platform.',
 }
 
 export function DashboardPage() {
   const { user } = useAuth()
   if (!user) return null // RequireAuth guarantees a user; this keeps TypeScript happy
+  if (user.is_staff) return <Navigate to="/staff" replace />
 
   return (
     <section className="mx-auto max-w-3xl px-4 py-8 sm:py-10">

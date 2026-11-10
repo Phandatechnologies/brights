@@ -10,8 +10,12 @@ This is not a certification. Review it again before launch and after big changes
   `is_staff`, which no API can set.
 - Rate limits: 10 logins/min per IP; 30 sign-ups/hour per IP; per-account lockout after 10 failed
   logins (15 minutes); admin login 10 attempts per 15 min per IP.
-- Admin accounts can't log in through the public API (they can download ID documents, so they use
-  the admin site only). The admin path is configurable (`DJANGO_ADMIN_URL`).
+- Staff accounts (they can open ID documents) need **two steps** to sign in: their password on the
+  normal login page, then a 6-digit code emailed to them (`accounts/staff_codes.py`). Codes are random,
+  stored only as a keyed hash, single use, valid 10 minutes, 5 tries, and a new code cancels the old one.
+  The Django admin's own login page redirects to this login, so there is no password-only way in.
+  The admin path is still configurable (`DJANGO_ADMIN_URL`).
+- If email sending is down, staff can't sign in until it works again (the code can't be delivered).
 - Email verification is required before contacting tutors, reporting, or submitting a tutor
   application. Password-reset and verification links are signed, single-use and expire after 3 days;
   a password reset logs out all other sessions.
@@ -83,8 +87,9 @@ All medium and low findings were fixed and covered by tests:
   the request waits). Low risk; could move to a background job later.
 - **Any superuser can do everything.** Keep very few superusers. Give other team members `is_staff`
   plus only the permissions they need.
-- **No two-factor login for admins yet.** Use long unique passwords and turn on 2FA for the hosting,
-  database, R2, email and GitHub accounts.
+- **Staff two-step login uses email codes**, so it is only as safe as the staff member's email account.
+  Staff should use an email account with its own 2FA. Also turn on 2FA for the hosting, database,
+  storage, email and GitHub accounts.
 - **Migrations run at container start.** Fine for one instance; use a separate release step if you
   ever run several.
 

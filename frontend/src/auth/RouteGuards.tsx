@@ -29,3 +29,13 @@ export function GuestOnly() {
   }
   return <Outlet />
 }
+
+/** The staff area: Brights team members only. Everyone else is sent to their own home. */
+export function RequireStaff() {
+  const { user, loading } = useAuth()
+  const location = useLocation()
+  if (loading) return <FullPageSpinner />
+  if (!user) return <Navigate to="/login" replace state={{ from: location.pathname }} />
+  if (!user.is_staff) return <Navigate to="/dashboard" replace />
+  return <Outlet />
+}

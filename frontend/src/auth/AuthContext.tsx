@@ -1,12 +1,15 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { authApi, type RegisterInput, type User } from '../api/auth'
+import { authApi, type RegisterInput, type StaffCodeRequired, type User } from '../api/auth'
 import { ApiError, ensureCsrfCookie } from '../api/client'
 
 type AuthState = {
   user: User | null
   /** True until we've asked the server whether someone is already logged in. */
   loading: boolean
-  login: (email: string, password: string) => Promise<User>
+  /** Logs in, or (for staff) returns the challenge for step two: the emailed code. */
+  login: (email: string, password: string) => Promise<User | StaffCodeRequired>
+  /** Step two of a staff login. */
+  loginWithCode: (challenge: string, code: string) => Promise<User>
   register: (input: RegisterInput) => Promise<User>
   logout: () => Promise<void>
   /** Re-fetch the logged-in user (e.g. after verifying their email). */
@@ -29,7 +32,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = useCallback(async (email: string, password: string) => {
-    const loggedIn = await authApi.login(email, password)
+    const result = await authApi.login(email, password)
+    if (!('code_required' in result)) setUser(result)
+    return result
+  }, [])
+
+  const loginWithCode = useCallback(async (challenge: string, code: string) => {
+    const loggedIn = await authApi.loginCode(challenge, code)
     setUser(loggedIn)
     return loggedIn
   }, [])
@@ -57,8 +66,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const value = useMemo(
-    () => ({ user, loading, login, register, logout, refresh }),
-    [user, loading, login, register, logout, refresh],
+    () => ({ user, loading, login, loginWithCode, register, logout, refresh }),
+    [user, loading, login, loginWithCode, register, logout, refresh],
   )
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
