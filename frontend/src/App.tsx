@@ -21,6 +21,9 @@ import { ProfileEditorPage } from './pages/tutor/ProfileEditorPage'
 import { ApplicationReviewPage } from './pages/staff/ApplicationReviewPage'
 import { ApplicationsPage } from './pages/staff/ApplicationsPage'
 import { StaffHomePage } from './pages/staff/StaffHomePage'
+import { PhotosPage } from './pages/staff/PhotosPage'
+import { ReportReviewPage } from './pages/staff/ReportReviewPage'
+import { ReportsPage } from './pages/staff/ReportsPage'
 
 export default function App() {
   return (
@@ -55,6 +58,9 @@ export default function App() {
               <Route path="/staff" element={<StaffHomePage />} />
               <Route path="/staff/applications" element={<ApplicationsPage />} />
               <Route path="/staff/applications/:id" element={<ApplicationReviewPage />} />
+              <Route path="/staff/photos" element={<PhotosPage />} />
+              <Route path="/staff/reports" element={<ReportsPage />} />
+              <Route path="/staff/reports/:id" element={<ReportReviewPage />} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

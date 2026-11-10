@@ -1,6 +1,6 @@
 import type { User } from '../api/auth'
 
-export type NavIconName = 'search' | 'users' | 'user' | 'home' | 'profile' | 'clipboard'
+export type NavIconName = 'search' | 'users' | 'user' | 'home' | 'profile' | 'clipboard' | 'photo' | 'flag'
 
 export type NavTab = {
   to: string
@@ -17,6 +17,8 @@ export function tabsFor(user: Pick<User, 'account_type' | 'is_staff'>): NavTab[]
     return [
       { to: '/staff', label: 'Staff home', icon: 'home' },
       { to: '/staff/applications', label: 'Applications', icon: 'clipboard' },
+      { to: '/staff/photos', label: 'Photos', icon: 'photo' },
+      { to: '/staff/reports', label: 'Reports', icon: 'flag' },
       { to: '/account', label: 'Account', icon: 'user' },
     ]
   }

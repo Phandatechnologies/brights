@@ -36,6 +36,19 @@ export const ClipboardIcon = (p: IconProps) => (
   </Svg>
 )
 
+export const PhotoIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="3.5" y="5" width="17" height="14" rx="2.5" /><circle cx="9" cy="10" r="1.6" />
+    <path d="m4 17 5-4.5 3.5 3 2.5-2 4.5 3.5" />
+  </Svg>
+)
+
+export const FlagIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M5.5 21V4" /><path d="M5.5 4.5h11l-2 4 2 4h-11" />
+  </Svg>
+)
+
 export const ProfileCardIcon = (p: IconProps) => (
   <Svg {...p}>
     <rect x="3" y="4.5" width="18" height="15" rx="2.5" /><circle cx="9" cy="11" r="2.5" />

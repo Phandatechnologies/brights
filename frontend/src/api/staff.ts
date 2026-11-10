@@ -7,6 +7,8 @@ export type StaffOverview = {
   applications_more_info: number
   oldest_pending_days: number | null
   photos_waiting: number
+  reports_open: number
+  reports_urgent: number
   totals: { learners: number; parents: number; tutors: number; approved_tutors: number }
 }
 
@@ -101,4 +103,75 @@ export const staffApi = {
   application: (id: number) => apiFetch<ApplicationDetail>(`/api/staff/applications/${id}/`),
   decide: (id: number, input: DecisionInput) =>
     apiFetch<ApplicationDetail>(`/api/staff/applications/${id}/decide/`, { method: 'POST', body: JSON.stringify(input) }),
+}
+
+// ---- Photos ---------------------------------------------------------------------------------
+
+export type PhotoRow = {
+  id: number
+  name: string
+  email: string
+  photo_status: 'pending' | 'approved' | 'rejected'
+  photo_note: string
+  /** Which photo the screen showed; approving only works if it's still this one. */
+  version: string
+  photo_url: string | null
+  updated_at: string
+}
+
+export const photoApi = {
+  list: (status: string, page = 1) =>
+    apiFetch<Page<PhotoRow>>(`/api/staff/photos/?status=${encodeURIComponent(status)}${page > 1 ? `&page=${page}` : ''}`),
+  decide: (id: number, input: { action: 'approve' | 'reject'; version: string; note?: string }) =>
+    apiFetch<PhotoRow>(`/api/staff/photos/${id}/decide/`, { method: 'POST', body: JSON.stringify(input) }),
+}
+
+// ---- Reports --------------------------------------------------------------------------------
+
+export type ReportRow = {
+  id: number
+  category: string
+  category_label: string
+  is_urgent: boolean
+  holds_tutor: boolean
+  status: 'open' | 'closed'
+  outcome: '' | 'dismissed' | 'warned' | 'suspended'
+  outcome_label: string
+  tutor_name: string
+  reporter_name: string
+  created_at: string
+  closed_at: string | null
+  days_open: number | null
+}
+
+export type ReportAction = 'dismiss' | 'warn' | 'suspend'
+
+export type ReportDetail = ReportRow & {
+  description: string
+  incident_date: string | null
+  reporter_was_minor: boolean
+  reporter: { name: string; email: string; account_type: string } | null
+  tutor: {
+    name: string
+    email: string
+    profile_id: number
+    application_id: number | null
+    application_status: ApplicationStatus | null
+    application_status_label: string | null
+    accepting_learners: boolean
+  }
+  contacts: { subject: string; grade: number | null; created_at: string }[]
+  other_reports: ReportRow[]
+  admin_notes: string
+  closed_by: string | null
+  is_own: boolean
+  actions: ReportAction[]
+}
+
+export const reportApi = {
+  list: (status: string, page = 1) =>
+    apiFetch<Page<ReportRow>>(`/api/staff/reports/?status=${encodeURIComponent(status)}${page > 1 ? `&page=${page}` : ''}`),
+  get: (id: number) => apiFetch<ReportDetail>(`/api/staff/reports/${id}/`),
+  decide: (id: number, input: { action: ReportAction; message: string; notes: string }) =>
+    apiFetch<ReportDetail>(`/api/staff/reports/${id}/decide/`, { method: 'POST', body: JSON.stringify(input) }),
 }

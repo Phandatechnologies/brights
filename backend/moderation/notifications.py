@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from core.mail import send_email
-from django.urls import reverse
 
 
 def admin_recipients():
@@ -18,7 +17,7 @@ def notify_admins_urgent(report):
     recipients = admin_recipients()
     if not recipients:
         return
-    link = settings.BACKEND_URL.rstrip("/") + reverse("admin:moderation_report_review", args=[report.pk])
+    link = settings.FRONTEND_URL.rstrip("/") + f"/staff/reports/{report.pk}"
     send_email(
         f"URGENT: child-safety report #{report.pk}",
         "A child-safety report was submitted. "

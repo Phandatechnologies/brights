@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router'
 import type { User } from '../api/auth'
 import { useAuth } from '../auth/AuthContext'
 import { isTabActive, ROLE_BADGES, tabsFor, type NavIconName, type NavTab } from '../lib/navigation'
-import { ClipboardIcon, HomeIcon, ProfileCardIcon, SearchIcon, UserIcon, UsersIcon } from './Icons'
+import { ClipboardIcon, FlagIcon, HomeIcon, PhotoIcon, ProfileCardIcon, SearchIcon, UserIcon, UsersIcon } from './Icons'
 
 const ICONS: Record<NavIconName, (p: { className?: string }) => React.ReactNode> = {
   search: SearchIcon,
@@ -11,6 +11,8 @@ const ICONS: Record<NavIconName, (p: { className?: string }) => React.ReactNode>
   home: HomeIcon,
   profile: ProfileCardIcon,
   clipboard: ClipboardIcon,
+  photo: PhotoIcon,
+  flag: FlagIcon,
 }
 
 /**
@@ -94,11 +96,14 @@ function SignedInTopBar({ user, tabs }: { user: User; tabs: NavTab[] }) {
   )
 }
 
+// Written out in full so Tailwind generates each class.
+const COLUMNS: Record<number, string> = { 2: 'grid-cols-2', 3: 'grid-cols-3', 4: 'grid-cols-4', 5: 'grid-cols-5' }
+
 function BottomTabBar({ tabs }: { tabs: NavTab[] }) {
   const { pathname } = useLocation()
   return (
     <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
-      <ul className={`mx-auto grid h-16 max-w-md ${tabs.length === 2 ? 'grid-cols-2' : tabs.length === 4 ? 'grid-cols-4' : 'grid-cols-3'}`}>
+      <ul className={`mx-auto grid h-16 max-w-md ${COLUMNS[tabs.length] ?? 'grid-cols-5'}`}>
         {tabs.map((tab) => {
           const active = isTabActive(tab, pathname)
           const Icon = ICONS[tab.icon]

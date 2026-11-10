@@ -24,7 +24,12 @@ from tutors.models import TutorApplication
 from tutors.permissions import IsStaff
 from tutors.rules import Status
 
-from .serializers import application_detail, application_row
+from moderation import services as report_services
+from moderation.models import Report
+from moderation.rules import ReportStatus
+from profiles import photo_review
+
+from .serializers import application_detail, application_row, photo_row, report_detail, report_row
 
 
 def error_response(exc):
@@ -57,6 +62,8 @@ class OverviewView(APIView):
             "applications_more_info": apps["more_info"],
             "oldest_pending_days": (timezone.now() - oldest).days if oldest else None,
             "photos_waiting": TutorProfile.objects.filter(photo_status=PhotoStatus.PENDING).exclude(photo="").count(),
+            "reports_open": Report.objects.filter(status=ReportStatus.OPEN).count(),
+            "reports_urgent": Report.objects.filter(status=ReportStatus.OPEN, is_urgent=True).count(),
             "totals": {**people, "approved_tutors": apps["approved"]},
         })
 
@@ -147,3 +154,99 @@ class ApplicationDecisionView(APIView):
             return error_response(exc)
         application.refresh_from_db()
         return Response(application_detail(application, request.user))
+
+
+# ---- Photos ---------------------------------------------------------------------------------
+
+class PhotoListView(APIView):
+    """GET /api/staff/photos/?status=pending|rejected|approved — waiting photos oldest first."""
+
+    permission_classes = [IsStaff]
+
+    def get(self, request):
+        wanted = request.query_params.get("status", PhotoStatus.PENDING)
+        if wanted not in (PhotoStatus.PENDING, PhotoStatus.REJECTED, PhotoStatus.APPROVED):
+            wanted = PhotoStatus.PENDING
+        queryset = (TutorProfile.objects.filter(photo_status=wanted).exclude(photo="").select_related("user")
+                    .order_by("updated_at" if wanted == PhotoStatus.PENDING else "-updated_at"))
+        paginator = ApplicationPagination()
+        page = paginator.paginate_queryset(queryset, request, view=self)
+        return paginator.get_paginated_response([photo_row(p) for p in page])
+
+
+class PhotoDecisionView(APIView):
+    """POST /api/staff/photos/<profile id>/decide/ {"action": "approve" | "reject", "version": "...", "note": "..."}"""
+
+    permission_classes = [IsStaff]
+
+    def post(self, request, pk):
+        get_object_or_404(TutorProfile, pk=pk)
+        action = request.data.get("action")
+        seen = str(request.data.get("version") or "")
+        try:
+            if action == "approve":
+                profile = photo_review.approve(pk, request.user, seen)
+            elif action == "reject":
+                profile = photo_review.reject(pk, request.user, seen, str(request.data.get("note") or ""))
+            else:
+                return Response({"non_field_errors": ["Choose approve or reject."]}, status=400)
+        except (ValidationError, PermissionDenied) as exc:
+            return error_response(exc)
+        return Response(photo_row(profile))
+
+
+# ---- Reports --------------------------------------------------------------------------------
+
+class ReportListView(APIView):
+    """GET /api/staff/reports/?status=open|closed|all — open ones urgent first, then oldest."""
+
+    permission_classes = [IsStaff]
+
+    def get(self, request):
+        wanted = request.query_params.get("status", ReportStatus.OPEN)
+        queryset = Report.objects.select_related("tutor__user", "reporter")
+        if wanted in (ReportStatus.OPEN, ReportStatus.CLOSED):
+            queryset = queryset.filter(status=wanted)
+        if wanted != ReportStatus.OPEN:
+            queryset = queryset.order_by("-created_at")
+        paginator = ApplicationPagination()
+        page = paginator.paginate_queryset(queryset, request, view=self)
+        return paginator.get_paginated_response([report_row(r) for r in page])
+
+
+class ReportDetailView(APIView):
+    """GET /api/staff/reports/<id>/"""
+
+    permission_classes = [IsStaff]
+
+    def get(self, request, pk):
+        report = get_object_or_404(Report.objects.select_related("tutor__user", "reporter", "closed_by"), pk=pk)
+        return Response(report_detail(report, request.user))
+
+
+class ReportDecisionView(APIView):
+    """
+    POST /api/staff/reports/<id>/decide/
+    {"action": "dismiss" | "warn" | "suspend", "message": "to the tutor", "notes": "internal"}
+    """
+
+    permission_classes = [IsStaff]
+
+    def post(self, request, pk):
+        get_object_or_404(Report, pk=pk)
+        message = str(request.data.get("message") or "")
+        notes = str(request.data.get("notes") or "")
+        handlers = {
+            "dismiss": lambda: report_services.dismiss(pk, request.user, notes),
+            "warn": lambda: report_services.warn(pk, request.user, message, notes),
+            "suspend": lambda: report_services.suspend(pk, request.user, message, notes),
+        }
+        action = request.data.get("action")
+        if action not in handlers:
+            return Response({"non_field_errors": ["Choose what to do with this report."]}, status=400)
+        try:
+            handlers[action]()
+        except (ValidationError, PermissionDenied) as exc:
+            return error_response(exc)
+        report = Report.objects.select_related("tutor__user", "reporter", "closed_by").get(pk=pk)
+        return Response(report_detail(report, request.user))

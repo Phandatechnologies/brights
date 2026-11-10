@@ -71,6 +71,21 @@ Ready for a free pilot with volunteer testers (GitHub + Render, see docs/DEPLOYM
 - POPIA, especially children's personal information: consent, guardian involvement, data minimisation, retention of verification documents.
 - Guardian consent is a self-declared checkbox — weak evidence; consider guardian email confirmation before launch.
 
+## 11 Nov 2026: staff area, phase 2 (profile photos and safety reports)
+- **Photos** (`/staff/photos`): a grid of photos waiting for approval, with Approve or Reject.
+  - Rejecting needs a reason, which the tutor sees. Quick reasons fill it in with one tap.
+  - Tabs show rejected and approved photos too.
+  - The rule from the admin is kept: a photo is only approved if it's still the exact photo the reviewer saw. The review screen sends back a photo "version", and the photo link refuses to show a newer photo under the old version (`profiles/photo_review.py`).
+  - Nobody can approve their own photo.
+- **Reports** (`/staff/reports`): open reports with urgent ones first, plus closed and all.
+  - The report page shows what was reported and who's involved: tutor status, reporter and whether they're under 18, the reporter's contact history with the tutor, and other reports about the same tutor.
+  - Actions: dismiss (internal note required), warn (message to the tutor), or suspend. These reuse `moderation/services.py`, so the emails and rules are unchanged.
+  - Child-safety reports show a SAPS 10111 / Childline 116 reminder.
+- **Urgent report emails** now link to the report in the staff area instead of the Django admin.
+- **Staff home** lists reports first, in red when one is urgent.
+- **Bottom bar:** staff now have 5 tabs. The bar now handles 5 columns; it used to wrap onto two rows.
+- **Tests:** 14 new, 289 in total. Browser tests passed for both flows, and all staff screens pass the contrast check in light and dark.
+
 ## 10 Nov 2026: staff area, phase 1 (tutor applications) and two-step staff login
 - **Staff area at `/staff`** in the Brights web app, replacing the Django admin for day-to-day work. Staff get their own menu (Staff home, Applications, Account), on phones too.
   - **Staff home:** applications to review (and how long the oldest has waited), applications waiting on the tutor, photos waiting, and platform totals.

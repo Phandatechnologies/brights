@@ -25,13 +25,15 @@ export function StaffHomePage() {
       {data && (
         <>
           <h2 className="mt-8 text-sm font-semibold uppercase tracking-wide text-slate-500">Needs attention</h2>
-          <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <TaskCard to="/staff/reports" count={data.reports_open} title="Safety reports" danger={data.reports_urgent > 0}
+              note={data.reports_urgent > 0 ? `${data.reports_urgent} urgent: child safety` : data.reports_open > 0 ? 'None urgent' : 'Nothing open'} />
             <TaskCard to="/staff/applications" count={data.applications_pending} title="Applications to review"
               note={data.oldest_pending_days !== null ? `Oldest has waited ${daysLabel(data.oldest_pending_days)}` : 'All caught up'} />
+            <TaskCard to="/staff/photos" count={data.photos_waiting} title="Profile photos to approve"
+              note={data.photos_waiting > 0 ? 'Tutors can’t be listed until approved' : 'All caught up'} />
             <TaskCard to="/staff/applications?status=more_info" count={data.applications_more_info} title="Waiting on the tutor"
               note="We asked these tutors for more information" quiet />
-            <TaskCard count={data.photos_waiting} title="Profile photos to approve"
-              note="Still in the Django admin until the next update" quiet />
           </div>
 
           <h2 className="mt-10 text-sm font-semibold uppercase tracking-wide text-slate-500">On Brights</h2>
@@ -52,16 +54,18 @@ export function StaffHomePage() {
   )
 }
 
-function TaskCard({ to, count, title, note, quiet = false }: { to?: string; count: number; title: string; note: string; quiet?: boolean }) {
+function TaskCard({ to, count, title, note, quiet = false, danger = false }: {
+  to?: string; count: number; title: string; note: string; quiet?: boolean; danger?: boolean
+}) {
   const urgent = !quiet && count > 0
   const body = (
     <>
       <p className={`text-4xl font-bold tabular-nums ${urgent ? 'text-heading' : 'text-slate-700'}`}>{count}</p>
       <p className="mt-1 font-semibold text-slate-900">{title}</p>
-      <p className="mt-1 text-sm text-slate-500">{note}</p>
+      <p className={`mt-1 text-sm ${danger ? 'font-semibold text-red-700' : 'text-slate-500'}`}>{note}</p>
     </>
   )
-  const style = `block rounded-2xl border p-5 shadow-sm transition ${urgent ? 'border-brand-sun bg-brand-sun/10' : 'border-slate-200 bg-surface'}`
+  const style = `block rounded-2xl border p-5 shadow-sm transition ${danger ? 'border-red-400 bg-red-50' : urgent ? 'border-brand-sun bg-brand-sun/10' : 'border-slate-200 bg-surface'}`
   return to ? (
     <Link to={to} className={`${style} hover:border-brand focus:outline-none focus-visible:ring-4 focus-visible:ring-brand/30`}>{body}</Link>
   ) : (

@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from tutors.permissions import IsStaff, IsTutorAccount
 
 from .images import InvalidPhoto, clean_photo
+from .photo_review import photo_version
 from .insights import record_view, tutor_insights
 from .models import Area, GuideVideo, TutorProfile
 from .queries import discoverable_profiles, search
@@ -164,6 +165,11 @@ class StaffPhotoView(APIView):
 
     def get(self, request, pk):
         profile = get_object_or_404(TutorProfile, pk=pk)
+        wanted = request.query_params.get("v")
+        if wanted is not None and wanted != photo_version(profile):
+            # The tutor replaced the photo since the review screen loaded: don't show a
+            # different photo under the old one's approve button.
+            return Response({"detail": "This photo has changed. Reload to see the new one."}, status=status.HTTP_409_CONFLICT)
         response = _photo_response(profile)
         response["Cache-Control"] = "private, no-store"
         return response
