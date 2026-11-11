@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router'
 import type { User } from '../api/auth'
 import { useAuth } from '../auth/AuthContext'
 import { isTabActive, ROLE_BADGES, tabsFor, type NavIconName, type NavTab } from '../lib/navigation'
-import { ClipboardIcon, FlagIcon, HomeIcon, PhotoIcon, ProfileCardIcon, SearchIcon, UserIcon, UsersIcon } from './Icons'
+import { ClipboardIcon, FlagIcon, HomeIcon, MoreIcon, PhotoIcon, ProfileCardIcon, SearchIcon, UserIcon, UsersIcon } from './Icons'
 
 const ICONS: Record<NavIconName, (p: { className?: string }) => React.ReactNode> = {
   search: SearchIcon,
@@ -13,6 +13,7 @@ const ICONS: Record<NavIconName, (p: { className?: string }) => React.ReactNode>
   clipboard: ClipboardIcon,
   photo: PhotoIcon,
   flag: FlagIcon,
+  more: MoreIcon,
 }
 
 /**

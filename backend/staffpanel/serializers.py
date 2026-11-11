@@ -167,3 +167,75 @@ def report_detail(report, viewer):
         "is_own": is_own,
         "actions": ["dismiss", "warn", "suspend"] if report.status == "open" and not is_own else [],
     }
+
+
+# ---- People ---------------------------------------------------------------------------------
+
+def user_row(user):
+    return {
+        "id": user.pk,
+        "name": _name(user),
+        "email": user.email,
+        "account_type": "staff" if user.is_staff else user.account_type,
+        "account_type_label": "Brights team" if user.is_staff else user.get_account_type_display(),
+        "is_active": user.is_active,
+        "email_verified": user.email_verified,
+        "is_minor": user.is_minor,
+        "date_joined": user.date_joined,
+    }
+
+
+def user_detail(user, viewer):
+    from contact.models import ContactEvent
+    from moderation.models import Report
+
+    from profiles.queries import discoverable_profiles
+
+    from .people import history
+
+    application = getattr(user, "tutor_application", None)
+    profile = getattr(user, "tutor_profile", None)
+    is_self = user.pk == viewer.pk
+    protected = (user.is_staff or user.is_superuser) and not viewer.is_superuser
+    actions = []
+    if not is_self and not protected:
+        actions.append("unblock" if not user.is_active else "block")
+    if not user.email_verified:
+        actions.append("resend_confirmation")
+    return {
+        **user_row(user),
+        "first_name": user.first_name,
+        "date_of_birth": user.date_of_birth,
+        "age": user.age,
+        "last_login": user.last_login,
+        "tutor": {
+            "application_id": application.pk if application else None,
+            "application_status": application.status if application else None,
+            "application_status_label": application.get_status_display() if application else None,
+            "profile_id": profile.pk if profile else None,
+            "photo_status": profile.get_photo_status_display() if profile else None,
+            "is_listed": discoverable_profiles().filter(pk=profile.pk).exists() if profile else False,
+        } if user.account_type == "tutor" else None,
+        "contacts_made": ContactEvent.objects.filter(requester=user).count(),
+        "reports_made": Report.objects.filter(reporter=user).count(),
+        "reports_about": Report.objects.filter(tutor__user=user).count() if profile else 0,
+        "history": history(user),
+        "is_self": is_self,
+        "actions": actions,
+    }
+
+
+# ---- How-to videos --------------------------------------------------------------------------
+
+def video_row(video):
+    return {
+        "id": video.pk,
+        "title": video.title,
+        "description": video.description,
+        "topic": video.topic,
+        "topic_label": video.get_topic_display(),
+        "youtube_id": video.youtube_id,
+        "order": video.order,
+        "is_published": video.is_published,
+        "created_at": video.created_at,
+    }

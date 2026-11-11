@@ -12,4 +12,9 @@ urlpatterns = [
     path("reports/", views.ReportListView.as_view(), name="staff-reports"),
     path("reports/<int:pk>/", views.ReportDetailView.as_view(), name="staff-report"),
     path("reports/<int:pk>/decide/", views.ReportDecisionView.as_view(), name="staff-report-decide"),
+    path("users/", views.UserListView.as_view(), name="staff-users"),
+    path("users/<int:pk>/", views.UserDetailView.as_view(), name="staff-user"),
+    path("users/<int:pk>/action/", views.UserActionView.as_view(), name="staff-user-action"),
+    path("videos/", views.VideoListView.as_view(), name="staff-videos"),
+    path("videos/<int:pk>/", views.VideoDetailView.as_view(), name="staff-video"),
 ]

@@ -7,6 +7,7 @@ so every decision is still checked, logged in the history and emailed exactly
 as before. Staff only: is_staff + active, never grantable through the API.
 """
 
+from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
@@ -29,7 +30,12 @@ from moderation.models import Report
 from moderation.rules import ReportStatus
 from profiles import photo_review
 
-from .serializers import application_detail, application_row, photo_row, report_detail, report_row
+from accounts.models import User as Account
+from profiles.models import GuideVideo
+
+from . import people
+from .serializers import (application_detail, application_row, photo_row, report_detail, report_row, user_detail,
+                          user_row, video_row)
 
 
 def error_response(exc):
@@ -65,6 +71,8 @@ class OverviewView(APIView):
             "reports_open": Report.objects.filter(status=ReportStatus.OPEN).count(),
             "reports_urgent": Report.objects.filter(status=ReportStatus.OPEN, is_urgent=True).count(),
             "totals": {**people, "approved_tutors": apps["approved"]},
+            # For the few jobs still done there (subjects, areas, staff accounts). Staff only, never public.
+            "django_admin_url": f"/{settings.ADMIN_URL}",
         })
 
 
@@ -250,3 +258,133 @@ class ReportDecisionView(APIView):
             return error_response(exc)
         report = Report.objects.select_related("tutor__user", "reporter", "closed_by").get(pk=pk)
         return Response(report_detail(report, request.user))
+
+
+# ---- People ---------------------------------------------------------------------------------
+
+USER_FILTERS = {
+    "learner": Q(account_type="learner", is_staff=False),
+    "parent": Q(account_type="parent", is_staff=False),
+    "tutor": Q(account_type="tutor", is_staff=False),
+    "staff": Q(is_staff=True),
+    "blocked": Q(is_active=False),
+    "unconfirmed": Q(email_verified_at__isnull=True),
+}
+
+
+class UserListView(APIView):
+    """GET /api/staff/users/?type=learner|parent|tutor|staff|blocked|unconfirmed|all&q=…  (newest first)"""
+
+    permission_classes = [IsStaff]
+
+    def get(self, request):
+        queryset = Account.objects.all()
+        wanted = request.query_params.get("type", "all")
+        if wanted in USER_FILTERS:
+            queryset = queryset.filter(USER_FILTERS[wanted])
+        for word in (request.query_params.get("q") or "").split():
+            queryset = queryset.filter(Q(first_name__icontains=word) | Q(last_name__icontains=word) | Q(email__icontains=word))
+        paginator = ApplicationPagination()
+        page = paginator.paginate_queryset(queryset.order_by("-date_joined", "-pk"), request, view=self)
+        return paginator.get_paginated_response([user_row(u) for u in page])
+
+
+class UserDetailView(APIView):
+    """GET /api/staff/users/<id>/"""
+
+    permission_classes = [IsStaff]
+
+    def get(self, request, pk):
+        user = get_object_or_404(Account.objects.select_related("tutor_application", "tutor_profile"), pk=pk)
+        return Response(user_detail(user, request.user))
+
+
+class UserActionView(APIView):
+    """POST /api/staff/users/<id>/action/ {"action": "block" | "unblock" | "resend_confirmation", "reason": "..."}"""
+
+    permission_classes = [IsStaff]
+
+    def post(self, request, pk):
+        get_object_or_404(Account, pk=pk)
+        reason = str(request.data.get("reason") or "")
+        handlers = {
+            "block": lambda: people.block(pk, request.user, reason),
+            "unblock": lambda: people.unblock(pk, request.user, reason),
+            "resend_confirmation": lambda: people.resend_confirmation(pk, request.user),
+        }
+        action = request.data.get("action")
+        if action not in handlers:
+            return Response({"non_field_errors": ["Choose what to do with this account."]}, status=400)
+        try:
+            handlers[action]()
+        except (ValidationError, PermissionDenied) as exc:
+            return error_response(exc)
+        user = Account.objects.select_related("tutor_application", "tutor_profile").get(pk=pk)
+        return Response(user_detail(user, request.user))
+
+
+# ---- How-to videos --------------------------------------------------------------------------
+
+VIDEO_FIELDS = ("title", "description", "topic", "youtube_id", "order", "is_published")
+
+
+def _save_video(video, data):
+    for field in VIDEO_FIELDS:
+        if field in data:
+            value = data[field]
+            if field == "is_published":
+                value = value in (True, "true", "1", 1)
+            elif field == "order":
+                try:
+                    value = max(0, int(value))
+                except (TypeError, ValueError):
+                    raise ValidationError({"order": ["Use a whole number."]})
+            else:
+                value = str(value or "").strip()
+            setattr(video, field, value)
+    video.full_clean()  # checks lengths and topic, and keeps just the YouTube video ID
+    video.save()
+    return video
+
+
+def _video_errors(exc):
+    if hasattr(exc, "message_dict"):
+        return Response(exc.message_dict, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"non_field_errors": exc.messages}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VideoListView(APIView):
+    """GET /api/staff/videos/ (all, drafts too) · POST to add one."""
+
+    permission_classes = [IsStaff]
+
+    def get(self, request):
+        return Response({
+            "topics": [{"value": v, "label": l} for v, l in GuideVideo.Topic.choices],
+            "videos": [video_row(v) for v in GuideVideo.objects.order_by("order", "created_at")],
+        })
+
+    def post(self, request):
+        try:
+            video = _save_video(GuideVideo(), request.data)
+        except ValidationError as exc:
+            return _video_errors(exc)
+        return Response(video_row(video), status=status.HTTP_201_CREATED)
+
+
+class VideoDetailView(APIView):
+    """PATCH /api/staff/videos/<id>/ · DELETE it (removes it from Brights only, not from YouTube)."""
+
+    permission_classes = [IsStaff]
+
+    def patch(self, request, pk):
+        video = get_object_or_404(GuideVideo, pk=pk)
+        try:
+            _save_video(video, request.data)
+        except ValidationError as exc:
+            return _video_errors(exc)
+        return Response(video_row(video))
+
+    def delete(self, request, pk):
+        get_object_or_404(GuideVideo, pk=pk).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

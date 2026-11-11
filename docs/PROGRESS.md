@@ -71,6 +71,24 @@ Ready for a free pilot with volunteer testers (GitHub + Render, see docs/DEPLOYM
 - POPIA, especially children's personal information: consent, guardian involvement, data minimisation, retention of verification documents.
 - Guardian consent is a self-declared checkbox — weak evidence; consider guardian email confirmation before launch.
 
+## 11 Nov 2026: staff area, phase 3 (users, how-to videos, "More")
+- **Staff menu:** Staff home, Applications, Photos, Reports, **More**. More holds Users, How-to videos, Your account and a link to the Django admin, which is now only needed for subjects, areas and team accounts.
+- **Users** (`/staff/users`): every account, newest first.
+  - Filters: learners, parents, tutors, Brights team, blocked, email not confirmed. Search by name or email.
+  - Badges for under-18, unconfirmed and blocked.
+  - A user's page shows their details, their tutor status (application, photo, whether they're in search), their activity (contacts and reports) and the team history.
+  - Actions:
+    - **Block login.** A reason is required. It works at once: open sessions stop and blocked tutors leave search.
+    - **Unblock login.**
+    - **Email a new confirmation link.**
+  - Every action is written to Django's admin history (`staffpanel/people.py`), so it also shows there.
+  - Guardrails: you can't change your own account, and only the account owner (superuser) can block another team member.
+- **How-to videos** (`/staff/videos`):
+  - Add by pasting a YouTube link. Only YouTube is accepted, and only the video ID is kept.
+  - New videos start as drafts. You can publish or unpublish, edit, move up or down, and remove. Removing takes it off Brights only, not YouTube.
+  - Tutors see only published videos, and the section stays hidden until one is published.
+- **Tests:** 9 new, 298 in total. A browser test covered every action, and all staff pages pass the contrast check in light and dark.
+
 ## 11 Nov 2026: staff area, phase 2 (profile photos and safety reports)
 - **Photos** (`/staff/photos`): a grid of photos waiting for approval, with Approve or Reject.
   - Rejecting needs a reason, which the tutor sees. Quick reasons fill it in with one tap.

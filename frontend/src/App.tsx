@@ -24,6 +24,10 @@ import { StaffHomePage } from './pages/staff/StaffHomePage'
 import { PhotosPage } from './pages/staff/PhotosPage'
 import { ReportReviewPage } from './pages/staff/ReportReviewPage'
 import { ReportsPage } from './pages/staff/ReportsPage'
+import { MorePage } from './pages/staff/MorePage'
+import { UserPage } from './pages/staff/UserPage'
+import { UsersPage } from './pages/staff/UsersPage'
+import { VideosPage } from './pages/staff/VideosPage'
 
 export default function App() {
   return (
@@ -61,6 +65,10 @@ export default function App() {
               <Route path="/staff/photos" element={<PhotosPage />} />
               <Route path="/staff/reports" element={<ReportsPage />} />
               <Route path="/staff/reports/:id" element={<ReportReviewPage />} />
+              <Route path="/staff/more" element={<MorePage />} />
+              <Route path="/staff/users" element={<UsersPage />} />
+              <Route path="/staff/users/:id" element={<UserPage />} />
+              <Route path="/staff/videos" element={<VideosPage />} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

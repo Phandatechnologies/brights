@@ -49,6 +49,13 @@ export const FlagIcon = (p: IconProps) => (
   </Svg>
 )
 
+export const MoreIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="4" y="4" width="6.5" height="6.5" rx="1.5" /><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5" />
+    <rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5" /><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5" />
+  </Svg>
+)
+
 export const ProfileCardIcon = (p: IconProps) => (
   <Svg {...p}>
     <rect x="3" y="4.5" width="18" height="15" rx="2.5" /><circle cx="9" cy="11" r="2.5" />

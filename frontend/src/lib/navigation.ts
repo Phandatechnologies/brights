@@ -1,6 +1,6 @@
 import type { User } from '../api/auth'
 
-export type NavIconName = 'search' | 'users' | 'user' | 'home' | 'profile' | 'clipboard' | 'photo' | 'flag'
+export type NavIconName = 'search' | 'users' | 'user' | 'home' | 'profile' | 'clipboard' | 'photo' | 'flag' | 'more'
 
 export type NavTab = {
   to: string
@@ -19,7 +19,8 @@ export function tabsFor(user: Pick<User, 'account_type' | 'is_staff'>): NavTab[]
       { to: '/staff/applications', label: 'Applications', icon: 'clipboard' },
       { to: '/staff/photos', label: 'Photos', icon: 'photo' },
       { to: '/staff/reports', label: 'Reports', icon: 'flag' },
-      { to: '/account', label: 'Account', icon: 'user' },
+      // Users, how-to videos and the staff member's own account live under "More".
+      { to: '/staff/more', label: 'More', icon: 'more', alsoActive: ['/staff/users', '/staff/videos', '/account'] },
     ]
   }
   switch (user.account_type) {
